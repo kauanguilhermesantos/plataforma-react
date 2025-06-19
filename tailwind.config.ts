@@ -10,8 +10,12 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
-  			background: 'var(--background)',
-  			foreground: 'var(--foreground)'
+			neutral: {
+				100: "#D3D3D3"
+			},
+			"cinza-claro": "#D3D3D3"
+  			// background: 'var(--background)',
+  			// foreground: 'var(--foreground)'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -20,6 +24,16 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+//   plugins: [require("tailwindcss-animate")],
 };
 export default config;
+
+// Cinza claro (#D3D3D3): neutralidade e ausência de viés
+
+// Bege suave (#F5F5DC): acolhimento e equilíbrio
+
+// Azul acinzentado (#A9B0B3): serenidade com leveza
+
+// Verde menta claro (#D0F0C0): sensação de frescor e abertura
+
+// Branco puro (#FFFFFF): pureza e possibilidade de adaptação
