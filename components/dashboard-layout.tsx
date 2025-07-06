@@ -23,13 +23,11 @@ import {
   Settings,
   LogOut,
   Bell,
-  Search,
   Code,
   Trophy,
   Calendar,
 } from "lucide-react"
 import Link from "next/link"
-import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 interface DashboardLayoutProps {
@@ -49,11 +47,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   const navigationItems = [
-    { icon: Home, label: "Dashboard", href: "/dashboard", active: true },
-    { icon: BookOpen, label: "Cursos", href: "/courses" },
-    { icon: Code, label: "Projetos", href: "/projects" },
-    { icon: Trophy, label: "Conquistas", href: "/achievements" },
-    { icon: Calendar, label: "Agenda", href: "/schedule" },
+    { icon: Home, label: "Home", href: "/dashboard", active: true },
+    { icon: BookOpen, label: "Meus Cursos", href: "/courses" },
+    { icon: Code, label: "Catálogo", href: "/projects" },
+    // { icon: Trophy, label: "Conquistas", href: "/achievements" },
+    // { icon: Calendar, label: "Agenda", href: "/schedule" },
     ...(user.role === "teacher" ? [{ icon: Users, label: "Alunos", href: "/students" }] : []),
     { icon: Settings, label: "Configurações", href: "/settings" },
   ]
@@ -70,7 +68,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               variant="ghost"
               size="sm"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="hidden md:flex"
+              className="hidden md:flex dark:text-white"
             >
               <Menu className="h-5 w-5" />
             </Button>
@@ -94,19 +92,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </Link>
           </div>
 
-          {/* Barra de Pesquisa */}
-          <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input placeholder="Pesquisar cursos, projetos..." className="pl-10" />
-            </div>
-          </div>
-
           {/* Ações do Header */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <Button variant="ghost" size="sm" className="relative">
-              <Bell className="h-5 w-5" />
+              <Bell className="h-5 w-5 dark:text-white" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 3
               </span>
@@ -114,8 +104,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full dark:text-black">
+                  <Avatar className="h-8 w-8 dark:bg-white">
                     <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                     <AvatarFallback>
                       {user.name
@@ -126,7 +116,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuContent className="w-56 dark:bg-white" align="end" >
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{user.name}</p>
