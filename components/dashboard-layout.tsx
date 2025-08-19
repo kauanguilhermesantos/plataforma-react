@@ -47,13 +47,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   const navigationItems = [
-    { icon: Home, label: "Home", href: "/dashboard", active: true },
-    { icon: BookOpen, label: "Meus Cursos", href: "/courses" },
-    { icon: Code, label: "Catálogo", href: "/projects" },
+    { icon: Home, label: "Home", href: "/home", active: true },
+    { icon: BookOpen, label: "Meus Cursos", href: "/meusCursos" },
+    { icon: Code, label: "Catálogo", href: "/catalogo" },
     // { icon: Trophy, label: "Conquistas", href: "/achievements" },
     // { icon: Calendar, label: "Agenda", href: "/schedule" },
-    ...(user.role === "teacher" ? [{ icon: Users, label: "Alunos", href: "/students" }] : []),
-    { icon: Settings, label: "Configurações", href: "/settings" },
+    // ...(user.role === "teacher" ? [{ icon: Users, label: "Alunos", href: "/students" }] : []),
+    { icon: Settings, label: "Configurações", href: "/configuracoes" },
   ]
 
   return (
