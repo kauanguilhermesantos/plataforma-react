@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import Link from "next/link"
 import {
   Search,
   Star,
@@ -159,24 +160,6 @@ export function CatalogContent() {
       tags: ["React Native", "Expo", "Navigation", "AsyncStorage"],
       isNew: true,
     },
-    {
-      id: 7,
-      title: "aaaaaaaaax",
-      description: "Crie aplicativos móveis para iOS e Android usando React Native.",
-      instructor: {
-        name: "Prof. Fernanda Rocha",
-        avatar: "/placeholder.svg?height=40&width=40",
-      },
-      category: "Mobile",
-      level: "Intermediário",
-      duration: "38h",
-      students: 156,
-      rating: 4.5,
-      reviews: 23,
-      thumbnail: "/placeholder.svg?height=200&width=300",
-      tags: ["React Native", "Expo", "Navigation", "AsyncStorage"],
-      isNew: true,
-    },
   ]
 
   const categories = [
@@ -218,9 +201,8 @@ export function CatalogContent() {
   })
 
   const handleEnroll = (courseId: number) => {
-    // Simular inscrição no curso
-    console.log(`Inscrevendo no curso ${courseId}`)
-    // Aqui você implementaria a lógica de inscrição
+    // A navegação será feita pelo Link component
+    console.log(`Navegando para o curso ${courseId}`)
   }
 
   return (
@@ -381,10 +363,12 @@ export function CatalogContent() {
 
               {/* Ação */}
               <div className="flex justify-end">
-                <Button onClick={() => handleEnroll(course.id)} className="w-full">
-                  <Play className="h-4 w-4 mr-2" />
-                  Inscrever-se
-                </Button>
+                <Link href={`/curso/${course.id}`} className="w-full">
+                  <Button className="w-full">
+                    <Play className="h-4 w-4 mr-2" />
+                    Acessar Curso
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
