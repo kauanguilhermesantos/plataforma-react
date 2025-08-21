@@ -54,6 +54,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: User, label: "Meu Perfil", href: "/meuPerfil" },
   ]
 
+  const handleLogout = () => {
+    // Aqui vai a lógica de logout
+    console.log("Fazendo logout...")
+    // Exemplo: limpar tokens, redirecionar para login, etc.
+    window.location.href = "/login"
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -128,7 +135,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     <span>Meu Perfil</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sair</span>
                 </DropdownMenuItem>
@@ -160,6 +167,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     </Link>
                   ))}
                 </nav>
+                {/* Logout Button */}
+                <div className="px-2 pb-2">
+                  <button
+                    onClick={handleLogout}
+                    className="group flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                  >
+                    <LogOut className="mr-3 h-5 w-5" />
+                    Sair
+                  </button>
+                </div>
               </div>
             </div>
           </aside>
