@@ -249,14 +249,14 @@ export function CourseViewer({ courseId }: CourseViewerProps) {
             </Button>
           ) : (
             <>
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 <Bookmark className="h-4 w-4 mr-2" />
                 Salvar
               </Button>
               <Button variant="outline" size="sm">
                 <Share className="h-4 w-4 mr-2" />
                 Compartilhar
-              </Button>
+              </Button> */}
             </>
           )}
         </div>
