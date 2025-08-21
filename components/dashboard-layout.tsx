@@ -19,13 +19,11 @@ import {
   Menu,
   Home,
   BookOpen,
-  Users,
+  User,
   Settings,
   LogOut,
   Bell,
-  Code,
-  Trophy,
-  Calendar,
+  Code
 } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -53,7 +51,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     // { icon: Trophy, label: "Conquistas", href: "/achievements" },
     // { icon: Calendar, label: "Agenda", href: "/schedule" },
     // ...(user.role === "teacher" ? [{ icon: Users, label: "Alunos", href: "/students" }] : []),
-    { icon: Settings, label: "Configurações", href: "/configuracoes" },
+    { icon: User, label: "Meu Perfil", href: "/meuPerfil" },
   ]
 
   return (
@@ -125,8 +123,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Configurações</span>
+                  <User className="mr-2 h-4 w-4" />
+                  <Link href="/meuPerfil">
+                    <span>Meu Perfil</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <LogOut className="mr-2 h-4 w-4" />
