@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,19 +13,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import {
-  GraduationCap,
-  Menu,
-  Home,
-  BookOpen,
-  User,
-  Settings,
-  LogOut,
-  Bell,
-  Code
-} from "lucide-react"
+import { GraduationCap, Menu, Home, BookOpen, Settings, LogOut, Bell, Search, User } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { usePathname } from "next/navigation"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -35,6 +25,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
+  const pathname = usePathname()
 
   // Simulando dados do usuário
   const user = {
@@ -45,17 +36,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   const navigationItems = [
-    { icon: Home, label: "Home", href: "/home", active: true },
+    { icon: Home, label: "Dashboard", href: "/home" },
     { icon: BookOpen, label: "Meus Cursos", href: "/meusCursos" },
-    { icon: Code, label: "Catálogo", href: "/catalogo" },
-    // { icon: Trophy, label: "Conquistas", href: "/achievements" },
-    // { icon: Calendar, label: "Agenda", href: "/schedule" },
-    // ...(user.role === "teacher" ? [{ icon: Users, label: "Alunos", href: "/students" }] : []),
+    { icon: Search, label: "Catálogo", href: "/catalogo" },
     { icon: User, label: "Meu Perfil", href: "/meuPerfil" },
   ]
 
   const handleLogout = () => {
-    // Aqui vai a lógica de logout
+    // Aqui você implementaria a lógica de logout
     console.log("Fazendo logout...")
     // Exemplo: limpar tokens, redirecionar para login, etc.
     window.location.href = "/login"
@@ -73,7 +61,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               variant="ghost"
               size="sm"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="hidden md:flex dark:text-white"
+              className="hidden md:flex"
             >
               <Menu className="h-5 w-5" />
             </Button>
@@ -85,7 +73,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64">
-                <MobileNavigation items={navigationItems} user={user} />
+                <MobileNavigation items={navigationItems} user={user} pathname={pathname} onLogout={handleLogout} />
               </SheetContent>
             </Sheet>
 
@@ -101,7 +89,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <Button variant="ghost" size="sm" className="relative">
-              <Bell className="h-5 w-5 dark:text-white" />
+              <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 3
               </span>
@@ -130,8 +118,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <Link href="/meuPerfil">
+                  <Link href="/meuPerfil" className="flex items-center w-full">
+                    <User className="mr-2 h-4 w-4" />
                     <span>Meu Perfil</span>
                   </Link>
                 </DropdownMenuItem>
@@ -157,7 +145,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                       key={item.href}
                       href={item.href}
                       className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                        item.active
+                        pathname === item.href
                           ? "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100"
                           : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
                       }`}
@@ -167,6 +155,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     </Link>
                   ))}
                 </nav>
+
                 {/* Logout Button */}
                 <div className="px-2 pb-2">
                   <button
@@ -193,7 +182,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   )
 }
 
-function MobileNavigation({ items, user }: { items: any[]; user: any }) {
+function MobileNavigation({
+  items,
+  user,
+  pathname,
+  onLogout,
+}: { items: any[]; user: any; pathname: string; onLogout: () => void }) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-2 p-4 border-b">
@@ -209,13 +203,24 @@ function MobileNavigation({ items, user }: { items: any[]; user: any }) {
             key={item.href}
             href={item.href}
             className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-              item.active ? "bg-blue-100 text-blue-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              pathname === item.href
+                ? "bg-blue-100 text-blue-900"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
             }`}
           >
             <item.icon className="mr-3 h-5 w-5" />
             {item.label}
           </Link>
         ))}
+
+        {/* Logout Button Mobile */}
+        <button
+          onClick={onLogout}
+          className="group flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+        >
+          <LogOut className="mr-3 h-5 w-5" />
+          Sair
+        </button>
       </nav>
 
       <div className="p-4 border-t">
