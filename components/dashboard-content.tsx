@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Clock, Play, CheckCircle } from "lucide-react"
+import Link from "next/link"
 
 export function DashboardContent() {
   // Simulando dados do usuário
@@ -111,10 +112,12 @@ export function DashboardContent() {
                       <Progress value={course.progress} className="h-2" />
                     </div>
                   </div>
-                  <Button size="sm" className="dark:text-white bg-blue-600" variant="default">
-                    <Play className="h-4 w-4 mr-1" />
-                    Continuar
-                  </Button>
+                  <Link href={`/curso/${course.id}`}>
+                    <Button size="sm" className="dark:text-white bg-blue-600" variant="default">
+                      <Play className="h-4 w-4 mr-1" />
+                      Continuar
+                    </Button>
+                  </Link>
                 </div>
               ))}
             </CardContent>
