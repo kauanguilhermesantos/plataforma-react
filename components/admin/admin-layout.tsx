@@ -57,7 +57,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     // { icon: BarChart3, label: "Relatórios", href: "/admin/reports" },
     // { icon: CreditCard, label: "Financeiro", href: "/admin/billing" },
     // { icon: FileText, label: "Conteúdo", href: "/admin/content" },
-    { icon: Settings, label: "Configurações", href: "/admin/configuracoes" },
+    // { icon: Settings, label: "Configurações", href: "/admin/configuracoes" },
   ]
 
   const handleLogout = () => {
