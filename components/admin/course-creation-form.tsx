@@ -278,6 +278,10 @@ export function CourseCreationForm() {
 
   return (
     <>
+      <div className="mb-6">
+              <h1 className="text-3xl font-bold dark:text-white">Criar Novo Curso</h1>
+              <p className="text-slate-600 dark:text-slate-400 mt-1">Preencha as informações para criar um novo curso</p>
+            </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Informações Básicas */}
         <Card className="dark:bg-slate-900 dark:border-slate-800">
