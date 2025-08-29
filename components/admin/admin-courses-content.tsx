@@ -146,7 +146,7 @@ export function AdminCoursesContent() {
   }
 
   const handleNewCourse = () => {
-    window.location.href = "admin/cursos/novoCurso"
+    window.location.href = "cursos/novoCurso"
   }
 
   // Filtrar cursos
@@ -400,7 +400,7 @@ export function AdminCoursesContent() {
                           <Eye className="mr-2 h-4 w-4" />
                           Visualizar
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => (window.location.href = `cursos/${course.id}/editarCurso`)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Editar
                         </DropdownMenuItem>
