@@ -14,9 +14,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
 import Link from "next/link"
-import { ArrowLeft, Eye, Save, Users, BookOpen, Clock, Star } from "lucide-react"
+import { ArrowLeft, Eye, Save, Users, BookOpen, Clock, Star, Plus, X, Upload } from "lucide-react"
 
 interface CourseEditorProps {
   courseId: string
@@ -130,6 +129,9 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
   const [activeTab, setActiveTab] = useState("basic")
   const [isSaving, setIsSaving] = useState(false)
   const [currentTag, setCurrentTag] = useState("")
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
+  const [isThumbnailUploading, setIsThumbnailUploading] = useState(false)
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -260,6 +262,46 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
       ...prev,
       tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }))
+  }
+
+  const handleThumbnailUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor, selecione apenas arquivos de imagem.")
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("A imagem deve ter no máximo 5MB.")
+      return
+    }
+
+    setIsThumbnailUploading(true)
+    setThumbnailFile(file)
+
+    try {
+      // Criar preview da imagem
+      const previewUrl = URL.createObjectURL(file)
+
+      // Simular upload
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      setThumbnailPreview(previewUrl)
+      setCourse((prev) => ({ ...prev, thumbnail: previewUrl }))
+    } catch (error) {
+      console.error("[v0] Erro no upload:", error)
+      alert("Erro ao fazer upload da imagem.")
+    } finally {
+      setIsThumbnailUploading(false)
+    }
+  }
+
+  const removeThumbnail = () => {
+    if (thumbnailPreview) {
+      URL.revokeObjectURL(thumbnailPreview)
+    }
+    setThumbnailFile(null)
+    setThumbnailPreview(null)
+    setCourse((prev) => ({ ...prev, thumbnail: "/placeholder.svg" }))
   }
 
   return (
@@ -439,7 +481,7 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
                       onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
                     />
                     <Button type="button" onClick={addTag} variant="outline" size="sm">
-                      <X className="w-4 h-4" />
+                      <Plus className="w-4 h-4" />
                     </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -463,16 +505,57 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>Thumbnail do Curso</Label>
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
-                    <img
-                      src={course.thumbnail || "/placeholder.svg"}
-                      alt="Thumbnail"
-                      className="w-full h-32 object-cover rounded mb-4"
-                    />
-                    <Button variant="outline">
-                      <X className="h-4 w-4 mr-2" />
-                      Alterar Imagem
-                    </Button>
+                  <div className="border-2 border-dashed border-muted-border rounded-lg p-6 text-center space-y-4">
+                    <div className="relative">
+                      <img
+                        src={thumbnailPreview || course.thumbnail || "/placeholder.svg"}
+                        alt="Thumbnail"
+                        className="w-full h-32 object-cover rounded mx-auto"
+                      />
+                      {thumbnailPreview && (
+                        <button
+                          onClick={removeThumbnail}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    {isThumbnailUploading ? (
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        <span className="text-sm text-muted-foreground">Carregando...</span>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              handleThumbnailUpload(file)
+                            }
+                          }}
+                          className="hidden"
+                          id="thumbnail-upload"
+                        />
+                        <label htmlFor="thumbnail-upload">
+                          <Button variant="outline" asChild>
+                            <span className="cursor-pointer">
+                              <Upload className="h-4 w-4 mr-2" />
+                              {thumbnailPreview ? "Alterar Imagem" : "Fazer Upload"}
+                            </span>
+                          </Button>
+                        </label>
+                        {thumbnailFile && (
+                          <p className="text-xs text-muted-foreground">
+                            {thumbnailFile.name} ({(thumbnailFile.size / 1024 / 1024).toFixed(2)} MB)
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 
