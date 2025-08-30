@@ -132,6 +132,9 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
   const [isThumbnailUploading, setIsThumbnailUploading] = useState(false)
+  const [instructorPhotoFile, setInstructorPhotoFile] = useState<File | null>(null)
+  const [instructorPhotoPreview, setInstructorPhotoPreview] = useState<string | null>(null)
+  const [isInstructorPhotoUploading, setIsInstructorPhotoUploading] = useState(false)
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -302,6 +305,52 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
     setThumbnailFile(null)
     setThumbnailPreview(null)
     setCourse((prev) => ({ ...prev, thumbnail: "/placeholder.svg" }))
+  }
+
+  const handleInstructorPhotoUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor, selecione apenas arquivos de imagem.")
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("A imagem deve ter no máximo 5MB.")
+      return
+    }
+
+    setIsInstructorPhotoUploading(true)
+    setInstructorPhotoFile(file)
+
+    try {
+      // Criar preview da imagem
+      const previewUrl = URL.createObjectURL(file)
+
+      // Simular upload
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      setInstructorPhotoPreview(previewUrl)
+      setCourse((prev) => ({
+        ...prev,
+        instructor: { ...prev.instructor, avatar: previewUrl },
+      }))
+    } catch (error) {
+      console.error("[v0] Erro no upload:", error)
+      alert("Erro ao fazer upload da imagem.")
+    } finally {
+      setIsInstructorPhotoUploading(false)
+    }
+  }
+
+  const removeInstructorPhoto = () => {
+    if (instructorPhotoPreview) {
+      URL.revokeObjectURL(instructorPhotoPreview)
+    }
+    setInstructorPhotoFile(null)
+    setInstructorPhotoPreview(null)
+    setCourse((prev) => ({
+      ...prev,
+      instructor: { ...prev.instructor, avatar: "/placeholder.svg" },
+    }))
   }
 
   return (
@@ -565,14 +614,55 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
                   <h3 className="font-medium">Informações do Instrutor</h3>
 
                   <div className="flex items-center space-x-4">
-                    <Avatar className="h-16 w-16">
-                      <AvatarImage src={course.instructor.avatar || "/placeholder.svg"} />
-                      <AvatarFallback>{course.instructor.name[0]}</AvatarFallback>
-                    </Avatar>
-                    <Button variant="outline" size="sm">
-                      <X className="h-4 w-4 mr-2" />
-                      Alterar Foto
-                    </Button>
+                    <div className="relative">
+                      <Avatar className="h-16 w-16">
+                        <AvatarImage src={instructorPhotoPreview || course.instructor.avatar || "/placeholder.svg"} />
+                        <AvatarFallback>{course.instructor.name[0]}</AvatarFallback>
+                      </Avatar>
+                      {instructorPhotoPreview && (
+                        <button
+                          onClick={removeInstructorPhoto}
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    {isInstructorPhotoUploading ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        <span className="text-sm text-muted-foreground">Carregando...</span>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0]
+                            if (file) {
+                              handleInstructorPhotoUpload(file)
+                            }
+                          }}
+                          className="hidden"
+                          id="instructor-photo-upload"
+                        />
+                        <label htmlFor="instructor-photo-upload">
+                          <Button variant="outline" size="sm" asChild>
+                            <span className="cursor-pointer">
+                              <Upload className="h-4 w-4 mr-2" />
+                              {instructorPhotoPreview ? "Alterar Foto" : "Fazer Upload"}
+                            </span>
+                          </Button>
+                        </label>
+                        {instructorPhotoFile && (
+                          <p className="text-xs text-muted-foreground">
+                            {instructorPhotoFile.name} ({(instructorPhotoFile.size / 1024 / 1024).toFixed(2)} MB)
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
