@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { X, Upload, Loader2, Plus, Play, ChevronDown, ChevronRight, Clock, Star, Trash2, FileText } from "lucide-react"
+import { X, Upload, Loader2, Plus, Play, ChevronDown, ChevronRight, Clock, Star, Trash2, FileText, Settings, BarChart3, Zap } from "lucide-react"
 import Link from "next/link"
 import { ArrowLeft, Eye, Save, Users, BookOpen } from "lucide-react"
 
@@ -86,6 +86,7 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
   const [showPublishModal, setShowPublishModal] = useState(false)
   const [moduleToDelete, setModuleToDelete] = useState<number | null>(null)
   const [lessonToDelete, setLessonToDelete] = useState<{ moduleId: number; lessonId: number } | null>(null)
+  const [showDeleteCourseModal, setShowDeleteCourseModal] = useState(false)
 
   const [course, setCourse] = useState<Course>({
     id: courseId,
@@ -418,6 +419,14 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
       ...prev,
       resources: prev.resources.filter((resource) => resource.id !== resourceId),
     }))
+  }
+
+  const confirmDeleteCourse = () => {
+    // Aqui seria implementada a lógica de exclusão do curso
+    console.log("Excluindo curso:", course.id)
+    setShowDeleteCourseModal(false)
+    // Redirecionar para lista de cursos após exclusão
+    // router.push('/admin')
   }
 
   return (
@@ -1131,53 +1140,77 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
         </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="flex justify-center">
             <Card>
               <CardHeader>
-                <CardTitle>Configurações de Publicação</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Configurações de Publicação
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="published">Status de Publicação</Label>
-                    <p className="text-sm text-gray-500">
-                      {course.isPublished ? "Curso visível para estudantes" : "Curso em modo rascunho"}
-                    </p>
+              <CardContent className="space-y-6">
+                {/* Status de Publicação */}
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full ${course.isPublished ? "bg-green-500" : "bg-yellow-500"}`}
+                      />
+                      <Label htmlFor="published" className="font-medium">
+                        {course.isPublished ? "Publicado" : "Rascunho"}
+                      </Label>
+                    </div>
+                    <Switch id="published" checked={course.isPublished} onCheckedChange={handlePublishToggle} />
                   </div>
-                  <Switch id="published" checked={course.isPublished} onCheckedChange={handlePublishToggle} />
+                  <p className="text-sm text-muted-foreground">
+                    {course.isPublished
+                      ? "Curso visível para todos os estudantes na plataforma"
+                      : "Curso em desenvolvimento, visível apenas para administradores"}
+                  </p>
                 </div>
 
-                <Separator />
-
-                <div className="space-y-2">
-                  <Label>Estatísticas</Label>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <p className="font-medium">Estudantes Inscritos</p>
+                {/* Estatísticas */}
+                <div>
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4" />
+                    Estatísticas do Curso
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Users className="h-4 w-4 text-blue-600" />
+                        <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Estudantes</p>
+                      </div>
                       <p className="text-2xl font-bold text-blue-600">{course.students.toLocaleString()}</p>
                     </div>
-                    <div>
-                      <p className="font-medium">Avaliação Média</p>
+                    <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Star className="h-4 w-4 text-yellow-600" />
+                        <p className="text-sm font-medium text-yellow-700 dark:text-yellow-300">Avaliação</p>
+                      </div>
                       <p className="text-2xl font-bold text-yellow-600">{course.rating}</p>
                     </div>
                   </div>
                 </div>
 
-                <Separator />
-
-                <div className="space-y-3">
-                  <h4 className="font-medium">Ações Avançadas</h4>
+                {/* Ações do Curso */}
+                <div>
+                  <h4 className="font-medium mb-3 flex items-center gap-2">
+                    <Zap className="h-4 w-4" />
+                    Ações do Curso
+                  </h4>
                   <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start bg-transparent">
-                      <X className="h-4 w-4 mr-2" />
+                    {/* <Button variant="outline" className="w-full justify-start hover:bg-muted bg-transparent">
+                      <Settings className="h-4 w-4 mr-2" />
                       Configurações Avançadas
-                    </Button>
+                    </Button> */}
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-red-600 hover:text-red-700 bg-transparent"
+                      className="w-full justify-start text-red-600 hover:text-white hover:bg-red-500 border-red-200 dark:border-red-800 bg-transparent"
+                      onClick={() => setShowDeleteCourseModal(true)}
                     >
-                      <X className="h-4 w-4 mr-2" />
-                      Excluir Curso
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Excluir Curso Permanentemente
                     </Button>
                   </div>
                 </div>
@@ -1245,6 +1278,27 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
               Cancelar
             </Button>
             <Button onClick={confirmPublishToggle}>{course.isPublished ? "Despublicar" : "Publicar"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/*  Modal Exclusão Curso */}
+      <Dialog open={showDeleteCourseModal} onOpenChange={setShowDeleteCourseModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Excluir Curso Permanentemente</DialogTitle>
+            <DialogDescription>
+              Esta ação não pode ser desfeita. Tem certeza que deseja excluir permanentemente o curso "{course.title}"?
+              Todos os dados, módulos, aulas e recursos serão perdidos para sempre.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteCourseModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteCourse}>
+              Excluir Permanentemente
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
