@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { X, Upload, Loader2, Plus, Play, ChevronDown, ChevronRight, Clock, Star, Trash2 } from "lucide-react"
+import { X, Upload, Loader2, Plus, Play, ChevronDown, ChevronRight, Clock, Star, Trash2, FileText } from "lucide-react"
 import Link from "next/link"
 import { ArrowLeft, Eye, Save, Users, BookOpen } from "lucide-react"
 
@@ -53,8 +53,10 @@ interface Module {
 interface Resource {
   id: number
   title: string
-  type: "pdf" | "link" | "file"
+  type: "pdf"
   url: string
+  file?: File
+  isUploading?: boolean
 }
 
 interface Course {
@@ -326,7 +328,7 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
     setCourse((prev) => ({ ...prev, resources: [...prev.resources, newResource] }))
   }
 
-  const updateResource = (resourceId: number, field: keyof Resource, value: string) => {
+  const updateResource = (resourceId: number, field: keyof Resource, value: any) => {
     setCourse((prev) => ({
       ...prev,
       resources: prev.resources.map((resource) =>
@@ -409,6 +411,13 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
       e.preventDefault()
       addTag()
     }
+  }
+
+  const removeResource = (resourceId: number) => {
+    setCourse((prev) => ({
+      ...prev,
+      resources: prev.resources.filter((resource) => resource.id !== resourceId),
+    }))
   }
 
   return (
@@ -997,43 +1006,122 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
                 </Button>
               </div>
             </CardHeader>
+
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {course.resources.map((resource) => (
-                  <div key={resource.id} className="p-4 border rounded-lg">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Input
-                        value={resource.title}
-                        onChange={(e) => updateResource(resource.id, "title", e.target.value)}
-                        placeholder="Título do recurso"
-                      />
-                      <Select
-                        value={resource.type}
-                        onValueChange={(value: "pdf" | "link" | "file") => updateResource(resource.id, "type", value)}
+                  <div
+                    key={resource.id}
+                    className="group relative bg-card border border-border rounded-xl p-6"
+                  >
+                    {/* Header with title and actions */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1 mr-4">
+                        <Input
+                          value={resource.title}
+                          onChange={(e) => updateResource(resource.id, "title", e.target.value)}
+                          placeholder="Digite o título do recurso..."
+                          className="text-lg font-medium border bg-slate-50 dark:bg-slate-900 focus-visible:ring-0 placeholder:text-muted-foreground/60"
+                        />
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeResource(resource.id)}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pdf">PDF</SelectItem>
-                          <SelectItem value="link">Link</SelectItem>
-                          <SelectItem value="file">Arquivo</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        value={resource.url}
-                        onChange={(e) => updateResource(resource.id, "url", e.target.value)}
-                        placeholder="URL ou caminho do arquivo"
-                      />
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <div className="flex justify-end space-x-2 mt-4">
-                      <Button variant="outline" size="sm">
-                        <X className="h-4 w-4 mr-2" />
-                        Upload
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => deleteResource(resource.id)}>
-                        <X className="h-4 w-4 text-red-500" />
-                      </Button>
+
+                    {/* Upload Area */}
+                    <div className="space-y-4">
+                      {!resource.url ? (
+                        <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
+                          <input
+                            type="file"
+                            accept=".pdf,application/pdf"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0]
+                              if (file) {
+                                if (file.type !== "application/pdf") {
+                                  alert("Por favor, selecione apenas arquivos PDF.")
+                                  return
+                                }
+                                if (file.size > 10 * 1024 * 1024) {
+                                  alert("O arquivo deve ter no máximo 10MB.")
+                                  return
+                                }
+
+                                updateResource(resource.id, "isUploading", true)
+
+                                setTimeout(() => {
+                                  const url = URL.createObjectURL(file)
+                                  updateResource(resource.id, "url", url)
+                                  updateResource(resource.id, "file", file)
+                                  updateResource(resource.id, "isUploading", false)
+                                }, 2000)
+                              }
+                            }}
+                            className="hidden"
+                            id={`pdf-upload-${resource.id}`}
+                          />
+
+                          {resource.isUploading ? (
+                            <div className="flex flex-col items-center gap-3">
+                              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                              <p className="text-sm text-muted-foreground">Carregando arquivo...</p>
+                            </div>
+                          ) : (
+                            <label
+                              htmlFor={`pdf-upload-${resource.id}`}
+                              className="cursor-pointer flex flex-col items-center gap-3"
+                            >
+                              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                <Upload className="w-6 h-6 text-primary" />
+                              </div>
+                              <div>
+                                <p className="font-medium text-foreground">Clique para fazer upload</p>
+                                <p className="text-sm text-muted-foreground">Apenas arquivos PDF até 10MB</p>
+                              </div>
+                            </label>
+                          )}
+                        </div>
+                      ) : (
+                        /* File Preview */
+                        <div className="bg-muted/50 rounded-lg p-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+                              <FileText className="w-6 h-6 text-red-600 dark:text-red-400" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-foreground truncate">
+                                {resource.file?.name || "Arquivo PDF"}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {resource.file ? `${(resource.file.size / 1024 / 1024).toFixed(2)} MB` : "PDF"}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button variant="outline" size="sm">
+                                <Eye className="w-4 h-4 mr-2" />
+                                Visualizar
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  updateResource(resource.id, "url", "")
+                                  updateResource(resource.id, "file", undefined)
+                                }}
+                                className="text-muted-foreground hover:text-destructive"
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
