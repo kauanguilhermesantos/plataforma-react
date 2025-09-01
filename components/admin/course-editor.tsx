@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,12 +12,20 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { X, Upload, Loader2, Plus, Play, ChevronDown, ChevronRight, Clock, Star, Trash2 } from "lucide-react"
 import Link from "next/link"
-import { ArrowLeft, Eye, Save, Users, BookOpen, Clock, Star, Plus, X, Upload } from "lucide-react"
+import { ArrowLeft, Eye, Save, Users, BookOpen } from "lucide-react"
 
 interface CourseEditorProps {
   courseId: string
@@ -28,169 +38,233 @@ interface Lesson {
   type: "video" | "text" | "quiz"
   videoUrl?: string
   description?: string
-  order: number
+  videoFile?: File
+  videoPreview?: string
+  isUploading?: boolean
 }
 
 interface Module {
   id: number
   title: string
-  description?: string
+  description: string
   lessons: Lesson[]
-  order: number
+}
+
+interface Resource {
+  id: number
+  title: string
+  type: "pdf" | "link" | "file"
+  url: string
 }
 
 interface Course {
-  id: number
+  id: string
   title: string
   description: string
-  shortDescription: string
-  instructor: {
-    id: number
-    name: string
-    avatar: string
-    bio: string
-  }
   thumbnail: string
-  rating: number
-  students: number
-  duration: string
-  level: string
   category: string
-  price: number
-  isPublished: boolean
-  modules: Module[]
-  resources: Array<{
-    id: number
-    title: string
-    type: string
-    url: string
-  }>
+  level: "Iniciante" | "Intermediário" | "Avançado"
   tags: string[]
+  instructor: {
+    name: string
+    bio: string
+    avatar: string
+  }
+  modules: Module[]
+  resources: Resource[]
+  isPublished: boolean
+  students: number
+  rating: number
+  reviews: number
 }
 
 export function CourseEditor({ courseId }: CourseEditorProps) {
+  const [showDeleteModuleModal, setShowDeleteModuleModal] = useState(false)
+  const [showDeleteLessonModal, setShowDeleteLessonModal] = useState(false)
+  const [showPublishModal, setShowPublishModal] = useState(false)
+  const [moduleToDelete, setModuleToDelete] = useState<number | null>(null)
+  const [lessonToDelete, setLessonToDelete] = useState<{ moduleId: number; lessonId: number } | null>(null)
+
   const [course, setCourse] = useState<Course>({
-    id: Number.parseInt(courseId),
+    id: courseId,
     title: "JavaScript Completo - Do Básico ao Avançado",
-    description:
-      "Aprenda JavaScript desde os fundamentos até conceitos avançados como async/await, closures e muito mais. Este curso foi cuidadosamente estruturado para levar você desde os conceitos mais básicos até técnicas avançadas de programação.",
-    shortDescription: "Domine JavaScript do zero ao avançado com projetos práticos",
-    instructor: {
-      id: 1,
-      name: "Prof. Maria Silva",
-      avatar: "/placeholder.svg?height=60&width=60",
-      bio: "Desenvolvedora Full Stack com mais de 8 anos de experiência. Especialista em JavaScript e React.",
-    },
-    thumbnail: "/placeholder.svg?height=400&width=600",
-    rating: 4.8,
-    students: 1250,
-    duration: "40h",
-    level: "Iniciante",
+    description: "Aprenda JavaScript desde os conceitos básicos até técnicas avançadas de programação.",
+    thumbnail: "/placeholder.svg?height=200&width=300",
     category: "Programação",
-    price: 0,
-    isPublished: true,
+    level: "Intermediário",
+    tags: ["JavaScript", "Web Development", "Frontend"],
+    instructor: {
+      name: "Prof. Maria Silva",
+      bio: "Desenvolvedora Full Stack com mais de 8 anos de experiência em JavaScript e tecnologias web.",
+      avatar: "/placeholder.svg?height=100&width=100",
+    },
     modules: [
       {
         id: 1,
         title: "Introdução ao JavaScript",
-        description: "Fundamentos básicos da linguagem",
-        order: 1,
+        description: "Conceitos básicos e fundamentos da linguagem",
         lessons: [
-          { id: 1, title: "O que é JavaScript?", duration: "12:30", type: "video", order: 1 },
-          { id: 2, title: "Configurando o Ambiente", duration: "8:45", type: "video", order: 2 },
-          { id: 3, title: "Primeiro Programa", duration: "15:20", type: "video", order: 3 },
-          { id: 4, title: "Variáveis e Tipos", duration: "18:10", type: "video", order: 4 },
-          { id: 5, title: "Quiz - Fundamentos", duration: "5:00", type: "quiz", order: 5 },
-        ],
-      },
-      {
-        id: 2,
-        title: "Estruturas de Controle",
-        description: "Condicionais e loops",
-        order: 2,
-        lessons: [
-          { id: 6, title: "Condicionais (if/else)", duration: "14:25", type: "video", order: 1 },
-          { id: 7, title: "Switch Case", duration: "10:30", type: "video", order: 2 },
-          { id: 8, title: "Loops - For e While", duration: "16:45", type: "video", order: 3 },
-          { id: 9, title: "Break e Continue", duration: "8:20", type: "video", order: 4 },
-          { id: 10, title: "Exercícios Práticos", duration: "20:00", type: "text", order: 5 },
-          { id: 11, title: "Quiz - Estruturas", duration: "5:00", type: "quiz", order: 6 },
+          {
+            id: 1,
+            title: "O que é JavaScript?",
+            duration: "15:30",
+            type: "video",
+            videoUrl: "https://example.com/video1",
+            description: "Uma introdução completa ao JavaScript e sua importância no desenvolvimento web.",
+          },
+          {
+            id: 2,
+            title: "Configurando o Ambiente",
+            duration: "12:45",
+            type: "video",
+            videoUrl: "https://example.com/video2",
+            description: "Como configurar seu ambiente de desenvolvimento para JavaScript.",
+          },
         ],
       },
     ],
     resources: [
-      { id: 1, title: "Código Fonte - Módulo 1", type: "zip", url: "#" },
-      { id: 2, title: "Slides da Apresentação", type: "pdf", url: "#" },
-      { id: 3, title: "Exercícios Extras", type: "pdf", url: "#" },
+      {
+        id: 1,
+        title: "Guia de Referência JavaScript",
+        type: "pdf",
+        url: "https://example.com/guide.pdf",
+      },
     ],
-    tags: ["JavaScript", "Programação", "Web Development", "Frontend"],
+    isPublished: true,
+    students: 1250,
+    rating: 4.8,
+    reviews: 324,
   })
 
-  const [activeTab, setActiveTab] = useState("basic")
-  const [isSaving, setIsSaving] = useState(false)
-  const [currentTag, setCurrentTag] = useState("")
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null)
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
-  const [isThumbnailUploading, setIsThumbnailUploading] = useState(false)
+  const [thumbnailUploading, setThumbnailUploading] = useState(false)
+
   const [instructorPhotoFile, setInstructorPhotoFile] = useState<File | null>(null)
   const [instructorPhotoPreview, setInstructorPhotoPreview] = useState<string | null>(null)
-  const [isInstructorPhotoUploading, setIsInstructorPhotoUploading] = useState(false)
+  const [instructorPhotoUploading, setInstructorPhotoUploading] = useState(false)
 
-  const handleSave = async () => {
-    setIsSaving(true)
-    try {
-      // Simula salvamento
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      console.log("[v0] Curso salvo:", course)
-    } catch (error) {
-      console.error("[v0] Erro ao salvar:", error)
-    } finally {
-      setIsSaving(false)
+  const [expandedLessons, setExpandedLessons] = useState<Set<number>>(new Set())
+  const [newTag, setNewTag] = useState("")
+
+  const handleThumbnailUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor, selecione apenas arquivos de imagem.")
+      return
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("O arquivo deve ter no máximo 5MB.")
+      return
+    }
+
+    setThumbnailUploading(true)
+    setThumbnailFile(file)
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file)
+    setThumbnailPreview(previewUrl)
+
+    // Simulate upload delay
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    setCourse((prev) => ({ ...prev, thumbnail: previewUrl }))
+    setThumbnailUploading(false)
+  }
+
+  const removeThumbnail = () => {
+    if (thumbnailPreview) {
+      URL.revokeObjectURL(thumbnailPreview)
+    }
+    setThumbnailFile(null)
+    setThumbnailPreview(null)
+    setCourse((prev) => ({ ...prev, thumbnail: "/placeholder.svg?height=200&width=300" }))
+  }
+
+  const handleInstructorPhotoUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) {
+      alert("Por favor, selecione apenas arquivos de imagem.")
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert("O arquivo deve ter no máximo 5MB.")
+      return
+    }
+
+    setInstructorPhotoUploading(true)
+    setInstructorPhotoFile(file)
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file)
+    setInstructorPhotoPreview(previewUrl)
+
+    // Simulate upload delay
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    setCourse((prev) => ({
+      ...prev,
+      instructor: { ...prev.instructor, avatar: previewUrl },
+    }))
+    setInstructorPhotoUploading(false)
+  }
+
+  const removeInstructorPhoto = () => {
+    if (instructorPhotoPreview) {
+      URL.revokeObjectURL(instructorPhotoPreview)
+    }
+    setInstructorPhotoFile(null)
+    setInstructorPhotoPreview(null)
+    setCourse((prev) => ({
+      ...prev,
+      instructor: { ...prev.instructor, avatar: "/placeholder.svg?height=100&width=100" },
+    }))
   }
 
   const handlePublishToggle = () => {
+    setShowPublishModal(true)
+  }
+
+  const confirmPublishToggle = () => {
     setCourse((prev) => ({ ...prev, isPublished: !prev.isPublished }))
+    setShowPublishModal(false)
   }
 
   const addModule = () => {
     const newModule: Module = {
       id: Date.now(),
       title: "Novo Módulo",
-      description: "",
-      order: course.modules.length + 1,
+      description: "Descrição do módulo",
       lessons: [],
     }
     setCourse((prev) => ({ ...prev, modules: [...prev.modules, newModule] }))
   }
 
-  const addLesson = (moduleId: number) => {
-    const newLesson: Lesson = {
-      id: Date.now(),
-      title: "Nova Aula",
-      duration: "0:00",
-      type: "video",
-      order: 1,
-    }
-
-    setCourse((prev) => ({
-      ...prev,
-      modules: prev.modules.map((module) =>
-        module.id === moduleId
-          ? { ...module, lessons: [...module.lessons, { ...newLesson, order: module.lessons.length + 1 }] }
-          : module,
-      ),
-    }))
-  }
-
-  const updateModule = (moduleId: number, field: string, value: string) => {
+  const updateModule = (moduleId: number, field: keyof Module, value: string) => {
     setCourse((prev) => ({
       ...prev,
       modules: prev.modules.map((module) => (module.id === moduleId ? { ...module, [field]: value } : module)),
     }))
   }
 
-  const updateLesson = (moduleId: number, lessonId: number, field: string, value: string) => {
+  const addLesson = (moduleId: number) => {
+    const newLesson: Lesson = {
+      id: Date.now(),
+      title: "Nova Aula",
+      duration: "00:00",
+      type: "video",
+      description: "Descrição da aula",
+    }
+    setCourse((prev) => ({
+      ...prev,
+      modules: prev.modules.map((module) =>
+        module.id === moduleId ? { ...module, lessons: [...module.lessons, newLesson] } : module,
+      ),
+    }))
+  }
+
+  const updateLesson = (moduleId: number, lessonId: number, field: keyof Lesson, value: any) => {
     setCourse((prev) => ({
       ...prev,
       modules: prev.modules.map((module) =>
@@ -207,34 +281,52 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
   }
 
   const deleteModule = (moduleId: number) => {
-    setCourse((prev) => ({
-      ...prev,
-      modules: prev.modules.filter((module) => module.id !== moduleId),
-    }))
+    setModuleToDelete(moduleId)
+    setShowDeleteModuleModal(true)
+  }
+
+  const confirmDeleteModule = () => {
+    if (moduleToDelete) {
+      setCourse((prev) => ({
+        ...prev,
+        modules: prev.modules.filter((module) => module.id !== moduleToDelete),
+      }))
+      setModuleToDelete(null)
+      setShowDeleteModuleModal(false)
+    }
   }
 
   const deleteLesson = (moduleId: number, lessonId: number) => {
-    setCourse((prev) => ({
-      ...prev,
-      modules: prev.modules.map((module) =>
-        module.id === moduleId
-          ? { ...module, lessons: module.lessons.filter((lesson) => lesson.id !== lessonId) }
-          : module,
-      ),
-    }))
+    setLessonToDelete({ moduleId, lessonId })
+    setShowDeleteLessonModal(true)
+  }
+
+  const confirmDeleteLesson = () => {
+    if (lessonToDelete) {
+      setCourse((prev) => ({
+        ...prev,
+        modules: prev.modules.map((module) =>
+          module.id === lessonToDelete.moduleId
+            ? { ...module, lessons: module.lessons.filter((lesson) => lesson.id !== lessonToDelete.lessonId) }
+            : module,
+        ),
+      }))
+      setLessonToDelete(null)
+      setShowDeleteLessonModal(false)
+    }
   }
 
   const addResource = () => {
-    const newResource = {
+    const newResource: Resource = {
       id: Date.now(),
       title: "Novo Recurso",
       type: "pdf",
-      url: "#",
+      url: "",
     }
     setCourse((prev) => ({ ...prev, resources: [...prev.resources, newResource] }))
   }
 
-  const updateResource = (resourceId: number, field: string, value: string) => {
+  const updateResource = (resourceId: number, field: keyof Resource, value: string) => {
     setCourse((prev) => ({
       ...prev,
       resources: prev.resources.map((resource) =>
@@ -250,107 +342,73 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
     }))
   }
 
+  const toggleLessonExpansion = (lessonId: number) => {
+    setExpandedLessons((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(lessonId)) {
+        newSet.delete(lessonId)
+      } else {
+        newSet.add(lessonId)
+      }
+      return newSet
+    })
+  }
+
+  const handleVideoUpload = async (moduleId: number, lessonId: number, file: File) => {
+    if (!file.type.startsWith("video/")) {
+      alert("Por favor, selecione apenas arquivos de vídeo.")
+      return
+    }
+
+    if (file.size > 100 * 1024 * 1024) {
+      alert("O arquivo deve ter no máximo 100MB.")
+      return
+    }
+
+    // Set uploading state
+    updateLesson(moduleId, lessonId, "isUploading", true)
+    updateLesson(moduleId, lessonId, "videoFile", file)
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file)
+    updateLesson(moduleId, lessonId, "videoPreview", previewUrl)
+
+    // Simulate upload delay
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    // Update lesson with video URL and clear uploading state
+    updateLesson(moduleId, lessonId, "videoUrl", previewUrl)
+    updateLesson(moduleId, lessonId, "isUploading", false)
+  }
+
+  const removeVideo = (moduleId: number, lessonId: number) => {
+    const lesson = course.modules.find((m) => m.id === moduleId)?.lessons.find((l) => l.id === lessonId)
+
+    if (lesson?.videoPreview) {
+      URL.revokeObjectURL(lesson.videoPreview)
+    }
+
+    updateLesson(moduleId, lessonId, "videoFile", undefined)
+    updateLesson(moduleId, lessonId, "videoPreview", undefined)
+    updateLesson(moduleId, lessonId, "videoUrl", undefined)
+  }
+
   const addTag = () => {
-    if (currentTag.trim() && !course.tags.includes(currentTag.trim())) {
-      setCourse((prev) => ({
-        ...prev,
-        tags: [...prev.tags, currentTag.trim()],
-      }))
-      setCurrentTag("")
+    if (newTag.trim() && !course.tags.includes(newTag.trim())) {
+      setCourse((prev) => ({ ...prev, tags: [...prev.tags, newTag.trim()] }))
+      setNewTag("")
     }
   }
 
   const removeTag = (tagToRemove: string) => {
-    setCourse((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    }))
+    setCourse((prev) => ({ ...prev, tags: prev.tags.filter((tag) => tag !== tagToRemove) }))
   }
 
-  const handleThumbnailUpload = async (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      alert("Por favor, selecione apenas arquivos de imagem.")
-      return
+  const handleTagKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      addTag()
     }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("A imagem deve ter no máximo 5MB.")
-      return
-    }
-
-    setIsThumbnailUploading(true)
-    setThumbnailFile(file)
-
-    try {
-      // Criar preview da imagem
-      const previewUrl = URL.createObjectURL(file)
-
-      // Simular upload
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      setThumbnailPreview(previewUrl)
-      setCourse((prev) => ({ ...prev, thumbnail: previewUrl }))
-    } catch (error) {
-      console.error("[v0] Erro no upload:", error)
-      alert("Erro ao fazer upload da imagem.")
-    } finally {
-      setIsThumbnailUploading(false)
-    }
-  }
-
-  const removeThumbnail = () => {
-    if (thumbnailPreview) {
-      URL.revokeObjectURL(thumbnailPreview)
-    }
-    setThumbnailFile(null)
-    setThumbnailPreview(null)
-    setCourse((prev) => ({ ...prev, thumbnail: "/placeholder.svg" }))
-  }
-
-  const handleInstructorPhotoUpload = async (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      alert("Por favor, selecione apenas arquivos de imagem.")
-      return
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("A imagem deve ter no máximo 5MB.")
-      return
-    }
-
-    setIsInstructorPhotoUploading(true)
-    setInstructorPhotoFile(file)
-
-    try {
-      // Criar preview da imagem
-      const previewUrl = URL.createObjectURL(file)
-
-      // Simular upload
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      setInstructorPhotoPreview(previewUrl)
-      setCourse((prev) => ({
-        ...prev,
-        instructor: { ...prev.instructor, avatar: previewUrl },
-      }))
-    } catch (error) {
-      console.error("[v0] Erro no upload:", error)
-      alert("Erro ao fazer upload da imagem.")
-    } finally {
-      setIsInstructorPhotoUploading(false)
-    }
-  }
-
-  const removeInstructorPhoto = () => {
-    if (instructorPhotoPreview) {
-      URL.revokeObjectURL(instructorPhotoPreview)
-    }
-    setInstructorPhotoFile(null)
-    setInstructorPhotoPreview(null)
-    setCourse((prev) => ({
-      ...prev,
-      instructor: { ...prev.instructor, avatar: "/placeholder.svg" },
-    }))
   }
 
   return (
@@ -365,11 +423,14 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Editar Curso</h1>
-            <p className="text-gray-600 dark:text-gray-400">Gerencie o conteúdo e configurações do curso</p>
+            <h1 className="text-2xl font-bold">Editar Curso</h1>
+            <p className="text-muted-foreground">Gerencie o conteúdo e configurações do curso</p>
           </div>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
+          <Badge variant={course.isPublished ? "default" : "secondary"}>
+            {course.isPublished ? "Publicado" : "Rascunho"}
+          </Badge>
           <div className="flex items-center space-x-2">
             <Label htmlFor="publish-toggle" className="text-sm">
               {course.isPublished ? "Publicado" : "Rascunho"}
@@ -382,22 +443,22 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
               Visualizar
             </Button>
           </Link>
-          <Button onClick={handleSave} disabled={isSaving}>
+          <Button>
             <Save className="h-4 w-4 mr-2" />
-            {isSaving ? "Salvando..." : "Salvar"}
+            Salvar
           </Button>
         </div>
       </div>
 
-      {/* Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
               <Users className="h-4 w-4 text-blue-500" />
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Estudantes</p>
-                <p className="text-xl font-bold">{course.students.toLocaleString()}</p>
+                <p className="text-sm font-medium">Estudantes</p>
+                <p className="text-2xl font-bold">{course.students.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -407,8 +468,21 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
             <div className="flex items-center space-x-2">
               <BookOpen className="h-4 w-4 text-green-500" />
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Módulos</p>
-                <p className="text-xl font-bold">{course.modules.length}</p>
+                <p className="text-sm font-medium">Módulos</p>
+                <p className="text-2xl font-bold">{course.modules.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Play className="h-4 w-4 text-purple-500" />
+              <div>
+                <p className="text-sm font-medium">Aulas</p>
+                <p className="text-2xl font-bold">
+                  {course.modules.reduce((acc, module) => acc + module.lessons.length, 0)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -418,8 +492,24 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
             <div className="flex items-center space-x-2">
               <Clock className="h-4 w-4 text-orange-500" />
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Duração</p>
-                <p className="text-xl font-bold">{course.duration}</p>
+                <p className="text-sm font-medium">Total de Horas</p>
+                <p className="text-2xl font-bold">
+                  {(() => {
+                    const totalMinutes = course.modules.reduce((acc, module) => {
+                      return (
+                        acc +
+                        module.lessons.reduce((lessonAcc, lesson) => {
+                          if (lesson.duration) {
+                            const [minutes, seconds] = lesson.duration.split(":").map(Number)
+                            return lessonAcc + minutes + seconds / 60
+                          }
+                          return lessonAcc
+                        }, 0)
+                      )
+                    }, 0)
+                    return Math.round((totalMinutes / 60) * 10) / 10 // Convert to hours with 1 decimal
+                  })()}h
+                </p>
               </div>
             </div>
           </CardContent>
@@ -429,449 +519,514 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
             <div className="flex items-center space-x-2">
               <Star className="h-4 w-4 text-yellow-500" />
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Avaliação</p>
-                <p className="text-xl font-bold">{course.rating}</p>
+                <p className="text-sm font-medium">Avaliação</p>
+                <p className="text-2xl font-bold">{course.rating || "4.8"}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="basic" className="space-y-4">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="basic">Informações Básicas</TabsTrigger>
           <TabsTrigger value="content">Conteúdo</TabsTrigger>
           <TabsTrigger value="resources">Recursos</TabsTrigger>
           <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
 
-        {/* Informações Básicas */}
-        <TabsContent value="basic" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações do Curso</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título do Curso</Label>
-                  <Input
-                    id="title"
-                    value={course.title}
-                    onChange={(e) => setCourse((prev) => ({ ...prev, title: e.target.value }))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="shortDescription">Descrição Curta</Label>
-                  <Input
-                    id="shortDescription"
-                    value={course.shortDescription}
-                    onChange={(e) => setCourse((prev) => ({ ...prev, shortDescription: e.target.value }))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descrição Completa</Label>
-                  <Textarea
-                    id="description"
-                    rows={4}
-                    value={course.description}
-                    onChange={(e) => setCourse((prev) => ({ ...prev, description: e.target.value }))}
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+        <TabsContent value="basic" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              {/* Informações do Curso */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Informações do Curso</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="category">Categoria</Label>
-                    <Select
-                      value={course.category}
-                      onValueChange={(value) => setCourse((prev) => ({ ...prev, category: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Programação">Programação</SelectItem>
-                        <SelectItem value="Design">Design</SelectItem>
-                        <SelectItem value="Data Science">Data Science</SelectItem>
-                        <SelectItem value="Marketing">Marketing</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="level">Nível</Label>
-                    <Select
-                      value={course.level}
-                      onValueChange={(value) => setCourse((prev) => ({ ...prev, level: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Iniciante">Iniciante</SelectItem>
-                        <SelectItem value="Intermediário">Intermediário</SelectItem>
-                        <SelectItem value="Avançado">Avançado</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="tags">Tags</Label>
-                  <div className="flex items-center gap-2 mb-2">
+                    <Label htmlFor="title">Título do Curso</Label>
                     <Input
-                      value={currentTag}
-                      onChange={(e) => setCurrentTag(e.target.value)}
-                      placeholder="Digite uma tag e pressione Enter"
-                      className="flex-1"
-                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
-                    />
-                    <Button type="button" onClick={addTag} variant="outline" size="sm">
-                      <Plus className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {course.tags.map((tag) => (
-                      <Badge key={tag} variant="secondary">
-                        {tag}
-                        <button type="button" onClick={() => removeTag(tag)} className="ml-2 hover:text-red-400">
-                          <X className="w-3 h-3" />
-                        </button>
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Mídia e Instrutor</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Thumbnail do Curso</Label>
-                  <div className="border-2 border-dashed border-muted-border rounded-lg p-6 text-center space-y-4">
-                    <div className="relative">
-                      <img
-                        src={thumbnailPreview || course.thumbnail || "/placeholder.svg"}
-                        alt="Thumbnail"
-                        className="w-full h-32 object-cover rounded mx-auto"
-                      />
-                      {thumbnailPreview && (
-                        <button
-                          onClick={removeThumbnail}
-                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      )}
-                    </div>
-
-                    {isThumbnailUploading ? (
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                        <span className="text-sm text-muted-foreground">Carregando...</span>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0]
-                            if (file) {
-                              handleThumbnailUpload(file)
-                            }
-                          }}
-                          className="hidden"
-                          id="thumbnail-upload"
-                        />
-                        <label htmlFor="thumbnail-upload">
-                          <Button variant="outline" asChild>
-                            <span className="cursor-pointer">
-                              <Upload className="h-4 w-4 mr-2" />
-                              {thumbnailPreview ? "Alterar Imagem" : "Fazer Upload"}
-                            </span>
-                          </Button>
-                        </label>
-                        {thumbnailFile && (
-                          <p className="text-xs text-muted-foreground">
-                            {thumbnailFile.name} ({(thumbnailFile.size / 1024 / 1024).toFixed(2)} MB)
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div className="space-y-4">
-                  <h3 className="font-medium">Informações do Instrutor</h3>
-
-                  <div className="flex items-center space-x-4">
-                    <div className="relative">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={instructorPhotoPreview || course.instructor.avatar || "/placeholder.svg"} />
-                        <AvatarFallback>{course.instructor.name[0]}</AvatarFallback>
-                      </Avatar>
-                      {instructorPhotoPreview && (
-                        <button
-                          onClick={removeInstructorPhoto}
-                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      )}
-                    </div>
-
-                    {isInstructorPhotoUploading ? (
-                      <div className="flex items-center space-x-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                        <span className="text-sm text-muted-foreground">Carregando...</span>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0]
-                            if (file) {
-                              handleInstructorPhotoUpload(file)
-                            }
-                          }}
-                          className="hidden"
-                          id="instructor-photo-upload"
-                        />
-                        <label htmlFor="instructor-photo-upload">
-                          <Button variant="outline" size="sm" asChild>
-                            <span className="cursor-pointer">
-                              <Upload className="h-4 w-4 mr-2" />
-                              {instructorPhotoPreview ? "Alterar Foto" : "Fazer Upload"}
-                            </span>
-                          </Button>
-                        </label>
-                        {instructorPhotoFile && (
-                          <p className="text-xs text-muted-foreground">
-                            {instructorPhotoFile.name} ({(instructorPhotoFile.size / 1024 / 1024).toFixed(2)} MB)
-                          </p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="instructorName">Nome do Instrutor</Label>
-                    <Input
-                      id="instructorName"
-                      value={course.instructor.name}
-                      onChange={(e) =>
-                        setCourse((prev) => ({
-                          ...prev,
-                          instructor: { ...prev.instructor, name: e.target.value },
-                        }))
-                      }
+                      id="title"
+                      value={course.title}
+                      onChange={(e) => setCourse((prev) => ({ ...prev, title: e.target.value }))}
                     />
                   </div>
-
                   <div className="space-y-2">
-                    <Label htmlFor="instructorBio">Biografia</Label>
+                    <Label htmlFor="description">Descrição</Label>
                     <Textarea
-                      id="instructorBio"
-                      rows={3}
-                      value={course.instructor.bio}
-                      onChange={(e) =>
-                        setCourse((prev) => ({
-                          ...prev,
-                          instructor: { ...prev.instructor, bio: e.target.value },
-                        }))
-                      }
+                      id="description"
+                      value={course.description}
+                      onChange={(e) => setCourse((prev) => ({ ...prev, description: e.target.value }))}
+                      rows={4}
                     />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Categoria</Label>
+                      <Select
+                        value={course.category}
+                        onValueChange={(value) => setCourse((prev) => ({ ...prev, category: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Programação">Programação</SelectItem>
+                          <SelectItem value="Design">Design</SelectItem>
+                          <SelectItem value="Marketing">Marketing</SelectItem>
+                          <SelectItem value="Data Science">Data Science</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="level">Nível</Label>
+                      <Select
+                        value={course.level}
+                        onValueChange={(value: "Iniciante" | "Intermediário" | "Avançado") =>
+                          setCourse((prev) => ({ ...prev, level: value }))
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Iniciante">Iniciante</SelectItem>
+                          <SelectItem value="Intermediário">Intermediário</SelectItem>
+                          <SelectItem value="Avançado">Avançado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Tags</Label>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Input
+                        value={newTag}
+                        onChange={(e) => setNewTag(e.target.value)}
+                        onKeyPress={handleTagKeyPress}
+                        placeholder="Digite uma tag..."
+                        className="flex-1"
+                      />
+                      <Button type="button" onClick={addTag} size="sm">
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {course.tags.map((tag, index) => (
+                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                          {tag}
+                          <button type="button" onClick={() => removeTag(tag)} className="ml-1 hover:text-destructive">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Thumbnail */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Thumbnail do Curso</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Thumbnail do Curso</Label>
+                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                      {thumbnailUploading ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                          <p className="text-sm text-muted-foreground">Carregando imagem...</p>
+                        </div>
+                      ) : thumbnailPreview ? (
+                        <div className="relative">
+                          <img
+                            src={thumbnailPreview || "/placeholder.svg"}
+                            alt="Thumbnail preview"
+                            className="max-w-full h-48 object-cover rounded-lg mx-auto"
+                          />
+                          <Button
+                            type="button"
+                            onClick={removeThumbnail}
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2"
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <img
+                            src={course.thumbnail || "/placeholder.svg"}
+                            alt="Thumbnail"
+                            className="max-w-full h-48 object-cover rounded-lg mx-auto"
+                          />
+                          <div className="flex justify-center">
+                            <label htmlFor="thumbnail-upload" className="cursor-pointer">
+                              <Button type="button" variant="outline" asChild>
+                                <span>
+                                  <Upload className="w-4 h-4 mr-2" />
+                                  Alterar Imagem
+                                </span>
+                              </Button>
+                              <input
+                                id="thumbnail-upload"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0]
+                                  if (file) handleThumbnailUpload(file)
+                                }}
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Instrutor */}
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Instrutor</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-4">
+                    <h3 className="font-medium">Informações do Instrutor</h3>
+
+                    <div className="flex items-center space-x-4">
+                      <div className="relative">
+                        {instructorPhotoUploading ? (
+                          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+                            <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                          </div>
+                        ) : (
+                          <Avatar className="h-16 w-16">
+                            <AvatarImage
+                              src={instructorPhotoPreview || course.instructor.avatar || "/placeholder.svg"}
+                            />
+                            <AvatarFallback>{course.instructor.name[0]}</AvatarFallback>
+                          </Avatar>
+                        )}
+                        {instructorPhotoPreview && (
+                          <Button
+                            type="button"
+                            onClick={removeInstructorPhoto}
+                            variant="destructive"
+                            size="sm"
+                            className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0"
+                          >
+                            <X className="w-3 h-3" />
+                          </Button>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <label htmlFor="instructor-photo-upload" className="cursor-pointer">
+                          <Button type="button" variant="outline" size="sm" asChild>
+                            <span>
+                              <Upload className="w-4 h-4 mr-2" />
+                              {instructorPhotoPreview ? "Alterar Foto" : "Adicionar Foto"}
+                            </span>
+                          </Button>
+                          <input
+                            id="instructor-photo-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) handleInstructorPhotoUpload(file)
+                            }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Nome do Instrutor</Label>
+                      <Input
+                        value={course.instructor.name}
+                        onChange={(e) =>
+                          setCourse((prev) => ({
+                            ...prev,
+                            instructor: { ...prev.instructor, name: e.target.value },
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Biografia</Label>
+                      <Textarea
+                        value={course.instructor.bio}
+                        onChange={(e) =>
+                          setCourse((prev) => ({
+                            ...prev,
+                            instructor: { ...prev.instructor, bio: e.target.value },
+                          }))
+                        }
+                        rows={4}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </TabsContent>
 
-        {/* Conteúdo */}
-        <TabsContent value="content" className="space-y-6">
+        <TabsContent value="content" className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Módulos e Aulas</CardTitle>
                 <Button onClick={addModule}>
-                  <X className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2" />
                   Adicionar Módulo
                 </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <ScrollArea className="h-[600px]">
-                <Accordion type="multiple" className="w-full space-y-4">
-                  {course.modules.map((module, moduleIndex) => (
-                    <AccordionItem key={module.id} value={`module-${module.id}`} className="border rounded-lg">
-                      <AccordionTrigger className="px-4 hover:no-underline">
-                        <div className="flex items-center justify-between w-full mr-4">
-                          <div className="flex items-center space-x-3">
-                            <X className="h-4 w-4 text-gray-400" />
-                            <div className="text-left">
-                              <p className="font-medium">{module.title}</p>
-                              <p className="text-sm text-gray-500">{module.lessons.length} aulas</p>
-                            </div>
+              <Accordion type="multiple" className="space-y-4">
+                {course.modules.map((module, moduleIndex) => (
+                  <AccordionItem key={module.id} value={`module-${module.id}`} className="border rounded-lg">
+                    <AccordionTrigger className="px-4 hover:no-underline">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-medium">
+                            {moduleIndex + 1}
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                deleteModule(module.id)
-                              }}
-                            >
-                              <X className="h-4 w-4 text-red-500" />
+                          <div className="text-left">
+                            <h3 className="font-medium">{module.title}</h3>
+                            <p className="text-sm text-muted-foreground">{module.lessons.length} aulas</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              deleteModule(module.id)
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <div className="space-y-4">
+                        {/* Editar informações do módulo */}
+                        <div className="grid grid-cols-1 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="space-y-2">
+                            <Label>Título do Módulo</Label>
+                            <Input
+                              value={module.title}
+                              onChange={(e) => updateModule(module.id, "title", e.target.value)}
+                              className="bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Lista de aulas */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Aulas</h4>
+                            <Button variant="outline" size="sm" onClick={() => addLesson(module.id)}>
+                              <Plus className="h-4 w-4 mr-2" />
+                              Adicionar Aula
                             </Button>
                           </div>
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-4 pb-4">
-                        <div className="space-y-4">
-                          {/* Editar informações do módulo */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                            <div className="space-y-2">
-                              <Label>Título do Módulo</Label>
-                              <Input
-                                value={module.title}
-                                onChange={(e) => updateModule(module.id, "title", e.target.value)}
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label>Descrição</Label>
-                              <Input
-                                value={module.description || ""}
-                                onChange={(e) => updateModule(module.id, "description", e.target.value)}
-                                placeholder="Descrição opcional do módulo"
-                              />
-                            </div>
-                          </div>
 
-                          {/* Lista de aulas */}
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <h4 className="font-medium">Aulas</h4>
-                              <Button variant="outline" size="sm" onClick={() => addLesson(module.id)}>
-                                <X className="h-4 w-4 mr-2" />
-                                Adicionar Aula
-                              </Button>
-                            </div>
-
-                            {module.lessons.map((lesson, lessonIndex) => (
-                              <div key={lesson.id} className="flex items-center space-x-3 p-3 border rounded-lg">
-                                <X className="h-4 w-4 text-gray-400" />
-
-                                <div className="flex-shrink-0">
-                                  {lesson.type === "video" ? (
-                                    <X className="h-4 w-4 text-blue-500" />
-                                  ) : lesson.type === "quiz" ? (
-                                    <X className="h-4 w-4 text-green-500" />
+                          {module.lessons.map((lesson, lessonIndex) => (
+                            <div key={lesson.id} className="p-4 bg-muted rounded-lg space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div
+                                  className="flex items-center gap-3 flex-1 cursor-pointer"
+                                  onClick={() => toggleLessonExpansion(lesson.id)}
+                                >
+                                  {expandedLessons.has(lesson.id) ? (
+                                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
                                   ) : (
-                                    <X className="h-4 w-4 text-gray-500" />
+                                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                                   )}
-                                </div>
-
-                                <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-2">
-                                  <Input
-                                    value={lesson.title}
-                                    onChange={(e) => updateLesson(module.id, lesson.id, "title", e.target.value)}
-                                    placeholder="Título da aula"
-                                  />
-                                  <Input
-                                    value={lesson.duration}
-                                    onChange={(e) => updateLesson(module.id, lesson.id, "duration", e.target.value)}
-                                    placeholder="00:00"
-                                  />
-                                  <Select
-                                    value={lesson.type}
-                                    onValueChange={(value) => updateLesson(module.id, lesson.id, "type", value)}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="video">Vídeo</SelectItem>
-                                      <SelectItem value="text">Texto</SelectItem>
-                                      <SelectItem value="quiz">Quiz</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                  <div className="flex items-center space-x-2">
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => console.log("[v0] Editar aula:", lesson.id)}
-                                    >
-                                      <X className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => deleteLesson(module.id, lesson.id)}
-                                    >
-                                      <X className="h-4 w-4 text-red-500" />
-                                    </Button>
+                                  <Play className="w-4 h-4 text-muted-foreground" />
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-medium">{lesson.title}</span>
+                                      {lesson.duration && (
+                                        <p className="text-xs text-muted-foreground">{lesson.duration}</p>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
+                                <Button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    deleteLesson(module.id, lesson.id)
+                                  }}
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground p-1 h-7 w-7"
+                                >
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
                               </div>
-                            ))}
-                          </div>
+
+                              {expandedLessons.has(lesson.id) && (
+                                <div className="p-4 border-t bg-muted/20 space-y-3">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                      <Label className="text-sm font-medium dark:text-slate-300 mb-2">
+                                        Título da Aula *
+                                      </Label>
+                                      <Input
+                                        value={lesson.title}
+                                        onChange={(e) => updateLesson(module.id, lesson.id, "title", e.target.value)}
+                                        placeholder="Título da aula"
+                                        className="bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label className="text-sm font-medium dark:text-slate-300 mb-2">Duração</Label>
+                                      <Input
+                                        value={lesson.duration}
+                                        onChange={(e) => updateLesson(module.id, lesson.id, "duration", e.target.value)}
+                                        placeholder="Duração (ex: 15:30)"
+                                        className="bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div>
+                                    <Label className="text-sm font-medium dark:text-slate-300 mb-2">Descrição da Aula</Label>
+                                    <Textarea
+                                      value={lesson.description || ""}
+                                      onChange={(e) =>
+                                        updateLesson(module.id, lesson.id, "description", e.target.value)
+                                      }
+                                      placeholder="Descreva o conteúdo desta aula..."
+                                      className="bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                                      rows={3}
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <Label className="text-sm font-medium dark:text-slate-300 mb-2">Vídeo da Aula</Label>
+
+                                    {lesson.isUploading ? (
+                                      <div className="flex items-center gap-3 p-4 bg-white dark:bg-slate-700 rounded-lg">
+                                        <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+                                        <div className="flex-1">
+                                          <p className="text-sm font-medium dark:text-slate-300">Carregando vídeo...</p>
+                                          <p className="text-xs dark:text-slate-400">Por favor, aguarde</p>
+                                        </div>
+                                      </div>
+                                    ) : lesson.videoPreview ? (
+                                      <div className="bg-white border border-slate-200 dark:bg-slate-700 rounded-lg p-3">
+                                        <div className="flex items-center justify-between mb-2">
+                                          <span className="text-sm font-medium dark:text-slate-300">Pré-visualização:</span>
+                                          <Button
+                                            type="button"
+                                            onClick={() => removeVideo(module.id, lesson.id)}
+                                            variant="destructive"
+                                            size="sm"
+                                            className="h-6 w-6 p-0"
+                                          >
+                                            <X className="w-3 h-3" />
+                                          </Button>
+                                        </div>
+                                        <video src={lesson.videoPreview} controls className="w-full max-h-48 rounded" />
+                                      </div>
+                                    ) : (
+                                      <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 text-center bg-white dark:bg-slate-700/50">
+                                        <Upload className="w-8 h-8 dark:text-slate-400 mx-auto mb-2" />
+                                        <p className="text-sm dark:text-slate-300 mb-2">Clique para fazer upload do vídeo</p>
+                                        <p className="text-xs dark:text-slate-400 mb-3">MP4, AVI, MOV até 100MB</p>
+                                        <label htmlFor={`video-upload-${lesson.id}`} className="cursor-pointer">
+                                          <Button type="button" variant="outline" size="sm" asChild>
+                                            <span>Selecionar Vídeo</span>
+                                          </Button>
+                                          <input
+                                            id={`video-upload-${lesson.id}`}
+                                            type="file"
+                                            accept="video/*"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                              const file = e.target.files?.[0]
+                                              if (file) handleVideoUpload(module.id, lesson.id, file)
+                                            }}
+                                          />
+                                        </label>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
                         </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </ScrollArea>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </CardContent>
           </Card>
         </TabsContent>
 
         {/* Recursos */}
-        <TabsContent value="resources" className="space-y-6">
+        <TabsContent value="resources" className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle>Recursos do Curso</CardTitle>
                 <Button onClick={addResource}>
-                  <X className="h-4 w-4 mr-2" />
+                  <Plus className="h-4 w-4 mr-2" />
                   Adicionar Recurso
                 </Button>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {course.resources.map((resource) => (
-                <div key={resource.id} className="flex items-center space-x-4 p-4 border rounded-lg">
-                  <X className="h-5 w-5 text-gray-500" />
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Input
-                      value={resource.title}
-                      onChange={(e) => updateResource(resource.id, "title", e.target.value)}
-                      placeholder="Título do recurso"
-                    />
-                    <Select value={resource.type} onValueChange={(value) => updateResource(resource.id, "type", value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pdf">PDF</SelectItem>
-                        <SelectItem value="zip">ZIP</SelectItem>
-                        <SelectItem value="doc">DOC</SelectItem>
-                        <SelectItem value="link">Link</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <div className="flex items-center space-x-2">
+            <CardContent>
+              <div className="space-y-4">
+                {course.resources.map((resource) => (
+                  <div key={resource.id} className="p-4 border rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Input
+                        value={resource.title}
+                        onChange={(e) => updateResource(resource.id, "title", e.target.value)}
+                        placeholder="Título do recurso"
+                      />
+                      <Select
+                        value={resource.type}
+                        onValueChange={(value: "pdf" | "link" | "file") => updateResource(resource.id, "type", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pdf">PDF</SelectItem>
+                          <SelectItem value="link">Link</SelectItem>
+                          <SelectItem value="file">Arquivo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        value={resource.url}
+                        onChange={(e) => updateResource(resource.id, "url", e.target.value)}
+                        placeholder="URL ou caminho do arquivo"
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2 mt-4">
                       <Button variant="outline" size="sm">
                         <X className="h-4 w-4 mr-2" />
                         Upload
@@ -881,14 +1036,13 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
                       </Button>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Configurações */}
-        <TabsContent value="settings" className="space-y-6">
+        <TabsContent value="settings" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -908,43 +1062,16 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
                 <Separator />
 
                 <div className="space-y-2">
-                  <Label htmlFor="price">Preço (R$)</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={course.price}
-                    onChange={(e) => setCourse((prev) => ({ ...prev, price: Number(e.target.value) }))}
-                  />
-                  <p className="text-sm text-gray-500">Deixe 0 para curso gratuito</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="duration">Duração Total</Label>
-                  <Input
-                    id="duration"
-                    value={course.duration}
-                    onChange={(e) => setCourse((prev) => ({ ...prev, duration: e.target.value }))}
-                    placeholder="Ex: 40h"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Estatísticas</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      {course.students.toLocaleString()}
+                  <Label>Estatísticas</Label>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium">Estudantes Inscritos</p>
+                      <p className="text-2xl font-bold text-blue-600">{course.students.toLocaleString()}</p>
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Estudantes</div>
-                  </div>
-                  <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600 dark:text-green-400">{course.rating}</div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Avaliação</div>
+                    <div>
+                      <p className="font-medium">Avaliação Média</p>
+                      <p className="text-2xl font-bold text-yellow-600">{course.rating}</p>
+                    </div>
                   </div>
                 </div>
 
@@ -971,6 +1098,68 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Delete Module Modal */}
+      <Dialog open={showDeleteModuleModal} onOpenChange={setShowDeleteModuleModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar Exclusão do Módulo</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir este módulo? Esta ação não pode ser desfeita e todas as aulas do módulo
+              também serão removidas.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteModuleModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteModule}>
+              Excluir Módulo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Lesson Modal */}
+      <Dialog open={showDeleteLessonModal} onOpenChange={setShowDeleteLessonModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar Exclusão da Aula</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir esta aula? Esta ação não pode ser desfeita e todo o conteúdo da aula será
+              perdido.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteLessonModal(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteLesson}>
+              Excluir Aula
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Publish Toggle Modal */}
+      <Dialog open={showPublishModal} onOpenChange={setShowPublishModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{course.isPublished ? "Despublicar Curso" : "Publicar Curso"}</DialogTitle>
+            <DialogDescription>
+              {course.isPublished
+                ? "Tem certeza que deseja despublicar este curso? Ele ficará invisível para os estudantes até ser publicado novamente."
+                : "Tem certeza que deseja publicar este curso? Ele ficará visível para todos os estudantes na plataforma."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPublishModal(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={confirmPublishToggle}>{course.isPublished ? "Despublicar" : "Publicar"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
