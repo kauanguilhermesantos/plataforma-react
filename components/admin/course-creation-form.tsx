@@ -367,7 +367,7 @@ export function CourseCreationForm() {
                 </Select>
               </div>
               <div>
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2">
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estilo de Aprendizagem *</label>
                   <Button
                     type="button"
