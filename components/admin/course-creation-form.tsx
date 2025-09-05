@@ -368,13 +368,13 @@ export function CourseCreationForm() {
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <label className="block text-sm font-medium text-slate-300">Estilo de Aprendizagem *</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Estilo de Aprendizagem *</label>
                   <Button
                     type="button"
                     onClick={() => setShowLearningStylesModal(true)}
                     variant="ghost"
                     size="sm"
-                    className="p-1 h-6 w-6 text-slate-400 hover:text-slate-300 hover:bg-slate-800"
+                    className="p-1 h-6 w-6 mb-1 text-slate-400 dark:hover:text-slate-300 dark:hover:bg-slate-800"
                   >
                     <HelpCircle className="w-4 h-4" />
                   </Button>
@@ -746,43 +746,43 @@ export function CourseCreationForm() {
 
       {/* Modal de Explicação dos Estilos de Aprendizagem */}
       <Dialog open={showLearningStylesModal} onOpenChange={setShowLearningStylesModal}>
-        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-2xl">
+        <DialogContent className="dark:bg-slate-900 dark:border-slate-800 dark:text-white max-w-2xl">
           <DialogHeader>
-            <DialogTitle className="text-blue-400">Estilos de Aprendizagem</DialogTitle>
-            <DialogDescription className="text-slate-300">
+            <DialogTitle className="text-blue-600 dark:text-blue-400">Estilos de Aprendizagem</DialogTitle>
+            <DialogDescription className="text-slate-600 dark:text-slate-300">
               Entenda as características de cada estilo de aprendizagem para escolher o mais adequado ao seu curso.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 max-h-96 overflow-y-auto">
-            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
-              <h3 className="font-semibold text-green-400 mb-2">🎯 Pragmático</h3>
-              <p className="text-sm text-slate-300">
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-green-600 dark:text-green-400 mb-2">🎯 Pragmático</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
                 Focado na aplicação prática do conhecimento. Prefere aprender através de exemplos reais, estudos de caso
                 e exercícios práticos. Ideal para cursos que enfatizam a implementação e uso imediato das habilidades
                 aprendidas.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
-              <h3 className="font-semibold text-blue-400 mb-2">📚 Teórico</h3>
-              <p className="text-sm text-slate-300">
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">📚 Teórico</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
                 Valoriza a compreensão profunda dos conceitos e princípios fundamentais. Prefere explicações detalhadas,
                 modelos conceituais e a lógica por trás das práticas. Ideal para cursos com forte base conceitual e
                 científica.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
-              <h3 className="font-semibold text-orange-400 mb-2">⚡ Ativista</h3>
-              <p className="text-sm text-slate-300">
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">⚡ Ativista</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
                 Aprende melhor através da experiência direta e participação ativa. Prefere atividades hands-on, projetos
                 colaborativos e experimentação. Ideal para cursos interativos com muita prática e experimentação.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
-              <h3 className="font-semibold text-purple-400 mb-2">🤔 Reflexivo</h3>
-              <p className="text-sm text-slate-300">
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-purple-600 dark:text-purple-400 mb-2">🤔 Reflexivo</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
                 Prefere observar e refletir antes de agir. Valoriza o tempo para processar informações e considerar
                 diferentes perspectivas. Ideal para cursos que incentivam a análise crítica e a reflexão profunda sobre
                 os temas abordados.
