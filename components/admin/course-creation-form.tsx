@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { X, Plus, Upload, Play, Loader2, Trash2 } from "lucide-react"
+import { X, Plus, Upload, Play, Loader2, Trash2, HelpCircle } from "lucide-react"
 
 interface Module {
   id: string
@@ -39,11 +39,13 @@ interface Lesson {
 export function CourseCreationForm() {
   const router = useRouter()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showLearningStylesModal, setShowLearningStylesModal] = useState(false)
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
     level: "",
+    learningStyle: "",
     instructor: "",
     thumbnail: "",
     tags: [] as string[],
@@ -311,7 +313,7 @@ export function CourseCreationForm() {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Categoria *</label>
                 <Select value={formData.category} onValueChange={(value) => handleInputChange("category", value)}>
@@ -319,11 +321,26 @@ export function CourseCreationForm() {
                     <SelectValue placeholder="Selecione a categoria" />
                   </SelectTrigger>
                   <SelectContent className="text-slate-700 dark:bg-slate-800 dark:border-slate-700">
-                    <SelectItem value="programacao">Programação</SelectItem>
-                    <SelectItem value="data-science">Data Science</SelectItem>
-                    <SelectItem value="design">Design</SelectItem>
-                    <SelectItem value="mobile">Mobile</SelectItem>
-                    <SelectItem value="web">Web Development</SelectItem>
+                    <SelectItem 
+                      value="programacao"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Programação</SelectItem>
+                    <SelectItem 
+                      value="data-science"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Data Science</SelectItem>
+                    <SelectItem 
+                      value="design"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Design</SelectItem>
+                    <SelectItem 
+                      value="mobile"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Mobile</SelectItem>
+                    <SelectItem 
+                      value="web"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Web Development</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -334,9 +351,58 @@ export function CourseCreationForm() {
                     <SelectValue placeholder="Selecione o nível" />
                   </SelectTrigger>
                   <SelectContent className="text-slate-700 dark:bg-slate-800 dark:border-slate-700">
-                    <SelectItem value="iniciante">Iniciante</SelectItem>
-                    <SelectItem value="intermediario">Intermediário</SelectItem>
-                    <SelectItem value="avancado">Avançado</SelectItem>
+                    <SelectItem 
+                      value="iniciante"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Iniciante</SelectItem>
+                    <SelectItem 
+                      value="intermediario"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Intermediário</SelectItem>
+                    <SelectItem 
+                      value="avancado"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Avançado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <label className="block text-sm font-medium text-slate-300">Estilo de Aprendizagem *</label>
+                  <Button
+                    type="button"
+                    onClick={() => setShowLearningStylesModal(true)}
+                    variant="ghost"
+                    size="sm"
+                    className="p-1 h-6 w-6 text-slate-400 hover:text-slate-300 hover:bg-slate-800"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                  </Button>
+                </div>
+                <Select
+                  value={formData.learningStyle}
+                  onValueChange={(value) => handleInputChange("learningStyle", value)}
+                >
+                  <SelectTrigger className="dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                    <SelectValue placeholder="Selecione o estilo" />
+                  </SelectTrigger>
+                  <SelectContent className="text-slate-700 dark:bg-slate-800 dark:border-slate-700">
+                    <SelectItem 
+                      value="pragmatico"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                      >Pragmático</SelectItem>
+                    <SelectItem 
+                      value="teorico"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                      >Teórico</SelectItem>
+                    <SelectItem 
+                      value="ativista"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Ativista</SelectItem>
+                    <SelectItem 
+                      value="reflexivo"
+                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                    >Reflexivo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -677,6 +743,63 @@ export function CourseCreationForm() {
             </Button>
         </div>
       </form>
+
+      {/* Modal de Explicação dos Estilos de Aprendizagem */}
+      <Dialog open={showLearningStylesModal} onOpenChange={setShowLearningStylesModal}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-blue-400">Estilos de Aprendizagem</DialogTitle>
+            <DialogDescription className="text-slate-300">
+              Entenda as características de cada estilo de aprendizagem para escolher o mais adequado ao seu curso.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
+              <h3 className="font-semibold text-green-400 mb-2">🎯 Pragmático</h3>
+              <p className="text-sm text-slate-300">
+                Focado na aplicação prática do conhecimento. Prefere aprender através de exemplos reais, estudos de caso
+                e exercícios práticos. Ideal para cursos que enfatizam a implementação e uso imediato das habilidades
+                aprendidas.
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
+              <h3 className="font-semibold text-blue-400 mb-2">📚 Teórico</h3>
+              <p className="text-sm text-slate-300">
+                Valoriza a compreensão profunda dos conceitos e princípios fundamentais. Prefere explicações detalhadas,
+                modelos conceituais e a lógica por trás das práticas. Ideal para cursos com forte base conceitual e
+                científica.
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
+              <h3 className="font-semibold text-orange-400 mb-2">⚡ Ativista</h3>
+              <p className="text-sm text-slate-300">
+                Aprende melhor através da experiência direta e participação ativa. Prefere atividades hands-on, projetos
+                colaborativos e experimentação. Ideal para cursos interativos com muita prática e experimentação.
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
+              <h3 className="font-semibold text-purple-400 mb-2">🤔 Reflexivo</h3>
+              <p className="text-sm text-slate-300">
+                Prefere observar e refletir antes de agir. Valoriza o tempo para processar informações e considerar
+                diferentes perspectivas. Ideal para cursos que incentivam a análise crítica e a reflexão profunda sobre
+                os temas abordados.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              onClick={() => setShowLearningStylesModal(false)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Entendi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
