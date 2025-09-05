@@ -278,6 +278,10 @@ export function CourseCreationForm() {
     )
   }
 
+  const excluirCurso = () => {
+    setShowDeleteModal(true);
+  }
+
   return (
     <>
       <div className="mb-6">
@@ -732,7 +736,7 @@ export function CourseCreationForm() {
         <div className="flex items-center justify-end gap-4">
             <Button
                 type="button"
-                onClick={handleCancel}
+                onClick={excluirCurso}
                 variant="outline"
                 className="border-slate-300 dark:border-slate-700 dark:text-slate-300 bg-transparent"
                 >
@@ -743,6 +747,33 @@ export function CourseCreationForm() {
             </Button>
         </div>
       </form>
+
+      {/* Modal de Confirmação de Cancelamento */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent className="dark:bg-slate-900 dark:border-slate-800 dark:text-white">
+          <DialogHeader>
+            <DialogTitle className="text-red-600 dark:text-red-400">Confirmar Exclusão</DialogTitle>
+            <DialogDescription className="text-slate-600 dark:text-slate-300">
+              Tem certeza que deseja excluir este curso? Esta ação não pode ser desfeita e todos os dados do curso serão
+              perdidos permanentemente.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button
+              type="button"
+              onClick={() => setShowDeleteModal(false)}
+              variant="outline"
+              className="border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-300 bg-transparent"
+            >
+              Cancelar
+            </Button>
+            <Button type="button" onClick={confirmDeleteCourse} className="bg-red-600 hover:bg-red-700 text-white">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Excluir Curso
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Modal de Explicação dos Estilos de Aprendizagem */}
       <Dialog open={showLearningStylesModal} onOpenChange={setShowLearningStylesModal}>
