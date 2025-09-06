@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { X, Upload, Loader2, Plus, Play, ChevronDown, ChevronRight, Clock, Star, Trash2, FileText, Settings, BarChart3, Zap } from "lucide-react"
+import { X, Upload, Loader2, Plus, Play, ChevronDown, ChevronRight, Clock, Star, Trash2, FileText, Settings, BarChart3, Zap, HelpCircle } from "lucide-react"
 import Link from "next/link"
 import { ArrowLeft, Eye, Save, Users, BookOpen } from "lucide-react"
 
@@ -66,6 +66,7 @@ interface Course {
   thumbnail: string
   category: string
   level: "Iniciante" | "Intermediário" | "Avançado"
+  learningStyle: "Pragmático" | "Teórico" | "Ativista" | "Reflexivo",
   tags: string[]
   instructor: {
     name: string
@@ -87,6 +88,18 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
   const [moduleToDelete, setModuleToDelete] = useState<number | null>(null)
   const [lessonToDelete, setLessonToDelete] = useState<{ moduleId: number; lessonId: number } | null>(null)
   const [showDeleteCourseModal, setShowDeleteCourseModal] = useState(false)
+  const [showLearningStylesModal, setShowLearningStylesModal] = useState(false)
+  
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    category: "",
+    level: "",
+    learningStyle: "",
+    instructor: "",
+    thumbnail: "",
+    tags: [] as string[],
+  })
 
   const [course, setCourse] = useState<Course>({
     id: courseId,
@@ -95,6 +108,7 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
     thumbnail: "/placeholder.svg?height=200&width=300",
     category: "Programação",
     level: "Intermediário",
+    learningStyle: "Teórico",
     tags: ["JavaScript", "Web Development", "Frontend"],
     instructor: {
       name: "Prof. Maria Silva",
@@ -151,6 +165,10 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
   const [expandedLessons, setExpandedLessons] = useState<Set<number>>(new Set())
   const [newTag, setNewTag] = useState("")
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+  
   const handleThumbnailUpload = async (file: File) => {
     if (!file.type.startsWith("image/")) {
       alert("Por favor, selecione apenas arquivos de imagem.")
@@ -579,7 +597,7 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
                       rows={4}
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                     <div className="space-y-2">
                       <Label htmlFor="category">Categoria</Label>
                       <Select
@@ -612,6 +630,48 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
                           <SelectItem value="Iniciante">Iniciante</SelectItem>
                           <SelectItem value="Intermediário">Intermediário</SelectItem>
                           <SelectItem value="Avançado">Avançado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 dark:text-white">Estilo de Aprendizagem *</label>
+                        <Button
+                          type="button"
+                          onClick={() => setShowLearningStylesModal(true)}
+                          variant="ghost"
+                          size="sm"
+                          className="p-1 h-6 w-6  text-slate-400 dark:hover:text-slate-300 dark:hover:bg-slate-800"
+                        >
+                          <HelpCircle className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <Select
+                        value={course.learningStyle}
+                        onValueChange={(value: "Pragmático" | "Teórico" | "Ativista" | "Reflexivo") =>
+                          setCourse((prev) => ({ ...prev, learningStyle: value }))
+                        }
+                      >
+                        <SelectTrigger className=" dark:border-slate-800 dark:text-white">
+                          <SelectValue placeholder="Selecione o estilo" />
+                        </SelectTrigger>
+                        <SelectContent className="text-slate-700 dark:bg-slate-800 dark:border-slate-700">
+                          <SelectItem 
+                            value="pragmatico"
+                            className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                            >Pragmático</SelectItem>
+                          <SelectItem 
+                            value="teorico"
+                            className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                            >Teórico</SelectItem>
+                          <SelectItem 
+                            value="ativista"
+                            className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                          >Ativista</SelectItem>
+                          <SelectItem 
+                            value="reflexivo"
+                            className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                          >Reflexivo</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1298,6 +1358,63 @@ export function CourseEditor({ courseId }: CourseEditorProps) {
             </Button>
             <Button variant="destructive" onClick={confirmDeleteCourse}>
               Excluir Permanentemente
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Explicação dos Estilos de Aprendizagem */}
+      <Dialog open={showLearningStylesModal} onOpenChange={setShowLearningStylesModal}>
+        <DialogContent className="dark:bg-slate-900 dark:border-slate-800 dark:text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-blue-600 dark:text-blue-400">Estilos de Aprendizagem</DialogTitle>
+            <DialogDescription className="text-slate-600 dark:text-slate-300">
+              Entenda as características de cada estilo de aprendizagem para escolher o mais adequado ao seu curso.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-green-600 dark:text-green-400 mb-2">🎯 Pragmático</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
+                Focado na aplicação prática do conhecimento. Prefere aprender através de exemplos reais, estudos de caso
+                e exercícios práticos. Ideal para cursos que enfatizam a implementação e uso imediato das habilidades
+                aprendidas.
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-blue-600 dark:text-blue-400 mb-2">📚 Teórico</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
+                Valoriza a compreensão profunda dos conceitos e princípios fundamentais. Prefere explicações detalhadas,
+                modelos conceituais e a lógica por trás das práticas. Ideal para cursos com forte base conceitual e
+                científica.
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-orange-600 dark:text-orange-400 mb-2">⚡ Ativista</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
+                Aprende melhor através da experiência direta e participação ativa. Prefere atividades hands-on, projetos
+                colaborativos e experimentação. Ideal para cursos interativos com muita prática e experimentação.
+              </p>
+            </div>
+
+            <div className="p-4 bg-slate-200 dark:bg-slate-800 rounded-lg border dark:border-slate-700">
+              <h3 className="font-semibold text-purple-600 dark:text-purple-400 mb-2">🤔 Reflexivo</h3>
+              <p className="text-sm text-justify text-slate-600 dark:text-slate-300">
+                Prefere observar e refletir antes de agir. Valoriza o tempo para processar informações e considerar
+                diferentes perspectivas. Ideal para cursos que incentivam a análise crítica e a reflexão profunda sobre
+                os temas abordados.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              onClick={() => setShowLearningStylesModal(false)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              Entendi
             </Button>
           </DialogFooter>
         </DialogContent>
