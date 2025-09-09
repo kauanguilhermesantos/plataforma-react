@@ -1,5 +1,5 @@
 import { AdminLayout } from "@/components/admin/admin-layout"
-import { CourseEditor } from "@/components/admin/course-editor"
+import { EditorCurso } from "@/components/admin/editorCurso/EditorCurso"
 
 export default function EditCoursePage({ params }: { params: { id: string } }) {
   const isCreating = params.id === "new"
@@ -7,7 +7,7 @@ export default function EditCoursePage({ params }: { params: { id: string } }) {
 
   return (
     <AdminLayout>
-        <CourseEditor courseId={courseId} />
+        <EditorCurso cursoId={courseId} />
     </AdminLayout>
   )
 }
