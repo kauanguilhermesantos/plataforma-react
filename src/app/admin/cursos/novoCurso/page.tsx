@@ -1,11 +1,13 @@
 
 import { AdminLayout } from "@/components/admin/admin-layout"
-import { CourseCreationForm } from "@/components/admin/course-creation-form"
+import { CriacaoCursoForm } from "@/components/admin/criacaoCurso/CriacaoCursoForm"
+// import { CourseCreationForm } from "@/components/admin/course-creation-form"
 
 export default function NewCoursePage() {
   return (
     <AdminLayout>
-        <CourseCreationForm />
+        {/* <CourseCreationForm /> */}
+        <CriacaoCursoForm />
     </AdminLayout>
   )
 }

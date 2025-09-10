@@ -2,6 +2,7 @@ export type NivelCurso = "Iniciante" | "Intermediário" | "Avançado";
 export type EstiloAprendizagem = "Pragmático" | "Teórico" | "Ativista" | "Reflexivo";
 export type TipoAula = "video" | "text" | "quiz";
 export type TipoRecurso = "pdf";
+export type CursoCategoria = "Programação" | "Data-Science" | "Design" | "Mobile" | "Web";
 
 export interface Aula {
   id: number;
@@ -10,7 +11,7 @@ export interface Aula {
   tipo: TipoAula;
   videoUrl?: string;
   descricao?: string;
-  videoArquivo?: File;
+  videoArquivo?: string;
   videoPreview?: string;
   isUploading?: boolean;
 }
@@ -18,7 +19,7 @@ export interface Aula {
 export interface Modulo {
   id: number;
   titulo: string;
-  descricao: string;
+  descricao?: string;
   aulas: Aula[];
 }
 
@@ -34,7 +35,9 @@ export interface Recurso {
 export interface Instrutor {
   nome: string;
   bio: string;
-  avatar: string;
+  avatar?: string;
+  foto?: string;
+  fotoPreview?: string;
 }
 
 export interface Curso {
@@ -53,6 +56,19 @@ export interface Curso {
   alunos: number;
   avaliacao: number;
   reviews: number;
+}
+
+export interface CursoFormData {
+  titulo: string;
+  descricao: string;
+  categoria: CursoCategoria | "";
+  nivel: NivelCurso | "";
+  estiloAprendizagem: EstiloAprendizagem | "";
+  thumbnail: string;
+  thumbnailPreview?: string;
+  tags: string[];
+  instrutor: Instrutor;
+  modulos: Modulo[];
 }
 
 export interface EditorCursoProps {
