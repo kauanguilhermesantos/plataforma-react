@@ -1,0 +1,272 @@
+import { Curso } from '@/types/curso'
+
+export const mockCursos: Curso[] = [
+  {
+    id: 1,
+    titulo: "JavaScript Completo - Do Básico ao Avançado",
+    descricao: "Aprenda JavaScript do zero e torne-se um desenvolvedor web completo.",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    categoria: "Programação",
+    nivel: "Iniciante",
+    status: "Publicado",
+    estiloAprendizagem: "Teórico",
+    tags: ["JavaScript", "Web", "Frontend"],
+    instrutor: {
+      nome: "Prof. Maria Silva",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Desenvolvedora Full Stack com 10 anos de experiência.",
+    },
+    modulos: [],
+    recursos: [],
+    // isPublished: true,
+    alunos: 1250,
+    avaliacao: 4.8,
+    reviews: 324,
+    dataCriacao: "2023-12-01",
+    ultimoUpdate: "2024-01-15",
+  },
+  {
+    id: 2,
+    titulo: "React.js - Construindo Aplicações Modernas",
+    instrutor: {
+      nome: "Prof. João Santos",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Programação",
+    nivel: "Intermediário",
+    status: "Publicado",
+    alunos: 890,
+    avaliacao: 4.9,
+    reviews: 156,
+    dataCriacao: "2023-11-15",
+    ultimoUpdate: "2024-01-10",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Domine o React.js e crie aplicações web dinâmicas e responsivas.",
+    estiloAprendizagem: "Pragmático",
+    tags: ["React", "JavaScript", "Frontend"],
+    modulos: [],
+    recursos: [],
+    // isPublished: true,
+  },
+  {
+    id: 3,
+    titulo: "Python para Data Science",
+    instrutor: {
+      nome: "Prof. Ana Costa",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Data Science",
+    nivel: "Intermediário",
+    status: "Publicado",
+    alunos: 567,
+    avaliacao: 4.7,
+    reviews: 89,
+    dataCriacao: "2023-10-20",
+    ultimoUpdate: "2024-01-05",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Aprenda Python e suas bibliotecas para análise de dados e machine learning.",
+    estiloAprendizagem: "Ativista",
+    tags: ["Python", "Data Science", "Machine Learning"],
+    modulos: [],
+    recursos: [],
+    // isPublished: true,
+  },
+  {
+    id: 4,
+    titulo: "UI/UX Design Fundamentals",
+    instrutor: {
+      nome: "Prof. Carlos Lima",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Design",
+    nivel: "Iniciante",
+    status: "Rascunho",
+    alunos: 0,
+    avaliacao: 0,
+    reviews: 0,
+    dataCriacao: "2024-01-10",
+    ultimoUpdate: "2024-01-18",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Introdução aos princípios de design de interfaces e experiência do usuário.",
+    estiloAprendizagem: "Reflexivo",
+    tags: ["Design", "UI", "UX"],
+    modulos: [],
+    recursos: [],
+    // isPublished: false,
+  },
+  {
+    id: 5,
+    titulo: "Node.js e Express - Backend Completo",
+    instrutor: {
+      nome: "Prof. Roberto Oliveira",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Programação",
+    nivel: "Avançado",
+    status: "Arquivado",
+    alunos: 298,
+    avaliacao: 4.8,
+    reviews: 45,
+    dataCriacao: "2023-08-15",
+    ultimoUpdate: "2023-12-20",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Construa APIs robustas e escaláveis com Node.js e Express.",
+    estiloAprendizagem: "Pragmático",
+    tags: ["Node.js", "Express", "Backend"],
+    modulos: [],
+    recursos: [],
+    // isPublished: false,
+  },
+  {
+    id: 6,
+    titulo: "Flutter - Desenvolvimento Mobile Cross-Platform",
+    instrutor: {
+      nome: "Prof. Juliana Almeida",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Mobile",
+    nivel: "Intermediário",
+    status: "Publicado",
+    alunos: 432,
+    avaliacao: 4.6,
+    reviews: 78,
+    dataCriacao: "2023-09-10",
+    ultimoUpdate: "2024-01-08",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Desenvolva aplicativos móveis para iOS e Android com Flutter.",
+    estiloAprendizagem: "Ativista",
+    tags: ["Flutter", "Dart", "Mobile"],
+    modulos: [],
+    recursos: [],
+    // isPublished: true,
+  },
+  {
+    id: 7,
+    titulo: "Machine Learning com Python",
+    instrutor: {
+      nome: "Prof. Ricardo Mendes",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Data Science",
+    nivel: "Avançado",
+    status: "Publicado",
+    alunos: 321,
+    avaliacao: 4.9,
+    reviews: 67,
+    dataCriacao: "2023-07-20",
+    ultimoUpdate: "2024-01-12",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Aprenda os conceitos e algoritmos de machine learning usando Python.",
+    estiloAprendizagem: "Teórico",
+    tags: ["Machine Learning", "Python", "Data Science"],
+    modulos: [],
+    recursos: [],
+    // isPublished: true,
+  },
+  {
+    id: 8,
+    titulo: "Design System com Figma",
+    instrutor: {
+      nome: "Prof. Camila Rodrigues",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Design",
+    nivel: "Intermediário",
+    status: "Rascunho",
+    alunos: 0,
+    avaliacao: 0,
+    reviews: 0,
+    dataCriacao: "2024-01-15",
+    ultimoUpdate: "2024-01-20",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Crie e gerencie design systems eficientes usando Figma.",
+    estiloAprendizagem: "Reflexivo",
+    tags: ["Design", "Figma", "UI"],
+    modulos: [],
+    recursos: [],
+    // isPublished: false,
+  },
+  {
+    id: 9,
+    titulo: "SQL e Banco de Dados Relacionais",
+    instrutor: {
+      nome: "Prof. Fernando Costa",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "Banco de Dados",
+    nivel: "Iniciante",
+    status: "Publicado",
+    alunos: 678,
+    avaliacao: 4.7,
+    reviews: 123,
+    dataCriacao: "2023-10-05",
+    ultimoUpdate: "2024-01-14",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Aprenda SQL e como gerenciar bancos de dados relacionais.",
+    estiloAprendizagem: "Pragmático",
+    tags: ["SQL", "Banco de Dados", "Data"],
+    modulos: [],
+    recursos: [],
+    // isPublished: true,
+  },
+  {
+    id: 10,
+    titulo: "DevOps e CI/CD com Docker e Kubernetes",
+    instrutor: {
+      nome: "Prof. Marcelo Oliveira",
+      avatar: "/placeholder.svg?height=32&width=32",
+      bio: "Especialista em Frontend e React com 8 anos de experiência.",
+    },
+    categoria: "DevOps",
+    nivel: "Avançado",
+    status: "Publicado",
+    alunos: 234,
+    avaliacao: 4.8,
+    reviews: 45,
+    dataCriacao: "2023-08-25",
+    ultimoUpdate: "2024-01-07",
+    thumbnail: "/placeholder.svg?height=100&width=150",
+    descricao: "Implemente práticas de DevOps e pipelines CI/CD usando Docker e Kubernetes.",
+    estiloAprendizagem: "Ativista",
+    tags: ["DevOps", "Docker", "Kubernetes"],
+    modulos: [],
+    recursos: [],
+    // isPublished: true,
+  }
+]
+
+// Função utilitária para buscar curso por ID
+export const getCursoById = (id: number): Curso | undefined => {
+  return mockCursos.find(curso => curso.id === id)
+}
+
+// Função para filtrar cursos por categoria
+export const getCursosByCategoria = (categoria: string): Curso[] => {
+  if (categoria === 'all') return mockCursos
+  return mockCursos.filter(curso => curso.categoria === categoria)
+}
+
+// Função para filtrar cursos por status
+export const getCursosByStatus = (status: string): Curso[] => {
+  if (status === 'all') return mockCursos
+  return mockCursos.filter(curso => curso.status === status)
+}
+
+// Função para buscar cursos por termo
+export const searchCursos = (term: string): Curso[] => {
+  if (!term) return mockCursos
+  const lowerTerm = term.toLowerCase()
+  return mockCursos.filter(curso => 
+    curso.titulo.toLowerCase().includes(lowerTerm) ||
+    curso.instrutor.nome.toLowerCase().includes(lowerTerm) ||
+    curso.categoria.toLowerCase().includes(lowerTerm)
+  )
+}

@@ -1,10 +1,10 @@
-import { AdminCoursesContent } from "@/components/admin/admin-courses-content"
 import { AdminLayout } from "@/components/admin/admin-layout"
+import { AdminCursosConteudo } from "@/components/admin/conteudoCurso/AdminCursosConteudo"
 
 export default function AdminCoursesPage() {
   return (
     <AdminLayout>
-      <AdminCoursesContent />
+      <AdminCursosConteudo />
     </AdminLayout>
   )
 }
