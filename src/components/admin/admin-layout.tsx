@@ -14,20 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import {
-  Menu,
-  LayoutDashboard,
-  Users,
-  BookOpen,
-  BarChart3,
-  Settings,
-  LogOut,
-  Bell,
-  Shield,
-  MessageSquare,
-  FileText,
-  CreditCard,
-} from "lucide-react"
+import { Menu, LayoutDashboard, BookOpen, Settings, LogOut, Shield } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { usePathname } from "next/navigation"
@@ -51,13 +38,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   const navigationItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
-    // { icon: Users, label: "Usuários", href: "/admin/usuarios" },
     { icon: BookOpen, label: "Cursos", href: "/admin/cursos" },
-    // { icon: MessageSquare, label: "Suporte", href: "/admin/support" },
-    // { icon: BarChart3, label: "Relatórios", href: "/admin/reports" },
-    // { icon: CreditCard, label: "Financeiro", href: "/admin/billing" },
-    // { icon: FileText, label: "Conteúdo", href: "/admin/content" },
-    // { icon: Settings, label: "Configurações", href: "/admin/configuracoes" },
   ]
 
   const handleLogout = () => {
@@ -107,12 +88,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {/* Ações do Header */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            {/* <Button variant="ghost" size="sm" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                12
-              </span>
-            </Button> */}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
