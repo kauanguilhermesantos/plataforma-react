@@ -46,7 +46,7 @@ export interface Curso {
   titulo: string;
   descricao: string;
   thumbnail: string;
-  categoria: string;
+  categoria: CursoCategoria;
   nivel: NivelCurso;
   status: CursoStatus;
   estiloAprendizagem: EstiloAprendizagem;

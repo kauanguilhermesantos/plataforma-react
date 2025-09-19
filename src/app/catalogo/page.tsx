@@ -1,10 +1,10 @@
-import { CatalogContent } from "@/components/catalog-content"
 import { DashboardLayout } from "@/components/dashboard-layout"
+import { ConteudoCatalogo } from "@/components/users/catalogo/components/ConteudoCatalogo"
 
-export default function CatalogPage() {
+export default function CatalogoPage() {
   return (
     <DashboardLayout>
-      <CatalogContent />
+      <ConteudoCatalogo />
     </DashboardLayout>
   )
 }

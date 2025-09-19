@@ -15,7 +15,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { GraduationCap, Menu, Home, BookOpen, Settings, LogOut, Bell, Search, User } from "lucide-react"
 import Link from "next/link"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { usePathname } from "next/navigation"
 
 interface DashboardLayoutProps {

@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, BookOpen, Play, Clock, Star } from "lucide-react";
 import { Curso } from "@/types/curso";
-import { calcularTotalHoras } from "@/utils/curso-helpers";
+import { calcularTotalHoras } from "@/utils/cursoHelpers";
 
 interface StatsCardsProps {
   curso: Curso;

@@ -1,5 +1,5 @@
 
-import { AdminLayout } from "@/components/admin/admin-layout"
+import { AdminLayout } from "@/components/admin/layoutAdmin"
 import { CriacaoCursoForm } from "@/components/admin/criacaoCurso/CriacaoCursoForm"
 // import { CourseCreationForm } from "@/components/admin/course-creation-form"
 
