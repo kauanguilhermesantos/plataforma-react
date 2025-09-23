@@ -1,10 +1,10 @@
-import { ProfileContent } from "@/components/profile-content"
 import { DashboardLayout } from "@/components/dashboard-layout"
+import { PerfilConteudo } from "@/components/perfil/components/PerfilConteudo"
 
 export default function ProfilePage() {
   return (
     <DashboardLayout>
-      <ProfileContent />
+      <PerfilConteudo />
     </DashboardLayout>
   )
 }
