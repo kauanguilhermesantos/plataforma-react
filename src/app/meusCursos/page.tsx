@@ -1,10 +1,10 @@
-import { MyCoursesContent } from "@/components/my-courses-content"
 import { DashboardLayout } from "@/components/dashboard-layout"
+import { MeusCursosConteudo } from "@/components/users/meusCursos/components/MeusCursosConteudo"
 
 export default function MyCoursesPage() {
   return (
     <DashboardLayout>
-      <MyCoursesContent />
+      <MeusCursosConteudo />
     </DashboardLayout>
   )
 }

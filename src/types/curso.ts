@@ -18,6 +18,11 @@ export interface Aula {
   concluida?: boolean;
 }
 
+export interface ProximaAula {
+  titulo: string
+  duracao: string
+}
+
 export interface Modulo {
   id: number;
   titulo: string;
@@ -48,24 +53,31 @@ export interface Instrutor {
 export interface Curso {
   id: number;
   titulo: string;
-  descricao: string;
+  descricao?: string;
   thumbnail: string;
   categoria: CursoCategoria;
   nivel: NivelCurso;
-  status: CursoStatus;
-  estiloAprendizagem: EstiloAprendizagem;
-  tags: string[];
+  status?: CursoStatus;
+  estiloAprendizagem?: EstiloAprendizagem;
+  tags?: string[];
   instrutor: Instrutor;
-  modulos: Modulo[];
-  recursos: Recurso[];
+  modulos?: Modulo[];
+  recursos?: Recurso[];
   // isPublished: boolean;
-  alunos: number;
+  alunos?: number;
   avaliacao: number;
-  reviews: number;
-  dataCriacao: string;
-  ultimoUpdate: string;
+  reviews?: number;
+  dataCriacao?: string;
+  ultimoUpdate?: string;
   duracaoTotal?: string;
   progresso?: number;
+  proximaAula?: ProximaAula
+  totalAulas?: number
+  aulasCompletadas?: number
+  isFavorite?: boolean
+  isCompleted?: boolean
+  dataInscricao?: string
+  ultimoAcesso?: string
 }
 
 export interface CursoFormData {
@@ -91,4 +103,27 @@ export interface CursoStats {
 
 export interface EditorCursoProps {
   cursoId?: string;
+}
+
+export interface UsuarioStats {
+  totalCursos: number
+  cursosCompletados: number
+  cursosEmProgresso: number
+  totalHoras: number
+  certificados: number
+}
+
+export interface Filtros {
+  searchTerm: string
+  selectedCategory: string
+  sortBy: string
+}
+
+export interface UnenrollDialogState {
+  isOpen: boolean
+  curso: Curso | null
+}
+
+export interface MeusCursosConteudoProps {
+  usuarioId?: string
 }
