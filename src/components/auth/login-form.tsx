@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Eye, EyeOff, Mail, AlertCircle } from "lucide-react"
+import { Eye, EyeOff, AlertCircle } from "lucide-react"
+import { FcGoogle } from "react-icons/fc";
 import Link from "next/link"
 
 export function LoginForm() {
@@ -74,12 +75,12 @@ export function LoginForm() {
     <div className="space-y-6">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-semibold">Entrar na sua conta</h2>
-        <p className="text-gray-700">Continue sua jornada de aprendizado</p>
+        <p className="text-gray-300">Continue sua jornada de aprendizado</p>
       </div>
 
       {error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="h-4 w-4 dark:text-red-600" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -96,6 +97,7 @@ export function LoginForm() {
             onChange={handleInputChange}
             disabled={isLoading}
             required
+            className="border-gray-300 dark:border-gray-400 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
 
@@ -111,10 +113,12 @@ export function LoginForm() {
               onChange={handleInputChange}
               disabled={isLoading}
               required
+              className="border-gray-300 dark:border-gray-400 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500"
+
             />
             <Button
               type="button"
-              variant="default"
+              variant="ghost"
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
@@ -127,35 +131,35 @@ export function LoginForm() {
         </div>
 
         <div className="flex items-center justify-between">
-          <Link href="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500 hover:underline">
+          <Link href="#" className="text-sm text-blue-500 hover:text-blue-400 hover:underline">
             Esqueceu a senha?
           </Link>
         </div>
 
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500" disabled={isLoading}>
+        <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Entrando..." : "Entrar"}
         </Button>
       </form>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          {/* <Separator className="w-full" /> */}
+          <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className=" px-2 text-gray-700">Ou continue com</span>
+          <span className="px-2 dark:bg-gray-700 dark:text-gray-300">Ou continue com</span>
         </div>
       </div>
 
       <div className="space-y-3">
-        <Button variant="outline" onClick={() => handleSocialLogin("Google")} disabled={isLoading} className="w-full hover:bg-gray-500">
-          <Mail className="mr-2 h-4 w-4" />
-          Continuar com Google
+        <Button variant="secondary" onClick={() => handleSocialLogin("Google")} disabled={isLoading} className="w-full">
+          <FcGoogle />
+          Google
         </Button>
       </div>
 
       <div className="text-center text-sm">
-        <span className="text-gray-600">Não tem uma conta? </span>
-        <Link href="/cadastro" className="text-blue-600 hover:text-blue-500 hover:underline font-medium">
+        <span className="text-gray-300">Não tem uma conta? </span>
+        <Link href="/cadastro" className="text-blue-500 hover:text-blue-400 hover:underline font-medium">
           Cadastre-se gratuitamente
         </Link>
       </div>
