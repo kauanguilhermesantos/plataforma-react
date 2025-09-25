@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Eye, EyeOff, Mail, AlertCircle, CheckCircle, User, GraduationCap } from "lucide-react"
+import { Eye, EyeOff, Mail, AlertCircle, CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { PasswordStrength } from "@/components/password-strength"
+import { PasswordStrength } from "@/components/auth/PasswordStrength"
+import { FcGoogle } from "react-icons/fc"
 
 interface FormData {
   firstName: string
@@ -24,7 +24,7 @@ interface FormData {
   acceptTerms: boolean
 }
 
-export function RegisterForm() {
+export function CadastroForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -136,12 +136,12 @@ export function RegisterForm() {
     <div className="space-y-6">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-semibold">Criar sua conta</h2>
-        <p className="text-gray-700">Junte-se à comunidade Koda</p>
+        <p className="text-gray-300">Junte-se à comunidade Koda</p>
       </div>
 
       {error && (
         <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="h-4 w-4 dark:text-red-600" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -155,11 +155,12 @@ export function RegisterForm() {
               id="firstName"
               name="firstName"
               type="text"
-              placeholder="Kauan"
+              placeholder="João"
               value={formData.firstName}
               onChange={handleInputChange}
               disabled={isLoading}
               required
+              className="border-gray-300 dark:border-gray-400 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
           <div className="space-y-2">
@@ -168,11 +169,12 @@ export function RegisterForm() {
               id="lastName"
               name="lastName"
               type="text"
-              placeholder="Santos"
+              placeholder="Silva"
               value={formData.lastName}
               onChange={handleInputChange}
               disabled={isLoading}
               required
+              className="border-gray-300 dark:border-gray-400 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -184,37 +186,14 @@ export function RegisterForm() {
             id="email"
             name="email"
             type="email"
-            placeholder="kauan@email.com"
+            placeholder="joao@email.com"
             value={formData.email}
             onChange={handleInputChange}
             disabled={isLoading}
             required
+            className="border-gray-300 dark:border-gray-400 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500"
           />
         </div>
-
-        {/* Perfil */}
-          {/* <div className="space-y-2">
-            <Label htmlFor="role">Eu sou *</Label>
-            <Select onValueChange={handleSelectChange} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione seu perfil" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="student">
-                  <div className="flex items-center dark:bg-blue-400">
-                    <User className="mr-2 h-4 w-4 dark:bg-gray-400" />
-                    Estudante
-                  </div>
-                </SelectItem>
-                <SelectItem value="teacher">
-                  <div className="flex items-center">
-                    <GraduationCap className="mr-2 h-4 w-4" />
-                    Professor/Instrutor
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div> */}
 
         {/* Senha */}
         <div className="space-y-2">
@@ -229,6 +208,7 @@ export function RegisterForm() {
               onChange={handleInputChange}
               disabled={isLoading}
               required
+              className="border-gray-300 dark:border-gray-400 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500"
             />
             <Button
               type="button"
@@ -239,9 +219,10 @@ export function RegisterForm() {
               disabled={isLoading}
             >
               {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              <span className="sr-only">{showPassword ? "Ocultar senha" : "Mostrar senha"}</span>
             </Button>
-            <PasswordStrength password={formData.password} />
           </div>
+            <PasswordStrength password={formData.password} />
         </div>
 
         {/* Confirmar Senha */}
@@ -257,6 +238,7 @@ export function RegisterForm() {
               onChange={handleInputChange}
               disabled={isLoading}
               required
+              className="border-gray-300 dark:border-gray-400 dark:bg-gray-700 dark:text-white focus:border-blue-500 focus:ring-blue-500"
             />
             <Button
               type="button"
@@ -282,17 +264,17 @@ export function RegisterForm() {
           />
           <Label htmlFor="acceptTerms" className="text-sm">
             Aceito os{" "}
-            <Link href="/terms" className="text-blue-600 hover:underline">
+            <Link href="/#" className="text-blue-500 hover:text-blue-400 hover:underline">
               Termos de Uso
             </Link>{" "}
             e{" "}
-            <Link href="/privacy" className="text-blue-600 hover:underline">
+            <Link href="/#" className="text-blue-500 hover:text-blue-400 hover:underline">
               Política de Privacidade
             </Link>
           </Label>
         </div>
 
-        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-500" disabled={isLoading}>
+        <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? "Criando conta..." : "Criar conta"}
         </Button>
       </form>
@@ -302,18 +284,18 @@ export function RegisterForm() {
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="px-2 text-gray-700">Ou continue com</span>
+          <span className="px-2 dark:bg-gray-700 dark:text-gray-300">Ou</span>
         </div>
       </div>
 
-      <Button variant="outline" onClick={handleSocialRegister} disabled={isLoading} className="w-full">
-        <Mail className="mr-2 h-4 w-4" />
+      <Button variant="secondary" onClick={handleSocialRegister} disabled={isLoading} className="w-full">
+        <FcGoogle />
         Continuar com Google
       </Button>
 
       <div className="text-center text-sm">
-        <span className="text-gray-600">Já tem uma conta? </span>
-        <Link href="/login" className="text-blue-600 hover:text-blue-500 hover:underline font-medium">
+        <span className="text-gray-300">Já tem uma conta? </span>
+        <Link href="/login" className="text-blue-500 hover:text-blue-400 hover:underline font-medium">
           Faça login
         </Link>
       </div>

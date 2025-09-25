@@ -38,7 +38,7 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
     <div className="space-y-3 mt-2">
       <div className="space-y-1">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Força da senha:</span>
+          <span className="text-gray-300">Força da senha:</span>
           <span
             className={`font-medium ${
               strength <= 40
@@ -66,8 +66,8 @@ export function PasswordStrength({ password }: PasswordStrengthProps) {
           const passed = requirement.test(password)
           return (
             <div key={index} className="flex items-center space-x-2 text-sm">
-              {passed ? <CheckCircle className="h-4 w-4 text-green-500" /> : <X className="h-4 w-4 text-gray-400" />}
-              <span className={passed ? "text-green-700" : "text-gray-500"}>{requirement.label}</span>
+              {passed ? <CheckCircle className="h-4 w-4 text-green-500" /> : <X className="h-4 w-4 text-gray-300" />}
+              <span className={passed ? "text-green-500" : "text-gray-300"}>{requirement.label}</span>
             </div>
           )
         })}
