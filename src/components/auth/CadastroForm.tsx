@@ -20,7 +20,7 @@ interface FormData {
   email: string
   password: string
   confirmPassword: string
-  role: string
+  // role: string
   acceptTerms: boolean
 }
 
@@ -36,7 +36,7 @@ export function CadastroForm() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
+    // role: "",
     acceptTerms: false,
   })
 
@@ -66,7 +66,7 @@ export function CadastroForm() {
     if (!formData.password) return "Senha é obrigatória"
     if (formData.password.length < 6) return "Senha deve ter pelo menos 6 caracteres"
     if (formData.password !== formData.confirmPassword) return "Senhas não coincidem"
-    if (!formData.role) return "Selecione seu perfil"
+    // if (!formData.role) return "Selecione seu perfil"
     if (!formData.acceptTerms) return "Você deve aceitar os termos de uso"
     return null
   }
@@ -113,10 +113,10 @@ export function CadastroForm() {
         </div>
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold">Conta criada com sucesso!</h2>
-          <p className="text-gray-600">
+          <p className="text-gray-300">
             Bem-vindo(a) à Koda, <strong>{formData.firstName}</strong>!
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-300">
             Enviamos um email de confirmação para <strong>{formData.email}</strong>
           </p>
         </div>
@@ -124,9 +124,11 @@ export function CadastroForm() {
           <Link href="/login" className="block">
             <Button className="w-full">Fazer Login</Button>
           </Link>
-          <Button variant="outline" className="w-full" onClick={() => setIsSuccess(false)}>
-            Criar outra conta
-          </Button>
+          <Link href="/cadastro" className="block">
+            <Button variant="outline" className="w-full" onClick={() => setIsSuccess(false)}>
+              Criar outra conta
+            </Button>
+          </Link>
         </div>
       </div>
     )
@@ -325,7 +327,7 @@ async function simulateRegister(userData: FormData) {
       firstName: userData.firstName,
       lastName: userData.lastName,
       email: userData.email,
-      role: userData.role,
+      // role: userData.role,
     },
   }
 }
