@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@/components/dashboard-layout"
+import { DashboardLayout } from "@/components/users/dashboard-layout"
 import { ConteudoCatalogo } from "@/components/users/catalogo/components/ConteudoCatalogo"
 
 export default function CatalogoPage() {

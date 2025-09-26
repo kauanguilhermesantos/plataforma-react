@@ -1,5 +1,5 @@
-import { DashboardContent } from "@/components/dashboard-content"
-import { DashboardLayout } from "@/components/dashboard-layout"
+import { DashboardContent } from "@/components/users/dashboard-content"
+import { DashboardLayout } from "@/components/users/dashboard-layout"
 
 export default function PaginaInicial() {
   return (
