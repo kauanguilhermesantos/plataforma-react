@@ -2,7 +2,7 @@
 import { Curso } from '@/types/curso';
 
 export const defaultCourse: Curso = {
-  id: "new",
+  id: 0,
   titulo: "JavaScript Completo - Do Básico ao Avançado",
   descricao: "Aprenda JavaScript desde os conceitos básicos até técnicas avançadas de programação.",
   thumbnail: "/placeholder.svg?height=200&width=300",
