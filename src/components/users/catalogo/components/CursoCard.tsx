@@ -8,7 +8,7 @@ import { Clock, Users, Star, Play } from "lucide-react"
 import { CursoCatalogo } from "@/types/catalogo"
 
 interface CursoCardProps {
-  curso: CursoCatalogo
+  curso: CursoCatalogo;
 }
 
 export function CursoCard({ curso }: CursoCardProps) {

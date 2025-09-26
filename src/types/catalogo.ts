@@ -3,16 +3,16 @@ import { CursoCategoria, Instrutor, NivelCurso } from "./curso"
 export interface CursoCatalogo {
   id: number
   titulo: string
-  descricao: string
+  descricao?: string
   instrutor: Instrutor
   categoria: CursoCategoria
   nivel: NivelCurso
   duracao?: string
-  alunos: number
+  alunos?: number
   avaliacao: number
-  reviews: number
+  reviews?: number
   thumbnail: string
-  tags: string[]
+  tags?: string[]
   isPopular?: boolean
   isNew?: boolean
 }
