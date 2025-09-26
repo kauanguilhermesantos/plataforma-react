@@ -28,7 +28,7 @@ export interface Modulo {
   titulo: string;
   descricao?: string;
   aulas: Aula[];
-  ordem: number;
+  ordem?: number;
   concluida?: number;
   total?:number
 }
@@ -51,6 +51,7 @@ export interface Instrutor {
 }
 
 export interface Curso {
+  isPublished?: boolean;
   id: number;
   titulo: string;
   descricao?: string;
