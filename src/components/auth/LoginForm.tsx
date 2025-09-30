@@ -75,7 +75,7 @@ export function LoginForm() {
     <div className="space-y-6">
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-semibold">Entrar na sua conta</h2>
-        <p className="text-gray-300">Continue sua jornada de aprendizado</p>
+        <p className="text-gray-600 dark:text-gray-300">Continue sua jornada de aprendizado</p>
       </div>
 
       {error && (
@@ -146,19 +146,19 @@ export function LoginForm() {
           <Separator className="w-full" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="px-2 dark:bg-gray-700 dark:text-gray-300">Ou continue com</span>
+          <span className="px-2 bg-white text-gray-600 dark:bg-gray-700 dark:text-gray-300">Ou continue com</span>
         </div>
       </div>
 
       <div className="space-y-3">
-        <Button variant="secondary" onClick={() => handleSocialLogin("Google")} disabled={isLoading} className="w-full">
+        <Button variant="secondary" onClick={() => handleSocialLogin("Google")} disabled={isLoading} className="w-full bg-slate-300 hover:bg-slate-200">
           <FcGoogle />
           Google
         </Button>
       </div>
 
       <div className="text-center text-sm">
-        <span className="text-gray-300">Não tem uma conta? </span>
+        <span className="text-gray-600">Não tem uma conta? </span>
         <Link href="/cadastro" className="text-blue-500 hover:text-blue-400 hover:underline font-medium">
           Cadastre-se gratuitamente
         </Link>
