@@ -11,7 +11,7 @@ export default function RegisterPage() {
         {/* Logo e Título */}
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold dark:text-blue-500">Koda</h1>
-          <p className="text-gray-400">Plataforma Educacional de Programação</p>
+          <p className="text-gray-600 dark:text-gray-400">Plataforma Educacional de Programação</p>
         </div>
 
         {/* Card de Cadastro */}
@@ -22,7 +22,7 @@ export default function RegisterPage() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
           <p>© 2024 Koda. Transformando o ensino de programação.</p>
         </div>
       </div>

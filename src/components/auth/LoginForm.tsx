@@ -151,14 +151,14 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-3">
-        <Button variant="secondary" onClick={() => handleSocialLogin("Google")} disabled={isLoading} className="w-full bg-slate-300 hover:bg-slate-200">
+        <Button onClick={() => handleSocialLogin("Google")} disabled={isLoading} className="w-full bg-slate-600 hover:bg-slate-500 dark:bg-slate-300 dark:hover:bg-slate-200">
           <FcGoogle />
           Google
         </Button>
       </div>
 
       <div className="text-center text-sm">
-        <span className="text-gray-600">Não tem uma conta? </span>
+        <span className="text-gray-600 dark:text-gray-300">Não tem uma conta? </span>
         <Link href="/cadastro" className="text-blue-500 hover:text-blue-400 hover:underline font-medium">
           Cadastre-se gratuitamente
         </Link>
