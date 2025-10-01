@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Clock, Play, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { estiloInfo } from "@/data/mockLSQ"
 
 export function DashboardContent() {
   // Simulando dados do usuário
@@ -15,6 +16,7 @@ export function DashboardContent() {
     streak: 7,
     achievements: 24,
     rank: "Intermediário",
+    estiloAprendizagem: "Pragmático"
   }
 
   const recentCourses = [
@@ -47,6 +49,9 @@ export function DashboardContent() {
     },
   ]
 
+  const estiloAprendizagemInfo = estiloInfo[userStats.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase()];
+  const EstiloIcon = estiloAprendizagemInfo ? estiloAprendizagemInfo.icon: null;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -56,7 +61,7 @@ export function DashboardContent() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 dark:text-white">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 dark:text-white">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Cursos Concluídos</CardTitle>
@@ -76,6 +81,17 @@ export function DashboardContent() {
           <CardContent>
             <div className="text-2xl font-bold">{userStats.totalHours}h</div>
             <p className="text-xs text-muted-foreground">+12h esta semana</p>
+          </CardContent>
+        </Card>
+
+        <Card className={`${estiloAprendizagemInfo.borderColor} border-2`}>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Estilo de Aprendizagem</CardTitle>
+            <EstiloIcon className={`h-4 w-4 ${estiloAprendizagemInfo.textColor}`} />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${estiloAprendizagemInfo.textColor}`}>{userStats.estiloAprendizagem}</div>
+            <p className="text-xs text-muted-foreground">Personalizado para você</p>
           </CardContent>
         </Card>
       </div>

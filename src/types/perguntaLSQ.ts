@@ -21,6 +21,7 @@ export interface EstiloInfo {
   nome: string
   color: string
   borderColor?: string
+  textColor?: string
   icon: React.ComponentType<any>
   descricao: string
   caracteristicas: string[]

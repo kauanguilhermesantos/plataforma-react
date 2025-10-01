@@ -60,7 +60,7 @@ export function BoasVindasEscolha() {
               </div>
 
               <Button
-                onClick={() => router.push("/learning-styles-quiz")}
+                onClick={() => router.push("/lsq")}
                 size="lg"
                 className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white"
               >

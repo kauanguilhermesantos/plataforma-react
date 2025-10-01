@@ -206,9 +206,10 @@ export const perguntas: PerguntaLSQ[] = [
 
 export const estiloInfo: Record<string, EstiloInfo> = {
   ativista: {
-    nome: "ativista",
+    nome: "Ativista",
     color: "from-orange-500 to-red-500",
     borderColor: "border-red-500",
+    textColor: "text-red-500",
     icon: Flame,
     descricao: "Você aprende melhor fazendo e experimentando. Gosta de novos desafios e experiências.",
     caracteristicas: [
@@ -219,9 +220,10 @@ export const estiloInfo: Record<string, EstiloInfo> = {
     ],
   },
   reflexivo: {
-    nome: "reflexivo",
+    nome: "Reflexivo",
     color: "from-green-500 to-emerald-500",
     borderColor: "border-green-500",
+    textColor: "text-green-500",
     icon: Eye,
     descricao: "Você aprende melhor observando e refletindo. Gosta de considerar diferentes perspectivas.",
     caracteristicas: [
@@ -232,9 +234,10 @@ export const estiloInfo: Record<string, EstiloInfo> = {
     ],
   },
   teorico: {
-    nome: "teorico",
+    nome: "Teórico",
     color: "from-purple-500 to-violet-500",
     borderColor: "border-purple-500",
+    textColor: "text-purple-500",
     icon: BookOpen,
     descricao: "Você aprende melhor com teorias e modelos lógicos. Gosta de entender os princípios por trás das coisas.",
     caracteristicas: [
@@ -245,9 +248,10 @@ export const estiloInfo: Record<string, EstiloInfo> = {
     ],
   },
   pragmatico: {
-    nome: "pragmatico",
+    nome: "Pragmático",
     color: "from-cyan-500 to-blue-500",
     borderColor: "border-blue-500",
+    textColor: "text-blue-500",
     icon: Wrench,
     descricao: "Você aprende melhor aplicando ideias na prática. Gosta de experimentar e ver resultados.",
     caracteristicas: [
