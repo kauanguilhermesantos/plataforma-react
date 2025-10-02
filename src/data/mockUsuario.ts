@@ -10,5 +10,6 @@ export const mockUsuario: Usuario = {
     dataNascimento: "2003-11-14",
     // role: "student",
     avatar: "/placeholder.svg?height=100&width=100",
-    joinDate: "2025-04-20"
+    joinDate: "2025-04-20",
+    estiloApredizagem: "Pragmático"
 }
