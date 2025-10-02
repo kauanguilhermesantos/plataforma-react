@@ -13,10 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { GraduationCap, Menu, Home, BookOpen, Settings, LogOut, Bell, Search, User } from "lucide-react"
+import { GraduationCap, Menu, Home, BookOpen, Settings, LogOut, Bell, Search, User, CircleQuestionMark } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { usePathname } from "next/navigation"
+import { Badge } from "../ui/badge"
+import { estiloInfo } from "@/data/mockLSQ"
+import { mockUsuario } from "@/data/mockUsuario"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -33,8 +36,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     email: "joao@email.com",
     role: "student",
     avatar: "/placeholder.svg?height=32&width=32",
+    estiloAprendizagem: "pragmatico",
   }
-
+  const estiloAprendizagemInfo = estiloInfo[user.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() as keyof typeof estiloInfo];
+  const EstiloIcon = estiloAprendizagemInfo ? estiloAprendizagemInfo.icon : CircleQuestionMark;
+  
   const navigationItems = [
     { icon: Home, label: "Dashboard", href: "/home" },
     { icon: BookOpen, label: "Meus Cursos", href: "/meusCursos" },
@@ -87,14 +93,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Ações do Header */}
           <div className="flex items-center gap-3">
+            {/* Botão do Tema */}
             <ThemeToggle />
-            <Button variant="ghost" size="sm" className="relative">
+
+            {/* Notifiações */}
+            {/* <Button variant="ghost" size="sm" className="relative">
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 3
               </span>
-            </Button>
+            </Button> */}
 
+            {/* Menu do Usuário */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -114,6 +124,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">{user.name}</p>
                     <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    <Badge className={`w-fit text-xs ${estiloAprendizagemInfo.bgColor} ${estiloAprendizagemInfo.textColor} ${estiloAprendizagemInfo.borderColor} flex items-center gap-1.5`}>
+                      <EstiloIcon className="h-3 w-3" />
+                      {estiloAprendizagemInfo.nome}
+                    </Badge>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
