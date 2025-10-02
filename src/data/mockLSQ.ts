@@ -210,6 +210,7 @@ export const estiloInfo: Record<string, EstiloInfo> = {
     color: "from-orange-500 to-red-500",
     borderColor: "border-red-500",
     textColor: "text-red-500",
+    bgColor: "bg-red-100/20",
     icon: Flame,
     descricao: "Você aprende melhor fazendo e experimentando. Gosta de novos desafios e experiências.",
     caracteristicas: [
@@ -224,6 +225,7 @@ export const estiloInfo: Record<string, EstiloInfo> = {
     color: "from-green-500 to-emerald-500",
     borderColor: "border-green-500",
     textColor: "text-green-500",
+    bgColor: "bg-green-100/20",
     icon: Eye,
     descricao: "Você aprende melhor observando e refletindo. Gosta de considerar diferentes perspectivas.",
     caracteristicas: [
@@ -238,6 +240,7 @@ export const estiloInfo: Record<string, EstiloInfo> = {
     color: "from-purple-500 to-violet-500",
     borderColor: "border-purple-500",
     textColor: "text-purple-500",
+    bgColor: "bg-purple-100/20",
     icon: BookOpen,
     descricao: "Você aprende melhor com teorias e modelos lógicos. Gosta de entender os princípios por trás das coisas.",
     caracteristicas: [
@@ -252,6 +255,7 @@ export const estiloInfo: Record<string, EstiloInfo> = {
     color: "from-cyan-500 to-blue-500",
     borderColor: "border-blue-500",
     textColor: "text-blue-500",
+    bgColor: "bg-blue-100/20",
     icon: Wrench,
     descricao: "Você aprende melhor aplicando ideias na prática. Gosta de experimentar e ver resultados.",
     caracteristicas: [

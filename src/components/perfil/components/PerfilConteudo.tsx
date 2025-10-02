@@ -7,6 +7,7 @@ import { PerfilTab } from "./PerfilTab"
 import { SecurityTab } from "./SecurityTab"
 import { SuccessAlert } from "@/components/shared/SuccessAlert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { LsqTab } from "./LsqTab"
 
 export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
   const {
@@ -31,8 +32,9 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
       {successMessage && <SuccessAlert message={successMessage} />}
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="profile">Perfil</TabsTrigger>
+          <TabsTrigger value="estiloAprendizagem">Estilo de Aprendizagem</TabsTrigger>
           <TabsTrigger value="security">Segurança</TabsTrigger>
         </TabsList>
 
@@ -53,6 +55,10 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
             onChangePassword={handleChangePassword}
             onDeleteAccount={handleDeleteAccount}
           />
+        </TabsContent>
+
+        <TabsContent value="estiloAprendizagem">
+          <LsqTab usuario={userData} />
         </TabsContent>
       </Tabs>
     </div>

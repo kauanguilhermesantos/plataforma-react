@@ -9,6 +9,13 @@ export interface Usuario {
 //   role: string
   avatar: string
   joinDate: string
+  estiloApredizagem: string
+  estiloApredizagemScores?: {
+    ativista: number
+    reflexivo: number
+    teorico: number
+    pragmatico: number
+  }
 }
 
 export interface Senha {
@@ -26,6 +33,10 @@ export interface PerfilTabProps {
   onUserDataChange: (data: Usuario) => void
   isLoading: boolean
   onSave: () => void
+}
+
+export interface LsqTabProps {
+    usuario: Usuario
 }
 
 export interface SecurityTabProps {
