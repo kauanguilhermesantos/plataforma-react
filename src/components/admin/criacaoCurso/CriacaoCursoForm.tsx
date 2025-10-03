@@ -8,6 +8,8 @@ import { InstrutorSection } from "./InstrutorSection";
 import { ModulosSection } from "./ModulosSection";
 import { DeleteConfirmacaoModal } from "./modals/DeleteConfirmacaoModal";
 import { EstiloAprendizagemModal } from "./modals/EstiloAprendizagemModal";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export function CriacaoCursoForm() {
   const {
@@ -44,11 +46,24 @@ export function CriacaoCursoForm() {
 
   return (
     <>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold dark:text-white">Criar Novo Curso</h1>
-        <p className="text-slate-600 dark:text-slate-400 mt-1">
-          Preencha as informações para criar um novo curso
-        </p>
+      {/* Div Header */}
+      <div className="flex items-center mb-6 space-x-4">
+        {/* Div Botão Voltar */}
+        <div className="flex items-center">
+          <Link href="/admin/cursos">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar
+            </Button>
+          </Link>
+        </div>
+        {/* Div Título */}
+        <div>
+          <h1 className="text-2xl font-bold dark:text-white">Criar Novo Curso</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">
+            Preencha as informações para criar um novo curso
+          </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">

@@ -16,7 +16,7 @@ export const CursoHeader = ({ curso, onPublishToggle }: CursoHeaderProps) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-4">
-        <Link href="/admin">
+        <Link href="/admin/cursos">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
