@@ -8,6 +8,7 @@ import { Clock, Users, Star, Play } from "lucide-react"
 import { CursoCatalogo } from "@/types/catalogo"
 import { mockCursos } from "@/data/mockCursos"
 import { estiloInfo } from "@/data/mockLSQ"
+import testeImagem from '@/testeImagem.png';
 
 interface CursoCardProps {
   curso: CursoCatalogo;
@@ -28,7 +29,8 @@ export function CursoCard({ curso }: CursoCardProps) {
       <div className="relative">
         {/* Thumbnail do Curso */}
         <img
-          src={curso.thumbnail || "/placeholder.svg"}
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/testeImagem.png`}
+          // src={curso.thumbnail || "/placeholder.svg"}
           alt={curso.titulo}
           className="w-full h-48 object-cover"
         />
