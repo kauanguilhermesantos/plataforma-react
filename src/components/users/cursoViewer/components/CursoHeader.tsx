@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Star, Users, Clock, ArrowLeft } from "lucide-react"
 import { Curso } from "@/types/curso"
 import Link from "next/link"
+import { useState } from "react"
 
 interface CursoHeaderProps {
   curso: Curso
@@ -12,11 +13,25 @@ interface CursoHeaderProps {
 }
 
 export function CursoHeader({ curso, isEnrolled, isEnrolling, onEnroll }: CursoHeaderProps) {
+  // Estado para gerenciar se o curso é para "Meus Cursos"
+  const [paraMeusCurosos, setParaMeusCursos] = useState(false);
+
+  // Função para lidar com a inscrição no curso
+  const handleBotaoInscrever = () => {
+    // Quando o usuário se inscrever, redireciona para "Meus Cursos"
+    setParaMeusCursos(true);
+    onEnroll(); // Chama a função de inscrição passada como prop
+  }
+
+  const voltaBotaoHref = () => {
+    return paraMeusCurosos ? "/meusCursos" : "/catalogo";
+  }
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-3">
         <div>
-          <Link href="/meusCursos">
+          <Link href={voltaBotaoHref()}>
             <Button variant="ghost" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar
@@ -44,7 +59,7 @@ export function CursoHeader({ curso, isEnrolled, isEnrolling, onEnroll }: CursoH
       </div>
       <div className="flex items-center space-x-2">
         {!isEnrolled && (
-          <Button onClick={onEnroll} disabled={isEnrolling} size="lg">
+          <Button onClick={handleBotaoInscrever} disabled={isEnrolling} size="lg">
             {isEnrolling ? "Inscrevendo..." : "Inscreva-se Agora"}
           </Button>
         )}
