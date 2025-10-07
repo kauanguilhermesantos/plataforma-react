@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Clock, Users, Star, Play } from "lucide-react"
 import { CursoCatalogo } from "@/types/catalogo"
 import { mockCursos } from "@/data/mockCursos"
+import { estiloInfo } from "@/data/mockLSQ"
 
 interface CursoCardProps {
   curso: CursoCatalogo;
@@ -19,18 +20,29 @@ export function CursoCard({ curso }: CursoCardProps) {
   // Usar a duracaoTotal do mockCursos se existir
   const duracaoTotalDoCurso = cursoCompleto?.duracaoTotal;
   
+  const estiloAprendizagemInfo = estiloInfo[curso.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() as keyof typeof estiloInfo];
+  // const 
+
   return (
     <Card key={curso.id} className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
+        {/* Thumbnail do Curso */}
         <img
           src={curso.thumbnail || "/placeholder.svg"}
           alt={curso.titulo}
           className="w-full h-48 object-cover"
         />
+        {/* Badge Estilo de Aprendizagem */}
         <div className="absolute top-2 left-2 flex gap-2">
-          {curso.isPopular && <Badge className="bg-orange-500 hover:bg-orange-600">Popular</Badge>}
-          {curso.isNew && <Badge className="bg-green-500 hover:bg-green-600">Novo</Badge>}
+            {/* Badge do estilo das  */}
+            <Badge variant="secondary" className={`${estiloAprendizagemInfo.bgColor} ${estiloAprendizagemInfo.textColor} border ${estiloAprendizagemInfo.borderColor} no-hover`}>
+              {curso.estiloAprendizagem}
+            </Badge>
+            {/* <Badge className={estiloAprendizagemInfo.bgColor}>{curso.estiloAprendizagem}</Badge> */}
+          {/* {curso.isPopular && <Badge className="bg-orange-500 hover:bg-orange-600">Popular</Badge>}
+          {curso.isNew && <Badge className="bg-green-500 hover:bg-green-600">Novo</Badge>} */}
         </div>
+        {/* Badge Nível */}
         <div className="absolute top-2 right-2">
           <Badge variant="secondary">{curso.nivel}</Badge>
         </div>
