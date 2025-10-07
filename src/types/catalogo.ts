@@ -15,6 +15,7 @@ export interface CursoCatalogo {
   tags?: string[]
   isPopular?: boolean
   isNew?: boolean
+  estiloAprendizagem?: string
 }
 
 export interface CategoriaCatalogo {
@@ -28,4 +29,5 @@ export interface FiltrosCatalogo {
   selectedCategory: string
   selectedLevel: string
   sortBy: string
+  selectedEstiloAprendizagem: string
 }

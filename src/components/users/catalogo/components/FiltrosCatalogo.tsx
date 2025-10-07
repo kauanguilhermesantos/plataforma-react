@@ -28,7 +28,8 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
           </div>
 
           {/* Filtros */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Por Catogoria */}
             <div className="space-y-2">
               <Label>Categoria</Label>
               <Select
@@ -51,6 +52,7 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
               </Select>
             </div>
 
+            {/* Por Nível */}
             <div className="space-y-2">
               <Label>Nível</Label>
               <Select
@@ -68,7 +70,8 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
                 </SelectContent>
               </Select>
             </div>
-
+            
+            {/* Por Popular */}
             <div className="space-y-2">
               <Label>Ordenar por</Label>
               <Select
@@ -84,6 +87,27 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
                   <SelectItem value="newest">Mais Recente</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Por Estilo de Aprendizagem */}
+            <div className="space-y-2">
+              <Label>Estilo de Aprendizagem</Label>
+              <Select
+                value={filters.selectedEstiloAprendizagem}
+                onValueChange={(value) => onFiltersChange({ selectedEstiloAprendizagem: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os Estilos</SelectItem>
+                  <SelectItem value="Pragmático">Pragmático</SelectItem>
+                  <SelectItem value="Teórico">Teórico</SelectItem>
+                  <SelectItem value="Ativista">Ativista</SelectItem>
+                  <SelectItem value="Reflexivo">Reflexivo</SelectItem>
+                </SelectContent>
+              </Select>
+
             </div>
           </div>
         </div>

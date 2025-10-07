@@ -7,7 +7,8 @@ export function useCatalogo() {
     searchTerm: "",
     selectedCategory: "all",
     selectedLevel: "all",
-    sortBy: "popular"
+    sortBy: "popular",
+    selectedEstiloAprendizagem: "all"
   })
 
   const filteredAndSortedCourses = useMemo(() => {
@@ -19,8 +20,9 @@ export function useCatalogo() {
 
       const matchesCategory = filters.selectedCategory === "all" || curso.categoria === filters.selectedCategory
       const matchesLevel = filters.selectedLevel === "all" || curso.nivel === filters.selectedLevel
+      const matchesEstiloAprendizagem = filters.selectedEstiloAprendizagem === "all" || curso.estiloAprendizagem === filters.selectedEstiloAprendizagem
 
-      return matchesSearch && matchesCategory && matchesLevel
+      return matchesSearch && matchesCategory && matchesLevel && matchesEstiloAprendizagem
     })
 
     return [...filtered].sort((a, b) => {
