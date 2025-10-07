@@ -113,10 +113,10 @@ export function CadastroForm() {
         </div>
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold">Conta criada com sucesso!</h2>
-          <p className="text-gray-300">
+          <p className="text-gray-600 dark:text-gray-300">
             Bem-vindo(a) à Koda, <strong>{formData.firstName}</strong>!
           </p>
-          <p className="text-sm text-gray-300">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Enviamos um email de confirmação para <strong>{formData.email}</strong>
           </p>
         </div>

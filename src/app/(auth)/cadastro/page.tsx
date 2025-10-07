@@ -1,8 +1,5 @@
 import { CadastroForm } from "@/components/auth/CadastroForm"
 import { Card, CardContent } from "@/components/ui/card"
-import { GraduationCap, ArrowLeft } from "lucide-react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
 
 export default function RegisterPage() {
   return (
