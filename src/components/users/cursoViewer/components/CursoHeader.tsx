@@ -4,6 +4,7 @@ import { Star, Users, Clock, ArrowLeft } from "lucide-react"
 import { Curso } from "@/types/curso"
 import Link from "next/link"
 import { useState } from "react"
+import { estiloInfo } from "@/data/mockLSQ"
 
 interface CursoHeaderProps {
   curso: Curso
@@ -26,6 +27,10 @@ export function CursoHeader({ curso, isEnrolled, isEnrolling, onEnroll }: CursoH
   const voltaBotaoHref = () => {
     return paraMeusCurosos ? "/meusCursos" : "/catalogo";
   }
+
+  
+  // Obter informações do estilo de aprendizagem
+  const estiloAprendizagemInfo = estiloInfo[curso.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() as keyof typeof estiloInfo];
 
   return (
     <div className="flex items-center justify-between">
@@ -54,6 +59,9 @@ export function CursoHeader({ curso, isEnrolled, isEnrolling, onEnroll }: CursoH
               <span>{curso.duracaoTotal}</span>
             </div>
             <Badge variant="secondary">{curso.nivel}</Badge>
+            <Badge variant="secondary" className={`${estiloAprendizagemInfo.bgColor} ${estiloAprendizagemInfo.textColor} border ${estiloAprendizagemInfo.borderColor} no-hover dark:bg-transparent`}>
+              {curso.estiloAprendizagem}
+            </Badge>
           </div>
         </div>
       </div>
