@@ -161,30 +161,32 @@ export function LandingPage() {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t">
               <nav className="flex flex-col space-y-4">
-                <a
-                  href="#beneficios"
-                  onClick={(e) => handleNavClick(e, "beneficios")}
-                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                >
-                  Benefícios
-                </a>
-                <a
-                  href="#estilos"
-                  onClick={(e) => handleNavClick(e, "estilos")}
-                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                >
-                  Estilos
-                </a>
-                <a
-                  href="#como-funciona"
-                  onClick={(e) => handleNavClick(e, "como-funciona")}
-                  className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                >
-                  Como Funciona
-                </a>
+                <div className="flex flex-col items-center space-y-2">
+                  <a
+                    href="#beneficios"
+                    onClick={(e) => handleNavClick(e, "beneficios")}
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  >
+                    Benefícios
+                  </a>
+                  <a
+                    href="#estilos"
+                    onClick={(e) => handleNavClick(e, "estilos")}
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  >
+                    Estilos de Aprendizagem
+                  </a>
+                  <a
+                    href="#como-funciona"
+                    onClick={(e) => handleNavClick(e, "como-funciona")}
+                    className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  >
+                    Como Funciona
+                  </a>
+                </div>
                 <div className="flex flex-col space-y-2 pt-4 border-t">
                   <Link href="/login">
-                    <Button variant="ghost" className="w-full justify-start">
+                    <Button variant="secondary" className="w-full">
                       Entrar
                     </Button>
                   </Link>

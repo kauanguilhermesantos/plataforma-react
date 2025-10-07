@@ -8,7 +8,6 @@ import { Clock, Users, Star, Play } from "lucide-react"
 import { CursoCatalogo } from "@/types/catalogo"
 import { mockCursos } from "@/data/mockCursos"
 import { estiloInfo } from "@/data/mockLSQ"
-import testeImagem from '@/testeImagem.png';
 
 interface CursoCardProps {
   curso: CursoCatalogo;
