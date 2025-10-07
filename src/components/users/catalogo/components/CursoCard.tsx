@@ -6,12 +6,19 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Clock, Users, Star, Play } from "lucide-react"
 import { CursoCatalogo } from "@/types/catalogo"
+import { mockCursos } from "@/data/mockCursos"
 
 interface CursoCardProps {
   curso: CursoCatalogo;
 }
 
 export function CursoCard({ curso }: CursoCardProps) {
+  // Encontrar o curso do mockCursos pelo ID
+  const cursoCompleto = mockCursos.find(c => c.id === curso.id);
+
+  // Usar a duracaoTotal do mockCursos se existir
+  const duracaoTotalDoCurso = cursoCompleto?.duracaoTotal;
+  
   return (
     <Card key={curso.id} className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
@@ -51,7 +58,7 @@ export function CursoCard({ curso }: CursoCardProps) {
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
-              {curso.duracao}
+              {duracaoTotalDoCurso}
             </div>
             <div className="flex items-center">
               <Users className="h-4 w-4 mr-1" />
