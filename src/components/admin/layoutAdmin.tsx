@@ -18,6 +18,7 @@ import { Menu, LayoutDashboard, BookOpen, Settings, LogOut, Shield } from "lucid
 import Link from "next/link"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { usePathname } from "next/navigation"
+import { Separator } from "../ui/separator"
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -30,9 +31,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   // Simulando dados do admin
   const admin = {
-    name: "Admin Koda",
+    name: "Kauan Santos",
     email: "admin@koda.com",
-    role: "Super Admin",
+    role: "Admin",
     avatar: "/placeholder.svg?height=32&width=32",
   }
 
@@ -177,6 +178,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   )
 }
 
+// Navegação Mobile
 function MobileNavigation({
   items,
   admin,
@@ -196,23 +198,27 @@ function MobileNavigation({
       </div>
 
       <nav className="flex-1 px-2 py-4 space-y-1">
-        {items.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-              pathname === item.href ? "bg-red-100 text-red-900" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            }`}
-          >
-            <item.icon className="mr-3 h-5 w-5" />
-            {item.label}
-          </Link>
-        ))}
+        <div className="space-y-1">
+          {items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                pathname === item.href ? "bg-red-100 text-red-900" : "dark:text-gray-300 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              <item.icon className="mr-3 h-5 w-5" />
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        <Separator/>
 
         {/* Logout Button Mobile */}
         <button
           onClick={onLogout}
-          className="group flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+          className="group flex  items-center w-full px-2 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
         >
           <LogOut className="mr-3 h-5 w-5" />
           Sair
@@ -231,7 +237,7 @@ function MobileNavigation({
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{admin.name}</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-300 truncate">{admin.name}</p>
             <p className="text-xs text-gray-500 truncate">{admin.email}</p>
             <Badge variant="destructive" className="text-xs mt-1">
               {admin.role}
