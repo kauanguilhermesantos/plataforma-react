@@ -34,7 +34,7 @@ export function DeleteCourseDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="w-[90vw] max-w-md mx-auto">
         <DialogHeader>
           <DialogTitle>Excluir Curso</DialogTitle>
           <DialogDescription>
@@ -42,7 +42,7 @@ export function DeleteCourseDialog({
             Esta ação não pode ser desfeita e todos os dados relacionados serão perdidos.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="flex gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
