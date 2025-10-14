@@ -22,44 +22,52 @@ export function CursoFilters({
 }: CursoFiltersProps) {
   return (
     <Card>
-      <CardContent className="p-6">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Pesquisar cursos..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={selectedCategory} onValueChange={onCategoryChange}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filtrar por categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas as Categorias</SelectItem>
-              <SelectItem value="Programação">Programação</SelectItem>
-              <SelectItem value="Design">Design</SelectItem>
-              <SelectItem value="Data Science">Data Science</SelectItem>
-              <SelectItem value="Mobile">Mobile</SelectItem>
-              <SelectItem value="Banco de Dados">Banco de Dados</SelectItem>
-              <SelectItem value="DevOps">DevOps</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={selectedStatus} onValueChange={onStatusChange}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filtrar por status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os Status</SelectItem>
-              <SelectItem value="published">Publicados</SelectItem>
-              <SelectItem value="draft">Rascunhos</SelectItem>
-              <SelectItem value="archived">Arquivados</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardContent>
-    </Card>
+  <CardContent className="p-4 sm:p-6">
+    <div className="flex flex-col gap-3 sm:gap-4">
+      {/* Campo de Pesquisa */}
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          placeholder="Pesquisar cursos..."
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="pl-10 w-full"
+        />
+      </div>
+      
+      {/* Filtros em coluna única para sm, linha para md+ */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        {/* Filtro por Categoria */}
+        <Select value={selectedCategory} onValueChange={onCategoryChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Filtrar por categoria" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as Categorias</SelectItem>
+            <SelectItem value="Programação">Programação</SelectItem>
+            <SelectItem value="Design">Design</SelectItem>
+            <SelectItem value="Data Science">Data Science</SelectItem>
+            <SelectItem value="Mobile">Mobile</SelectItem>
+            <SelectItem value="Banco de Dados">Banco de Dados</SelectItem>
+            <SelectItem value="DevOps">DevOps</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Filtro por Status */}
+        <Select value={selectedStatus} onValueChange={onStatusChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Filtrar por status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Status</SelectItem>
+            <SelectItem value="published">Publicados</SelectItem>
+            <SelectItem value="draft">Rascunhos</SelectItem>
+            <SelectItem value="archived">Arquivados</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  </CardContent>
+</Card>
   )
 }

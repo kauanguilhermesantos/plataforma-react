@@ -50,119 +50,157 @@ export function CursoTable({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Lista de Cursos ({cursos.length})</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Curso</TableHead>
-              <TableHead>Instrutor</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>Nível</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Estudantes</TableHead>
-              <TableHead>Avaliação</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+  <CardHeader>
+    <CardTitle>Lista de Cursos ({cursos.length})</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="min-w-[160px] sm:min-w-[200px]">Curso</TableHead>
+            <TableHead className="hidden md:table-cell">Instrutor</TableHead>
+            <TableHead className="hidden lg:table-cell">Categoria</TableHead>
+            <TableHead className="hidden lg:table-cell">Nível</TableHead>
+            <TableHead className="w-20 sm:w-auto">Status</TableHead>
+            <TableHead className="hidden xl:table-cell">Estudantes</TableHead>
+            <TableHead className="hidden xl:table-cell">Avaliação</TableHead>
+            <TableHead className="text-right w-16 sm:min-w-[80px]">Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {cursos.map((curso) => (
+            <TableRow key={curso.id}>
+              {/* Coluna Curso - Sempre visível */}
+              <TableCell>
+                <div className="flex items-center space-x-2 sm:space-x-3">
+                  {/* Imagem oculta em sm, visível em md+ */}
+                  <img
+                    src={curso.thumbnail || "/placeholder.svg"}
+                    alt={curso.titulo}
+                    className="hidden md:block w-10 h-8 lg:w-12 object-cover rounded"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium line-clamp-1 text-sm sm:text-base">{curso.titulo}</div>
+                    {/* Informações extras apenas para mobile (até 767px) */}
+                    <div className="text-xs text-gray-500 md:hidden">
+                      {curso.instrutor.nome.split(' ')[0]} • {curso.categoria}
+                    </div>
+                    <div className="flex gap-1 sm:gap-2 mt-1 md:hidden">
+                      <Badge variant="outline" className="text-xs">
+                        {curso.nivel}
+                      </Badge>
+                      {curso.avaliacao > 0 && (
+                        <span className="text-xs text-gray-500 flex items-center justify-center">
+                          <Star className="inline h-3 w-3 fill-yellow-400 text-yellow-400 mr-0.5" />
+                          {curso.avaliacao}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+
+              {/* Instrutor - Visível apenas em md+ (768px+) */}
+              <TableCell className="hidden md:table-cell">
+                <div className="flex items-center space-x-2">
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={curso.instrutor.avatar || "/placeholder.svg"} />
+                    <AvatarFallback className="text-xs">
+                      {curso.instrutor.nome[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm">{curso.instrutor.nome}</span>
+                </div>
+              </TableCell>
+
+              {/* Categoria - Visível apenas em lg+ (1024px+) */}
+              <TableCell className="hidden lg:table-cell">
+                <Badge variant="outline" className="text-xs">
+                  {curso.categoria}
+                </Badge>
+              </TableCell>
+
+              {/* Nível - Visível apenas em lg+ (1024px+) */}
+              <TableCell className="hidden lg:table-cell">
+                <Badge variant="outline" className={nivelBadgeFn(curso.nivel)}>
+                  {curso.nivel}
+                </Badge>
+              </TableCell>
+
+              {/* Status - Sempre visível */}
+              <TableCell>
+                <Badge className={`text-xs ${statusBadgeFn(curso.status)}`}>
+                  {curso.status === "Publicado" && "Pub"}
+                  {curso.status === "Rascunho" && "Rasc"}
+                  {curso.status === "Arquivado" && "Arq"}
+                </Badge>
+              </TableCell>
+
+              {/* Estudantes - Visível apenas em xl+ (1280px+) */}
+              <TableCell className="hidden xl:table-cell">
+                <span className="text-sm">{curso.alunos.toLocaleString()}</span>
+              </TableCell>
+
+              {/* Avaliação - Visível apenas em xl+ (1280px+) */}
+              <TableCell className="hidden xl:table-cell">
+                {curso.avaliacao > 0 ? (
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-sm">{curso.avaliacao}</span>
+                    <span className="text-gray-500 text-xs">({curso.reviews})</span>
+                  </div>
+                ) : (
+                  <span className="text-gray-400 text-sm">-</span>
+                )}
+              </TableCell>
+
+              {/* Ações - Sempre visível */}
+              <TableCell className="text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-7 w-7 sm:h-8 sm:w-8 p-0" disabled={isLoading}>
+                      <MoreHorizontal className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    <DropdownMenuItem>
+                      <Eye className="mr-2 h-4 w-4" />
+                      Visualizar
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => (window.location.href = `cursos/${curso.id}/editarCurso`)}>
+                      <Edit className="mr-2 h-4 w-4" />
+                      Editar
+                    </DropdownMenuItem>
+                    {curso.status === "Rascunho" && (
+                      <DropdownMenuItem onClick={() => onPublish(curso)} disabled={isLoading}>
+                        <Play className="mr-2 h-4 w-4" />
+                        Publicar
+                      </DropdownMenuItem>
+                    )}
+                    {curso.status === "Publicado" && (
+                      <DropdownMenuItem onClick={() => onArchive(curso)} disabled={isLoading}>
+                        <Pause className="mr-2 h-4 w-4" />
+                        Arquivar
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem 
+                      onClick={() => onDelete(curso)} 
+                      className="text-red-600"
+                      disabled={isLoading}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Excluir
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {cursos.map((curso) => (
-              <TableRow key={curso.id}>
-                <TableCell>
-                  <div className="flex items-center space-x-3">
-                    <img
-                      src={curso.thumbnail || "/placeholder.svg"}
-                      alt={curso.titulo}
-                      className="w-12 h-8 object-cover rounded"
-                    />
-                    <div>
-                      <div className="font-medium line-clamp-1">{curso.titulo}</div>
-                      <div className="text-sm text-gray-500">{curso.categoria}</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={curso.instrutor.avatar || "/placeholder.svg"} />
-                      <AvatarFallback>{curso.instrutor.nome[0]}</AvatarFallback>
-                    </Avatar>
-                    <span className="text-sm">{curso.instrutor.nome}</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">{curso.categoria}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline" className={nivelBadgeFn(curso.nivel)}>
-                    {curso.nivel}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge className={statusBadgeFn(curso.status)}>
-                    {curso.status === "Publicado" && "Publicado"}
-                    {curso.status === "Rascunho" && "Rascunho"}
-                    {curso.status === "Arquivado" && "Arquivado"}
-                  </Badge>
-                </TableCell>
-                <TableCell>{curso.alunos.toLocaleString()}</TableCell>
-                <TableCell>
-                  {curso.avaliacao > 0 ? (
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>{curso.avaliacao}</span>
-                      <span className="text-gray-500">({curso.reviews})</span>
-                    </div>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0" disabled={isLoading}>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Eye className="mr-2 h-4 w-4" />
-                        Visualizar
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => (window.location.href = `cursos/${curso.id}/editarCurso`)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Editar
-                      </DropdownMenuItem>
-                      {curso.status === "Rascunho" && (
-                        <DropdownMenuItem onClick={() => onPublish(curso)} disabled={isLoading}>
-                          <Play className="mr-2 h-4 w-4" />
-                          Publicar
-                        </DropdownMenuItem>
-                      )}
-                      {curso.status === "Publicado" && (
-                        <DropdownMenuItem onClick={() => onArchive(curso)} disabled={isLoading}>
-                          <Pause className="mr-2 h-4 w-4" />
-                          Arquivar
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem 
-                        onClick={() => onDelete(curso)} 
-                        className="text-red-600"
-                        disabled={isLoading}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  </CardContent>
+</Card>
   )
 }

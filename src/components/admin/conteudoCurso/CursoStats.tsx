@@ -7,7 +7,7 @@ interface CursoStatsProps {
 
 export function CursoStats({ stats }: CursoStatsProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
       <Card>
         <CardContent className="p-4 text-center">
           <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.totalCursos}</div>
