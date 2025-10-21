@@ -46,19 +46,19 @@ export function CursoConteudo({
         />
 
         {/* Ações da Aula */}
-        <div className="flex items-center justify-between p-4 shadow-md bg-white dark:bg-gray-800 rounded-lg">
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <ThumbsUp className="h-4 w-4 mr-2" />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 shadow-md bg-white dark:bg-gray-800 rounded-lg">
+          <div className="flex justify-between gap-4 sm:gap-8">
+            <Button variant="outline" size="sm" className="w-full xs:w-auto justify-center">
+              <ThumbsUp className="h-4 w-4" />
               Curtir
             </Button>
-            <Button variant="outline" size="sm" onClick={onToggleComments}>
-              <MessageCircle className="h-4 w-4 mr-2" />
+            <Button variant="outline" size="sm" onClick={onToggleComments} className="w-full xs:w-auto justify-center">
+              <MessageCircle className="h-4 w-4" />
               Comentários ({curso.reviews})
             </Button>
           </div>
           <Button>
-            <CheckCircle className="h-4 w-4 mr-2" />
+            <CheckCircle className="h-4 w-4" />
             Marcar como Concluída
           </Button>
         </div>
