@@ -79,7 +79,7 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
       <StatsCards curso={curso} />
       
       <Tabs defaultValue="basic" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+        <TabsList className="grid w-full grid-cols-1 gap-1 md:grid-cols-4 h-full">
           <TabsTrigger value="basic">Informações Básicas</TabsTrigger>
           <TabsTrigger value="content">Conteúdo</TabsTrigger>
           <TabsTrigger value="resources">Recursos</TabsTrigger>
