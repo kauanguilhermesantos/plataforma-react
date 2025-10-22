@@ -14,12 +14,11 @@ interface CursoHeaderProps {
 
 export const CursoHeader = ({ curso, onPublishToggle }: CursoHeaderProps) => {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex items-center space-x-4">
+    <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
+      <div className="flex items-center space-x-4 w-full sm:w-auto">
         <Link href="/admin/cursos">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar
+          <Button variant="ghost" size="icon">
+            <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <div>
@@ -27,7 +26,7 @@ export const CursoHeader = ({ curso, onPublishToggle }: CursoHeaderProps) => {
           <p className="text-muted-foreground">Gerencie o conteúdo e configurações do curso</p>
         </div>
       </div>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2 w-full sm:w-auto justify-between">
         <Badge variant={curso.isPublished ? "default" : "secondary"}>
           {curso.isPublished ? "Publicado" : "Rascunho"}
         </Badge>
