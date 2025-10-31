@@ -150,7 +150,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="flex">
         {/* Sidebar Desktop */}
         {isSidebarOpen && (
-          <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 md:pt-16 transition-all duration-300">
+          <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 lg:pt-16 transition-all duration-300">
             <div className="flex-1 flex flex-col min-h-0 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
               <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
                 <nav className="mt-5 flex-1 px-2 space-y-1">
@@ -186,7 +186,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         )}
 
         {/* Conteúdo Principal */}
-        <main className={`${isSidebarOpen ? "md:pl-64" : "md:pl-0"} flex flex-col flex-1 transition-all duration-300`}>
+        <main className={`${isSidebarOpen ? "lg:pl-64" : "lg:pl-0"} flex flex-col flex-1 transition-all duration-300`}>
           <div className="py-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
           </div>
