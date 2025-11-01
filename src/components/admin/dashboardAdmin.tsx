@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Users, BookOpen, Star } from "lucide-react"
 import { Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { estiloInfo } from "@/data/mockLSQ"
 
 export function AdminDashboard() {
   // Dados simulados para o dashboard
@@ -50,6 +51,13 @@ export function AdminDashboard() {
     { name: "Mobile", value: 10, color: "#EF4444" },
   ]
 
+  const estiloAprendizagemData = [
+    { name: "Ativista", value: 40, color: "#f87171" },
+    { name: "Reflexivo", value: 30, color: "#4ade80" },
+    { name: "Teórico", value: 20, color: "#c084fc" },
+    { name: "Pragmático", value: 10, color: "#60a5fa" },
+  ]
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -90,7 +98,7 @@ export function AdminDashboard() {
 
       {/* Charts */}
       {/* Distribuição por Categoria e Atividade Recente */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Distribuição por Categoria */}
         <Card>
           <CardHeader>
@@ -118,6 +126,44 @@ export function AdminDashboard() {
             </ResponsiveContainer>
             <div className="space-y-2 mt-4">
               {categoryData.map((category) => (
+                <div key={category.name} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }} />
+                    <span className="text-sm">{category.name}</span>
+                  </div>
+                  <span className="text-sm font-medium">{category.value}%</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Cursos por Estilos de Aprendizagem</CardTitle>
+            <CardDescription>Distribuição dos cursos</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={estiloAprendizagemData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {estiloAprendizagemData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="space-y-2 mt-4">
+              {estiloAprendizagemData.map((category) => (
                 <div key={category.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }} />
