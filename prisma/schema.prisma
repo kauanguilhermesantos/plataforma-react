@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["koda_schema"]
+}
+
+model admin {
+  id_usuario Int @id
+
+  @@schema("koda_schema")
+}
+
+model aluno {
+  id_usuario          Int       @id
+  bio                 String?
+  data_entrada        DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
+  estilo_aprendizagem String?   @db.VarChar(50)
+
+  @@schema("koda_schema")
+}
+
+model instrutor {
+  id_instrutor Int     @id @default(autoincrement())
+  nome         String  @db.VarChar(100)
+  bio          String?
+  foto         String? @db.VarChar(255)
+
+  @@schema("koda_schema")
+}
+
+model usuario {
+  id_usuario      Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(100)
+  sobrenome       String?   @db.VarChar(100)
+  email           String    @unique @db.VarChar(255)
+  senha           String    @db.VarChar(255)
+  telefone        String?   @db.VarChar(20)
+  localizacao     String?   @db.VarChar(100)
+  data_nascimento DateTime? @db.Date
+  foto            String?   @db.VarChar(255)
+
+  @@schema("koda_schema")
+}
