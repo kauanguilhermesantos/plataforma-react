@@ -15,29 +15,27 @@ import { PasswordStrength } from "@/components/auth/PasswordStrength"
 import { FcGoogle } from "react-icons/fc"
 
 interface FormData {
-  firstName: string
-  lastName: string
+  nome: string
+  sobrenome: string
   email: string
-  password: string
-  confirmPassword: string
-  // role: string
-  acceptTerms: boolean
+  senha: string
+  confirmaSenha: string
+  aceitar_termos: boolean
 }
 
 export function CadastroForm() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [mostrarSenha, setMostrarSenha] = useState(false)
+  const [mostrarConfirmaSenha, setMostrarConfirmaSenha] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState("")
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    nome: "",
+    sobrenome: "",
     email: "",
-    password: "",
-    confirmPassword: "",
-    // role: "",
-    acceptTerms: false,
+    senha: "",
+    confirmaSenha: "",
+    aceitar_termos: false,
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,15 +57,15 @@ export function CadastroForm() {
   }
 
   const validateForm = (): string | null => {
-    if (!formData.firstName.trim()) return "Nome é obrigatório"
-    if (!formData.lastName.trim()) return "Sobrenome é obrigatório"
+    if (!formData.nome.trim()) return "Nome é obrigatório"
+    if (!formData.sobrenome.trim()) return "Sobrenome é obrigatório"
     if (!formData.email) return "Email é obrigatório"
     if (!isValidEmail(formData.email)) return "Email inválido"
-    if (!formData.password) return "Senha é obrigatória"
-    if (formData.password.length < 6) return "Senha deve ter pelo menos 6 caracteres"
-    if (formData.password !== formData.confirmPassword) return "Senhas não coincidem"
+    if (!formData.senha) return "Senha é obrigatória"
+    if (formData.senha.length < 6) return "Senha deve ter pelo menos 6 caracteres"
+    if (formData.senha !== formData.confirmaSenha) return "Senhas não coincidem"
     // if (!formData.role) return "Selecione seu perfil"
-    if (!formData.acceptTerms) return "Você deve aceitar os termos de uso"
+    if (!formData.aceitar_termos) return "Você deve aceitar os termos de uso"
     return null
   }
 
@@ -82,8 +80,27 @@ export function CadastroForm() {
         throw new Error(validationError)
       }
 
-      // Simula chamada de API
-      await simulateRegister(formData)
+      // Chama a API de registro
+      const response = await fetch("/api/auth/registro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+      },
+        body: JSON.stringify({
+          nome: formData.nome,
+          sobrenome: formData.sobrenome,
+          email: formData.email,
+          senha: formData.senha,
+          aceitar_termos: formData.aceitar_termos,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao criar conta")
+      }
+
       setIsSuccess(true)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao criar conta")
@@ -114,7 +131,7 @@ export function CadastroForm() {
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold">Conta criada com sucesso!</h2>
           <p className="text-gray-600 dark:text-gray-300">
-            Bem-vindo(a) à Koda, <strong>{formData.firstName}</strong>!
+            Bem-vindo(a) à Koda, <strong>{formData.nome}</strong>!
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-300">
             Enviamos um email de confirmação para <strong>{formData.email}</strong>
@@ -123,11 +140,6 @@ export function CadastroForm() {
         <div className="space-y-3">
           <Link href="/login" className="block">
             <Button className="w-full">Fazer Login</Button>
-          </Link>
-          <Link href="/cadastro" className="block">
-            <Button variant="outline" className="w-full" onClick={() => setIsSuccess(false)}>
-              Criar outra conta
-            </Button>
           </Link>
         </div>
       </div>
@@ -152,13 +164,13 @@ export function CadastroForm() {
         {/* Nome e Sobrenome */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName">Nome *</Label>
+            <Label htmlFor="nome">Nome *</Label>
             <Input
-              id="firstName"
-              name="firstName"
+              id="nome"
+              name="nome"
               type="text"
               placeholder="João"
-              value={formData.firstName}
+              value={formData.nome}
               onChange={handleInputChange}
               disabled={isLoading}
               required
@@ -166,13 +178,13 @@ export function CadastroForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lastName">Sobrenome *</Label>
+            <Label htmlFor="sobrenome">Sobrenome *</Label>
             <Input
-              id="lastName"
-              name="lastName"
+              id="sobrenome"
+              name="sobrenome"
               type="text"
               placeholder="Silva"
-              value={formData.lastName}
+              value={formData.sobrenome}
               onChange={handleInputChange}
               disabled={isLoading}
               required
@@ -202,11 +214,11 @@ export function CadastroForm() {
           <Label htmlFor="password">Senha *</Label>
           <div className="relative">
             <Input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
+              id="senha"
+              name="senha"
+              type={mostrarSenha ? "text" : "senha"}
               placeholder="Mínimo 6 caracteres"
-              value={formData.password}
+              value={formData.senha}
               onChange={handleInputChange}
               disabled={isLoading}
               required
@@ -217,26 +229,26 @@ export function CadastroForm() {
               variant="ghost"
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setMostrarSenha(!mostrarSenha)}
               disabled={isLoading}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              <span className="sr-only">{showPassword ? "Ocultar senha" : "Mostrar senha"}</span>
+              {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              <span className="sr-only">{mostrarSenha ? "Ocultar senha" : "Mostrar senha"}</span>
             </Button>
           </div>
-            <PasswordStrength password={formData.password} />
+            <PasswordStrength password={formData.senha} />
         </div>
 
         {/* Confirmar Senha */}
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
+          <Label htmlFor="confirmaSenha">Confirmar Senha *</Label>
           <div className="relative">
             <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
+              id="confirmaSenha"
+              name="confirmaSenha"
+              type={mostrarConfirmaSenha ? "text" : "password"}
               placeholder="Digite a senha novamente"
-              value={formData.confirmPassword}
+              value={formData.confirmaSenha}
               onChange={handleInputChange}
               disabled={isLoading}
               required
@@ -247,10 +259,10 @@ export function CadastroForm() {
               variant="ghost"
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              onClick={() => setMostrarConfirmaSenha(!mostrarConfirmaSenha)}
               disabled={isLoading}
             >
-              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {mostrarConfirmaSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </Button>
           </div>
         </div>
@@ -258,13 +270,13 @@ export function CadastroForm() {
         {/* Termos de Uso */}
         <div className="flex items-center space-x-2">
           <Checkbox
-            id="acceptTerms"
-            name="acceptTerms"
-            checked={formData.acceptTerms}
-            onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, acceptTerms: checked as boolean }))}
+            id="aceitar_termos"
+            name="aceitar_termos"
+            checked={formData.aceitar_termos}
+            onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, aceitar_termos: checked as boolean }))}
             disabled={isLoading}
           />
-          <Label htmlFor="acceptTerms" className="text-sm">
+          <Label htmlFor="aceitar_termos" className="text-sm">
             Aceito os{" "}
             <Link href="/#" className="text-blue-500 hover:text-blue-400 hover:underline">
               Termos de Uso
@@ -324,10 +336,9 @@ async function simulateRegister(userData: FormData) {
     success: true,
     user: {
       id: Math.random().toString(36).substr(2, 9),
-      firstName: userData.firstName,
-      lastName: userData.lastName,
+      nome: userData.nome,
+      sobrenome: userData.sobrenome,
       email: userData.email,
-      // role: userData.role,
     },
   }
 }

@@ -42,6 +42,7 @@ model usuario {
   localizacao     String?   @db.VarChar(100)
   data_nascimento DateTime? @db.Date
   foto            String?   @db.VarChar(255)
+  aceitar_termos  Boolean?
 
   @@schema("koda_schema")
 }

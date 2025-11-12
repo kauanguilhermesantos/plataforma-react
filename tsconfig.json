@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    
     "lib": [
       "dom",
       "dom.iterable",
@@ -24,8 +23,11 @@
     ],
     "baseUrl": "src",
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": [
+        "./*"
+      ]
+    },
+    "strictNullChecks": true
   },
   "include": [
     "next-env.d.ts",
