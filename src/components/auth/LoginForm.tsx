@@ -11,14 +11,17 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, AlertCircle } from "lucide-react"
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link"
+import { useAuth } from "@/hooks/useAuth"
 
 export function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false)
+  const { login } = useAuth();
+
+  const [mostrarSenha, setMostrarSenha] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    senha: "",
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +41,7 @@ export function LoginForm() {
 
     try {
       // Validação básica
-      if (!formData.email || !formData.password) {
+      if (!formData.email || !formData.senha) {
         throw new Error("Por favor, preencha todos os campos")
       }
 
@@ -46,11 +49,35 @@ export function LoginForm() {
         throw new Error("Por favor, insira um email válido")
       }
 
-      // Simula chamada de API
-      await simulateLogin(formData)
+      // Chamada à API de login
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.senha,
+        }),
+      })
 
-      // Redirecionar para dashboard (simulado)
-      console.log("Login realizado com sucesso!")
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao fazer login");
+      }
+
+      // Adicionar cookie para o middleware
+      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; sameSite=Strict`;
+
+      login(data.usuario, data.token);
+
+      // Sucesso no login
+      console.log('Login realizado com sucesso:', data.user)
+
+      // Redirecionar para a Home
+      window.location.href = "/home";
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login")
     } finally {
@@ -85,7 +112,7 @@ export function LoginForm() {
         </Alert>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} method="POST" className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -102,14 +129,14 @@ export function LoginForm() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">Senha</Label>
+          <Label htmlFor="senha">Senha</Label>
           <div className="relative">
             <Input
-              id="password"
-              name="password"
-              type={showPassword ? "text" : "password"}
+              id="senha"
+              name="senha"
+              type={mostrarSenha ? "text" : "password"}
               placeholder="Digite sua senha"
-              value={formData.password}
+              value={formData.senha}
               onChange={handleInputChange}
               disabled={isLoading}
               required
@@ -121,11 +148,11 @@ export function LoginForm() {
               variant="ghost"
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setMostrarSenha(!mostrarSenha)}
               disabled={isLoading}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              <span className="sr-only">{showPassword ? "Ocultar senha" : "Mostrar senha"}</span>
+              {mostrarSenha ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              <span className="sr-only">{mostrarSenha ? "Ocultar senha" : "Mostrar senha"}</span>
             </Button>
           </div>
         </div>
@@ -171,16 +198,4 @@ export function LoginForm() {
 function isValidEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailRegex.test(email)
-}
-
-async function simulateLogin(credentials: { email: string; password: string }) {
-  // Simula delay de rede
-  await new Promise((resolve) => setTimeout(resolve, 1500))
-
-  // Simula validação de credenciais
-  if (credentials.email === "admin@koda.com" && credentials.password === "123456") {
-    return { success: true, user: { email: credentials.email, name: "Admin" } }
-  }
-
-  throw new Error("Email ou senha incorretos")
 }
