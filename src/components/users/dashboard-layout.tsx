@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { use, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -19,6 +19,7 @@ import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { usePathname } from "next/navigation"
 import { Badge } from "../ui/badge"
 import { estiloInfo } from "@/data/mockLSQ"
+import { useAuth } from "@/hooks/useAuth"
 import { mockUsuario } from "@/data/mockUsuario"
 
 interface DashboardLayoutProps {
@@ -29,6 +30,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const pathname = usePathname()
+
+  const { usuario, logout } = useAuth();
 
   // Simulando dados do usuário
   const user = {
@@ -48,11 +51,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: User, label: "Meu Perfil", href: "/meuPerfil" },
   ]
 
-  const handleLogout = () => {
-    // Aqui você implementaria a lógica de logout
-    console.log("Fazendo logout...")
-    // Exemplo: limpar tokens, redirecionar para login, etc.
-    window.location.href = "/login"
+  const handleLogout = async () => {
+    try {
+      console.log("Iniciando logout...");
+      await logout();
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+      window.location.href = '/login';
+    }
   }
 
   return (
@@ -79,11 +85,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64">
-                <MobileNavigation items={navigationItems} user={user} pathname={pathname} onLogout={handleLogout} />
+                <MobileNavigation items={navigationItems} user={user} pathname={pathname || ""} onLogout={handleLogout} />
               </SheetContent>
             </Sheet>
 
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/home" className="flex items-center gap-2">
               <div className="bg-blue-600 p-2 rounded-lg">
                 <GraduationCap className="h-6 w-6 text-white" />
               </div>
