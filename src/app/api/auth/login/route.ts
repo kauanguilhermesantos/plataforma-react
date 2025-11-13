@@ -44,15 +44,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const payload = {
+      usuarioId: usuario.id_usuario,
+      email: usuario.email
+    };
+
     // Criar token JWT
-    const token = jwt.sign(
-      { 
-        usuarioId: usuario.id_usuario,
-        email: usuario.email 
-      },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    )
+    const token = jwt.sign(payload, JWT_SECRET, {
+      expiresIn: '1d', // Expira em 1 dia
+      algorithm: 'HS256' // Algoritmo de assinatura
+    });
 
     // Preparar dados do usuário para resposta (sem a senha)
     const { senha, ...userWithoutPassword } = usuario
