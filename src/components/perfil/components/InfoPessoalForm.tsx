@@ -9,6 +9,9 @@ interface InfoPessoalFormProps {
 }
 
 export function InfoPessoalForm({ usuario, onUserDataChange }: InfoPessoalFormProps) {
+  
+  console.log("Renderizando InfoPessoalForm com dados do usuário:", usuario)
+  
   const handleChange = (field: keyof Usuario, value: string) => {
     onUserDataChange({
       ...usuario,
@@ -91,7 +94,8 @@ export function InfoPessoalForm({ usuario, onUserDataChange }: InfoPessoalFormPr
           rows={4}
           maxLength={500}
         />
-        <p className="text-sm text-gray-500">{usuario.bio.length}/500 caracteres</p>
+        {/* <p className="text-sm text-gray-500">{usuario.bio.length}/500 caracteres</p> */}
+        <p className="text-sm text-gray-500">0/500 caracteres</p>
       </div>
     </div>
   )

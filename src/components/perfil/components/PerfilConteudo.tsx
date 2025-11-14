@@ -8,10 +8,12 @@ import { SecurityTab } from "./SecurityTab"
 import { SuccessAlert } from "@/components/shared/SuccessAlert"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LsqTab } from "./LsqTab"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
   const {
     isLoading,
+    isLoadingUser,
     successMessage,
     userData,
     passwordData,
@@ -21,6 +23,21 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
     handleChangePassword,
     handleDeleteAccount,
   } = usePerfil()
+
+  if (isLoadingUser) {
+    return (
+      <div className="space-y-6">
+        <PerfilHeader 
+          titulo="Meu Perfil" 
+          descricao="Gerencie suas informações pessoais e configurações da conta" 
+        />
+        <div className="space-y-4">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
