@@ -50,7 +50,17 @@ export async function GET(request: NextRequest) {
             },
         });
 
+        const aluno = await prisma.aluno.findUnique({
+            where: { id_usuario: parseInt(decoded.usuarioId) },
+            select: {
+                bio: true,
+                data_entrada: true,
+                estilo_aprendizagem: true
+            }
+        })
+
         console.log("Dados do usuário encontrados:", usuario);
+        console.log("Dados do usuário encontrados:", aluno);
 
         if (!usuario) {
 
@@ -65,12 +75,12 @@ export async function GET(request: NextRequest) {
             ultimoNome: usuario.sobrenome,
             email: usuario.email,
             telefone: usuario.telefone,
-            // bio: usuario.bio,
+            bio: aluno?.bio,
             localizacao: usuario.localizacao,
             dataNascimento: usuario.data_nascimento ? usuario.data_nascimento.toISOString().split('T')[0] : '',
             avatar: usuario.foto,
-            // joinDate: usuario.join_date ? usuario.join_date.toISOString().split('T')[0] : '',
-            // estiloApredizagem: usuario.estilo_apredizagem,
+            joinDate: aluno?.data_entrada ? aluno.data_entrada.toISOString().split('T')[0] : '',
+            estiloApredizagem: aluno?.estilo_aprendizagem,
             // estiloApredizagemScores: usuario.estilo_apredizagem_scores ? JSON.parse(usuario.estilo_apredizagem_scores) : undefined,
         };
 
@@ -105,7 +115,7 @@ export async function PUT(request: NextRequest) {
         const body = await request.json();
 
         // Atualizar os dados do usuário no banco de dados
-        const atualizado = await prisma.usuario.update({
+        const atualizadoUsuario = await prisma.usuario.update({
             where: { id_usuario: parseInt(decoded.usuarioId) },
             data: {
                 nome: body.primeiroNome,
@@ -113,9 +123,20 @@ export async function PUT(request: NextRequest) {
                 telefone: body.telefone,
                 localizacao: body.localizacao,
                 data_nascimento: body.dataNascimento ? new Date(body.dataNascimento) : null,
-                foto: body.avatar
+                foto: body.avatar,
             },
         });
+
+        // Atualizar dados do aluno no banco de dados
+        const atualizadoAluno = await prisma.aluno.update({
+            where: { id_usuario: parseInt(decoded.usuarioId) },
+            data: {
+                bio: body.bio,
+                data_entrada: body.joinDate ? new Date(body.joinDate) : null,
+                estilo_aprendizagem: body.estiloApredizagem
+            }
+        })
+
         // Retornar uma resposta de sucesso
         return NextResponse.json({ message: "Perfil atualizado com sucesso" });
     } catch (error) {
@@ -244,3 +265,5 @@ export async function POST(request: NextRequest) {
         )
     }
 }
+
+

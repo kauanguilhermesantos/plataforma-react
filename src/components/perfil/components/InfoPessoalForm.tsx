@@ -94,8 +94,7 @@ export function InfoPessoalForm({ usuario, onUserDataChange }: InfoPessoalFormPr
           rows={4}
           maxLength={500}
         />
-        {/* <p className="text-sm text-gray-500">{usuario.bio.length}/500 caracteres</p> */}
-        <p className="text-sm text-gray-500">0/500 caracteres</p>
+        <p className="text-sm text-gray-500">{usuario.bio ? usuario.bio.length : 0}/500 caracteres</p>
       </div>
     </div>
   )
