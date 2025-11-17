@@ -8,11 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Save } from "lucide-react"
 import { useEffect } from "react"
 
-export function PerfilTab({ usuario, onUserDataChange, isLoading, onSave }: PerfilTabProps) {
-  const handleAvatarChange = () => {
-    // Simula upload de avatar
-    console.log("Iniciar upload de avatar")
-  }
+export function PerfilTab({ usuario, onUserDataChange, isLoading, isUploadingAvatar = false, onSave, onAvatarUpload }: PerfilTabProps) {
 
   useEffect(() => {
     console.log("Dados do usuário atualizados:", usuario)
@@ -25,12 +21,13 @@ export function PerfilTab({ usuario, onUserDataChange, isLoading, onSave }: Perf
         <CardDescription>Atualize suas informações básicas e foto de perfil</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* <AvatarSection
+        <AvatarSection
           avatar={usuario.avatar}
           primeiroNome={usuario.primeiroNome}
           ultimoNome={usuario.ultimoNome}
-          onAvatarChange={handleAvatarChange}
-        /> */}
+          onAvatarChange={onAvatarUpload ?? ((file: File) => {})}
+          isUploading={isUploadingAvatar}
+        />
 
         <Separator />
 

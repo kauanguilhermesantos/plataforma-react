@@ -6,6 +6,7 @@ import { get } from "http"
 export function usePerfil() {
   const [isLoading, setIsLoading] = useState(false) // Estado de carregamento geral
   const [isLoadingUser, setIsLoadingUser] = useState(true) // Estado de carregamento dos dados do usuário
+  const [isUploadindAvatar, setIsUploadingAvatar] = useState(false) // Estado de upload de avatar
   const [successMessage, setSuccessMessage] = useState("") // Mensagem de sucesso
   const [showDeleteDialog, setShowDeleteDialog] = useState(false) // Estado do diálogo de confirmação de exclusão
   const [showCurrentPassword, setShowCurrentPassword] = useState(false) // Estado de visibilidade da senha atual
@@ -39,6 +40,99 @@ export function usePerfil() {
     }
     return null
   }
+
+  // Função de upload de avatar
+  const handleAvatarUpload = async (file: File) => {
+    try {
+      console.log('🔄 Iniciando upload do avatar...', file.name)
+
+      setIsUploadingAvatar(true);
+
+      const token = getToken();
+
+      if (!token) {
+        console.error("Token não encontrado");
+        return;
+      }
+
+      // Configurar o FormData
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      console.log('🌐 Fazendo requisição para /api/usuario/perfil...')
+
+      const response = await fetch("/api/usuario/perfil", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      console.log('📡 Status da resposta:', response.status)
+      console.log('📡 Response ok:', response.ok)
+
+      if (!response.ok) {
+        const data = await response.json();
+
+        console.log('✅ Resposta da API:', data)
+
+        await fetchUserData()
+
+        // Atualizar os dados do usuário com o novo avatar
+        setUserData((prevData) => ({
+          ...prevData,
+          avatar: data.avatar,
+        }));
+
+        setSuccessMessage("Avatar atualizado com sucesso!")
+        setTimeout(() => setSuccessMessage(""), 3000)
+      } else {
+
+        console.log('❌ Erro na resposta da API')
+
+        const errorData = await response.json();
+
+        console.log('❌ Detalhes do erro:', errorData)
+
+        // alert("Erro ao fazer upload do avatar: " + errorData.error);
+      }
+    } catch (error) {
+      console.error("Erro ao fazer upload do avatar:", error)
+      alert("Erro ao fazer upload do avatar.")
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  }
+
+  const fetchUserData = async () => {
+  try {
+    const token = getToken()
+    
+    if (!token) {
+      console.error("Token não encontrado")
+      return
+    }
+
+    const response = await fetch("/api/usuario/perfil", {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (response.ok) {
+      const userDataFromApi = await response.json()
+      console.log('🔄 Dados atualizados do usuário:', userDataFromApi)
+      setUserData(userDataFromApi)
+    } else {
+      console.error("Erro ao carregar dados do usuário")
+    }
+  } catch (error) {
+    console.error("Erro na requisição:", error)
+  }
+}
 
   // Buscar dados do usuário logado
   useEffect(() => {
@@ -162,6 +256,7 @@ export function usePerfil() {
   return {
     isLoading,
     isLoadingUser,
+    isUploadindAvatar,
     successMessage,
     showDeleteDialog,
     showCurrentPassword,
@@ -176,5 +271,6 @@ export function usePerfil() {
     handleSaveProfile,
     handleChangePassword,
     handleDeleteAccount,
+    handleAvatarUpload,
   }
 }

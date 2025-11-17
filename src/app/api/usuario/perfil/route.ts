@@ -1,6 +1,9 @@
 import { getTokenFromHeader, verifyToken } from "@/lib/jwt";
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/prisma";
+import { join } from "path";
+import { existsSync } from "fs";
+import { mkdir, writeFile } from "fs/promises";
 
 // GET - Buscar dados do usuário logado
 export async function GET(request: NextRequest) {
@@ -40,7 +43,7 @@ export async function GET(request: NextRequest) {
                 // bio: true,
                 localizacao: true,
                 data_nascimento: true,
-                // avatar: true,
+                foto: true,
                 // join_date: true,
                 // estilo_apredizagem: true,
                 // estilo_apredizagem_scores: true,
@@ -65,7 +68,7 @@ export async function GET(request: NextRequest) {
             // bio: usuario.bio,
             localizacao: usuario.localizacao,
             dataNascimento: usuario.data_nascimento ? usuario.data_nascimento.toISOString().split('T')[0] : '',
-            // avatar: usuario.avatar,
+            avatar: usuario.foto,
             // joinDate: usuario.join_date ? usuario.join_date.toISOString().split('T')[0] : '',
             // estiloApredizagem: usuario.estilo_apredizagem,
             // estiloApredizagemScores: usuario.estilo_apredizagem_scores ? JSON.parse(usuario.estilo_apredizagem_scores) : undefined,
@@ -110,6 +113,7 @@ export async function PUT(request: NextRequest) {
                 telefone: body.telefone,
                 localizacao: body.localizacao,
                 data_nascimento: body.dataNascimento ? new Date(body.dataNascimento) : null,
+                foto: body.avatar
             },
         });
         // Retornar uma resposta de sucesso
@@ -118,5 +122,125 @@ export async function PUT(request: NextRequest) {
         // Tratar erros e retornar uma resposta de erro
         console.error("Erro ao atualizar dados do usuário:", error);
         return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+    }
+}
+
+// POST - Upload de avatar do usuário logado
+export async function POST(request: NextRequest) {
+    try {
+
+        console.log('🔐 Recebida requisição para upload de avatar')
+
+        // Extrair e verificar o token JWT
+        const token = getTokenFromHeader(request.headers.get("Authorization"));
+
+        // Verificar se o token está presente
+        if (!token) {
+
+            console.log('❌ Token não fornecido')
+
+            return NextResponse.json({ error: "Token não fornecido" }, { status: 401 });
+        }
+
+        // Verificar e decodificar o token
+        const decoded = verifyToken(token);
+
+        // Verificar se o token decodificado é válido
+        if (!decoded) {
+
+            console.log('❌ Token inválido')
+
+            return NextResponse.json({ error: "Token inválido" }, { status: 401 });
+        }
+
+        console.log('👤 Usuário autenticado:', decoded.usuarioId)
+
+        const formData = await request.formData();
+        const file = formData.get("avatar") as File;
+
+        console.log('📁 Arquivo recebido:', file ? {
+            name: file.name,
+            type: file.type,
+            size: file.size
+        } : 'Nenhum arquivo')
+
+        if (!file) {
+            
+            console.log('❌ Nenhum arquivo enviado')
+
+            return NextResponse.json({ message: "Nenhum arquivo encontrado"}, { status: 400 })
+        }
+
+        // Validar tipo do arquivo
+        const tiposValidos = ["image/jpeg", "image/png"];
+        if (!tiposValidos.includes(file.type)) {
+
+            console.log('❌ Tipo de arquivo inválido:', file.type)
+
+            return NextResponse.json({ message: "Tipo de arquivo não suportado. Use JPG ou PNG." }, { status: 400 })
+        }
+
+        // Validar tamanho (10MB)
+        if (file.size > 10 * 1024 *1024) {
+
+            console.log('❌ Arquivo muito grande:', file.size)
+
+            return NextResponse.json({ message: "Arquivo muito grande. Máximo 10MB." }, { status: 400 })
+        }
+
+        // Converter File para Buffer
+        const bytes = await file.arrayBuffer()
+        const buffer = await Buffer.from(bytes)
+
+        // Criar nome único para o arquivo
+        const timestamp = Date.now()
+        const fileExtension = file.type.split("/")[1]
+        const fileName = `avatar-${decoded.usuarioId}-${timestamp}.${fileExtension}`
+        
+        // Definir caminha para salvar (public/avatars)
+        const uploadDir = join(process.cwd(), "public", "avatars")
+
+        console.log('📂 Diretório de upload:', uploadDir)
+
+        // Criar diretório se não existir
+    if (!existsSync(uploadDir)) {
+
+        console.log('📁 Criando diretório...')
+
+      await mkdir(uploadDir, { recursive: true })
+    }
+
+    const filePath = join(uploadDir, fileName)
+
+    console.log('💾 Salvando arquivo em:', filePath)
+    
+    // Salvar arquivo
+    await writeFile(filePath, buffer)
+
+    // URL para acessar a imagem
+    const avatarUrl = `/avatars/${fileName}`
+
+    console.log('👤 Atualizando avatar no banco para:', avatarUrl)
+
+    // Atualizar no banco de dados
+    await prisma.usuario.update({
+        where: { id_usuario: parseInt(decoded.usuarioId)},
+        data: { foto: avatarUrl}
+    })
+
+    console.log('✅ Avatar atualizado com sucesso')
+
+    return NextResponse.json({
+        sucess: true,
+        avatarUrl,
+        message: "Avatar atualizado com sucesso"
+    })
+
+    } catch (error) {
+        console.error("Erro no upload do avatar: ", error)
+        return NextResponse.json(
+            { message: "Erro interno do servidor"},
+            { status: 500 }
+        )
     }
 }

@@ -14,6 +14,7 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
   const {
     isLoading,
     isLoadingUser,
+    isUploadindAvatar,
     successMessage,
     userData,
     passwordData,
@@ -22,6 +23,7 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
     handleSaveProfile,
     handleChangePassword,
     handleDeleteAccount,
+    handleAvatarUpload,
   } = usePerfil()
 
   if (isLoadingUser) {
@@ -60,7 +62,9 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
             usuario={userData}
             onUserDataChange={setUserData}
             isLoading={isLoading}
+            isUploadingAvatar={isUploadindAvatar}
             onSave={handleSaveProfile}
+            onAvatarUpload={handleAvatarUpload}
           />
         </TabsContent>
 

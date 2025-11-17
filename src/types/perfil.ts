@@ -33,7 +33,9 @@ export interface PerfilTabProps {
   usuario: Usuario
   onUserDataChange: (data: Usuario) => void
   isLoading: boolean
+  isUploadingAvatar?: boolean
   onSave: () => void
+  onAvatarUpload?: (file: File) => void
 }
 
 export interface LsqTabProps {
