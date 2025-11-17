@@ -5,7 +5,8 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value
 
   // Rotas que requerem autenticação 
-  if (request.nextUrl.pathname.startsWith('/home')) {
+  if (request.nextUrl.pathname.startsWith('/home') || 
+  request.nextUrl.pathname.startsWith('/meuPerfil')) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
@@ -22,5 +23,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/home/:path*', '/login']
+  matcher: ['/home/:path*', '/meuPerfil/:path', '/login']
 }
