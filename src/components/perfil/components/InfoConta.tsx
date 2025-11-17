@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge"
 import { Calendar } from "lucide-react"
 import { Usuario } from "@/types/perfil"
 
@@ -17,7 +16,9 @@ export function InfoConta({ usuario }: InfoContaProps) {
 //   }
 
   const formatJoinDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pt-BR")
+    const data = new Date(dateString);
+    data.setDate(data.getDate() + 1)
+    return data.toLocaleDateString("pt-BR")
   }
 
   return (
