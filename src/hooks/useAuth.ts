@@ -3,6 +3,7 @@ import { Usuario } from '@/types/perfil'
 
 interface UsuarioComTipo extends Usuario {
   tipo: "admin" | "aluno" | "usuario"
+  primeiroAcesso?: boolean
 }
 
 export function useAuth() {
@@ -21,6 +22,9 @@ export function useAuth() {
   // Função para fazer login
   const login = (userData: UsuarioComTipo, token: string) => {
     try {
+      console.log('Dados do usuário no login:', userData) // DEBUG
+      console.log('Primeiro acesso?:', userData.primeiroAcesso) // DEBUG
+
       setUsuario(userData)
       localStorage.setItem('usuario', JSON.stringify(userData))
       localStorage.setItem('token', token)
@@ -31,7 +35,14 @@ export function useAuth() {
       if (userData.tipo === "admin") {
         window.location.href ="/admin"  
       } else if (userData.tipo === "aluno") {
-        window.location.href = "/home"
+        // Se for primeiro acesso, redireciona para /boasVindas
+        if (userData.primeiroAcesso === true) {
+          console.log('Primeiro acesso - Redirecionando para /boasVindas') // DEBUG
+          window.location.href = "/boasVindas"
+        } else {
+          console.log('Não é primeiro acesso - Redirecionando para /home') // DEBUG
+          window.location.href = "/home"
+        }
       }
 
     } catch (error) {

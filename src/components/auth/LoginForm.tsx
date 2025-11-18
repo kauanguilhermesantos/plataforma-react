@@ -81,9 +81,6 @@ export function LoginForm() {
       // Sucesso no login
       console.log('Login realizado com sucesso:', data.user)
 
-      // Redireciona de acordo com o tipo de usuario
-      window.location.href = data.usuario.tipo === "admin" ? "/admin" : "/home";
-
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login")
     } finally {

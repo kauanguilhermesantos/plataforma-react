@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Se o usuário NÃO está logado e tenta acessar rotas protegidas
-  if (!token && (pathname.startsWith('/home') || pathname.startsWith('/admin') || pathname.startsWith('/meuPerfil'))) {
+  if (!token && (pathname.startsWith('/home') || pathname.startsWith('/admin') || pathname.startsWith('/meuPerfil') || pathname.startsWith('/boasVindas'))) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -23,6 +23,7 @@ export const config = {
     '/home/:path*', 
     '/meuPerfil/:path*', 
     '/admin/:path*',
-    '/login'
+    '/login',
+    '/boasVindas/:path*'
   ]
 }

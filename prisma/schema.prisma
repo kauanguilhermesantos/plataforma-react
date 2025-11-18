@@ -19,6 +19,7 @@ model aluno {
   bio                 String?
   data_entrada        DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
   estilo_aprendizagem String?   @db.VarChar(50)
+  primeiro_acesso     Boolean?  @default(true)
 
   @@schema("koda_schema")
 }

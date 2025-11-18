@@ -5,9 +5,53 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, ClipboardList, Zap, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/hooks/useAuth"
+import { useState } from "react"
 
 export function BoasVindasEscolha() {
   const router = useRouter()
+  const { usuario } = useAuth()
+  const [loading, setLoading] = useState(false)
+
+  const handleAcessoDireto = async () => {
+    try {
+      setLoading(true)
+
+      // Se for primeiro acesso, chamar API para atualizar
+      if (usuario?.primeiroAcesso) {
+        const response = await fetch('/api/boasVindas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+        })
+
+        if (!response.ok) {
+          throw new Error("Erro ao atualizar o primeiro acesso")
+        }
+
+        const data = await response.json()
+
+        if (data.sucess) {
+          // Atualizar localStorage
+          const usuarioAtualizado = {
+            ...usuario,
+            primeiroAcesso: false
+          }
+          localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado))
+        }
+      }
+      
+      // Redirecionar para home
+      router.push("/home")
+    } catch (error) {
+      console.error('Erro ao processar primeiro acesso:', error)
+      router.push("/home")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 dark:from-gray-900 dark:via-blue-950 dark:to-gray-800 flex items-center justify-center p-4">
@@ -25,9 +69,9 @@ export function BoasVindasEscolha() {
           </p>
         </div>
 
-        {/* Options */}
+        {/* Opções */}
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Quiz Option */}
+          {/* LSQ */}
           <Card className="group hover:shadow-2xl transition-all duration-300 border-2 hover:border-blue-500 dark:hover:border-blue-600 cursor-pointer relative overflow-hidden">
             <div className="absolute top-4 right-4">
               <Badge className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white border-0">Recomendado</Badge>
@@ -70,7 +114,7 @@ export function BoasVindasEscolha() {
             </CardContent>
           </Card>
 
-          {/* Direct Access Option */}
+          {/* Acesso Direto */}
           <Card className="group hover:shadow-2xl transition-all duration-300 border-2 hover:border-gray-400 dark:hover:border-gray-600 cursor-pointer">
             <CardContent className="p-8">
               <div className="mb-6">
@@ -99,7 +143,7 @@ export function BoasVindasEscolha() {
                 </div>
               </div>
 
-              <Button onClick={() => router.push("/home")} size="lg" variant="outline" className="w-full border-2">
+              <Button onClick={handleAcessoDireto} size="lg" variant="outline" className="w-full border-2">
                 Ir para Plataforma
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>

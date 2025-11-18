@@ -53,10 +53,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Verificar primeiro acesso
+    const primeiroAcesso = aluno?.primeiro_acesso || false;
+
     const payload = {
       usuarioId: usuario.id_usuario,
       email: usuario.email,
-      tipo: tipoUsuario
+      tipo: tipoUsuario,
+      primeiroAcesso: primeiroAcesso
     };
 
     // Criar token JWT
@@ -72,7 +76,8 @@ export async function POST(request: NextRequest) {
       success: true,
       usuario: {
         ...userWithoutPassword,
-        tipo: tipoUsuario
+        tipo: tipoUsuario,
+        primeiroAcesso: primeiroAcesso
       },
       token,
       message: 'Login realizado com sucesso!'
