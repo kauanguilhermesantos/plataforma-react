@@ -67,16 +67,22 @@ export function LoginForm() {
         throw new Error(data.error || "Erro ao fazer login");
       }
 
+      if (!data.success) {
+        throw new Error(data.error || "Erro ao fazer login");
+      }
+
+      console.log("Login response: ", data);
+
       // Adicionar cookie para o middleware
-      document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; sameSite=Strict`;
+      document.cookie = `token=${data.token}; path=/; max-age=${1 * 24 * 60 * 60}; secure; sameSite=Strict`;
 
       login(data.usuario, data.token);
 
       // Sucesso no login
       console.log('Login realizado com sucesso:', data.user)
 
-      // Redirecionar para a Home
-      window.location.href = "/home";
+      // Redireciona de acordo com o tipo de usuario
+      window.location.href = data.usuario.tipo === "admin" ? "/admin" : "/home";
 
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login")

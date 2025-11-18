@@ -3,25 +3,26 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value
+  const { pathname } = request.nextUrl
 
-  // Rotas que requerem autenticação 
-  if (request.nextUrl.pathname.startsWith('/home') || 
-  request.nextUrl.pathname.startsWith('/meuPerfil')) {
-    if (!token) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
+  // Se o usuário NÃO está logado e tenta acessar rotas protegidas
+  if (!token && (pathname.startsWith('/home') || pathname.startsWith('/admin') || pathname.startsWith('/meuPerfil'))) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Se o usuário já está logado, redirecionar do login para a Home
-  if (request.nextUrl.pathname.startsWith('/login')) {
-    if (token) {
-      return NextResponse.redirect(new URL('/home', request.url))
-    }
+  // Se o usuário ESTÁ logado e tenta acessar login
+  if (token && pathname.startsWith('/login')) {
+    return NextResponse.next()
   }
 
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/home/:path*', '/meuPerfil/:path', '/login']
+  matcher: [
+    '/home/:path*', 
+    '/meuPerfil/:path*', 
+    '/admin/:path*',
+    '/login'
+  ]
 }

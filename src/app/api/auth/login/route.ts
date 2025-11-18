@@ -20,10 +20,6 @@ export async function POST(request: NextRequest) {
     // Buscar usuário pelo email
     const usuario = await prisma.usuario.findUnique({
       where: { email },
-    //   include: {
-    //     aluno: true,
-    //     admin: true
-    //   }
     })
 
     // Verificar se usuário existe
@@ -33,6 +29,19 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
+
+    // Verificar aluno e admin
+    const [aluno, admin] = await Promise.all([
+      prisma.aluno.findUnique({
+        where: { id_usuario: usuario.id_usuario }
+      }),
+      prisma.admin.findUnique({
+        where: { id_usuario: usuario.id_usuario }
+      })
+    ])
+
+    // Determinar tipo de usuário
+    const tipoUsuario = admin ? "admin" : aluno ? "aluno" : "usuario";
 
     // Verificar senha
     const isPasswordValid = await bcrypt.compare(password, usuario.senha)
@@ -46,7 +55,8 @@ export async function POST(request: NextRequest) {
 
     const payload = {
       usuarioId: usuario.id_usuario,
-      email: usuario.email
+      email: usuario.email,
+      tipo: tipoUsuario
     };
 
     // Criar token JWT
@@ -58,14 +68,11 @@ export async function POST(request: NextRequest) {
     // Preparar dados do usuário para resposta (sem a senha)
     const { senha, ...userWithoutPassword } = usuario
 
-    // Determinar o tipo de usuário
-    // const userType = usuario.admin ? 'admin' : usuario.aluno ? 'aluno' : 'usuario'
-
     return NextResponse.json({
       success: true,
       usuario: {
         ...userWithoutPassword,
-        // tipo: userType
+        tipo: tipoUsuario
       },
       token,
       message: 'Login realizado com sucesso!'

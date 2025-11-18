@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Usuario } from '@/types/perfil'
 
+interface UsuarioComTipo extends Usuario {
+  tipo: "admin" | "aluno" | "usuario"
+}
+
 export function useAuth() {
-  const [usuario, setUsuario] = useState<Usuario | null>(null)
+  const [usuario, setUsuario] = useState<UsuarioComTipo | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -15,36 +19,62 @@ export function useAuth() {
   }, [])
 
   // Função para fazer login
-  const login = (userData: Usuario, token: string) => {
-    setUsuario(userData)
-    localStorage.setItem('usuario', JSON.stringify(userData))
-    localStorage.setItem('token', token)
+  const login = (userData: UsuarioComTipo, token: string) => {
+    try {
+      setUsuario(userData)
+      localStorage.setItem('usuario', JSON.stringify(userData))
+      localStorage.setItem('token', token)
 
-    document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=lax` // 7 dias
+      document.cookie = `token=${token}; path=/; max-age=${1 * 24 * 60 * 60}; secure; samesite=lax`
+
+      // Identifica o tipo de usuário e direciona
+      if (userData.tipo === "admin") {
+        window.location.href ="/admin"  
+      } else if (userData.tipo === "aluno") {
+        window.location.href = "/home"
+      }
+
+    } catch (error) {
+      console.error('Erro durante o login:', error)
+      throw error
+    }
   }
 
   // Função para fazer logout
   const logout = async () => {
     try {
-      // Limpar sessão no servidor
-      setUsuario(null)
-
-      // Limpar dados do localStorage
+      // Limpar todos os dados de autenticação
       localStorage.removeItem('usuario')
       localStorage.removeItem('token')
 
-      // Limpar cookie de token
-      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;'
-      document.cookie = 'token=; path=/; domain=' + window.location.hostname + '; expires=Thu, 01 Jan 1970 00:00:00 GMT;'
+      // Limpar cookie de token de forma mais agressiva
+      const domain = window.location.hostname
+      const basePath = window.location.origin
+      
+      // Limpar cookies de todas as formas possíveis
+      const cookiesToClear = [
+        'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT',
+        `token=; path=/; domain=${domain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`,
+        'token=; path=/; domain=.' + domain + '; expires=Thu, 01 Jan 1970 00:00:00 GMT',
+        `token=; path=/; domain=${basePath}; expires=Thu, 01 Jan 1970 00:00:00 GMT`
+      ]
 
-      // Redirecionar para a página de login
-      window.location.href = '/login';
+      cookiesToClear.forEach(cookie => {
+        document.cookie = cookie
+      })
+
+      // SÓ DEPOIS limpar o estado
+      setUsuario(null)
+
+      // E forçar recarregamento para limpar qualquer cache
+      window.location.replace('/login')
 
     } catch (error) {
       console.error('Erro ao fazer logout:', error)
-
-      // Redirecionar para a página de login mesmo em caso de erro
-      window.location.href = '/login';
+      // Forçar limpeza e redirecionamento mesmo em caso de erro
+      localStorage.removeItem('usuario')
+      localStorage.removeItem('token')
+      window.location.replace('/login')
     }
   }
 
