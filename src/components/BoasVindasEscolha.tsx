@@ -53,6 +53,10 @@ export function BoasVindasEscolha() {
     }
   }
 
+  const handleAcessoLsq = async () => {
+    router.push("/lsq")
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 dark:from-gray-900 dark:via-blue-950 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="max-w-5xl w-full">
@@ -104,7 +108,7 @@ export function BoasVindasEscolha() {
               </div>
 
               <Button
-                onClick={() => router.push("/lsq")}
+                onClick={handleAcessoLsq}
                 size="lg"
                 className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white"
               >

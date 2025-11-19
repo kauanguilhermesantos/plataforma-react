@@ -15,11 +15,16 @@ model admin {
 }
 
 model aluno {
-  id_usuario          Int       @id
-  bio                 String?
-  data_entrada        DateTime? @default(dbgenerated("CURRENT_DATE")) @db.Date
-  estilo_aprendizagem String?   @db.VarChar(50)
-  primeiro_acesso     Boolean?  @default(true)
+  id_usuario                                                                                                                       Int                  @id
+  bio                                                                                                                              String?
+  data_entrada                                                                                                                     DateTime?            @default(dbgenerated("CURRENT_DATE")) @db.Date
+  estilo_aprendizagem                                                                                                              String?              @db.VarChar(50)
+  primeiro_acesso                                                                                                                  Boolean?             @default(true)
+  ativista_score                                                                                                                   Int?
+  reflexivo_score                                                                                                                  Int?
+  teorico_score                                                                                                                    Int?
+  pragmatico_score                                                                                                                 Int?
+  estilo_aprendizagem_aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem estilo_aprendizagem? @relation("aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem", fields: [estilo_aprendizagem, ativista_score, reflexivo_score, teorico_score, pragmatico_score], references: [estilo_aprendizagem_dominante, ativista_score, reflexivo_score, teorico_score, pragmatico_score], onDelete: NoAction, onUpdate: NoAction, map: "estilo_aprendizagem_dominante")
 
   @@schema("koda_schema")
 }
@@ -45,5 +50,18 @@ model usuario {
   foto            String?   @db.VarChar(255)
   aceitar_termos  Boolean?
 
+  @@schema("koda_schema")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model estilo_aprendizagem {
+  estilo_aprendizagem_dominante                                                                                      String  @db.VarChar(50)
+  ativista_score                                                                                                     Int
+  reflexivo_score                                                                                                    Int
+  teorico_score                                                                                                      Int
+  pragmatico_score                                                                                                   Int
+  aluno_aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem aluno[] @relation("aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem")
+
+  @@id([estilo_aprendizagem_dominante, ativista_score, reflexivo_score, teorico_score, pragmatico_score])
   @@schema("koda_schema")
 }

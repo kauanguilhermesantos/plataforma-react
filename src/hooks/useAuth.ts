@@ -19,6 +19,26 @@ export function useAuth() {
     setLoading(false)
   }, [])
 
+  // Função para atualizar os dados do usuário
+  const atualizarUsuario = (dadosAtualizados: Partial<UsuarioComTipo>) => {
+    setUsuario(prev => {
+      if (!prev) return prev
+      
+      const novoUsuario = { 
+        ...prev, 
+        ...dadosAtualizados 
+      }
+      
+      console.log('Atualizando usuário:', { 
+        anterior: prev, 
+        atualizado: novoUsuario 
+      }) // DEBUG
+      
+      localStorage.setItem('usuario', JSON.stringify(novoUsuario))
+      return novoUsuario
+    })
+  }
+
   // Função para fazer login
   const login = (userData: UsuarioComTipo, token: string) => {
     try {
@@ -89,5 +109,5 @@ export function useAuth() {
     }
   }
 
-  return { usuario, login, logout, loading }
+  return { usuario, login, logout, loading, atualizarUsuario }
 }

@@ -5,30 +5,45 @@ import { useRouter } from "next/navigation"
 import { Resultados, EstiloAprendizagem, EstiloInfo } from "@/types/perguntaLSQ"
 import { EstiloCard } from "./EstiloCard"
 import { ScoreBar } from "./ScoreBar"
+import { useState } from "react"
 
 interface ResultadosTelaProps {
   resultados: Resultados
   estiloDominante: EstiloAprendizagem
   estiloInfo: Record<string, EstiloInfo>
-  getStyleLevel: (score: number, estilo: EstiloAprendizagem) => string
-  onFinish: () => void
+  getNivelEstilo: (score: number, estilo: EstiloAprendizagem) => string
+  onSalvaResultados: (resultados: Resultados, estiloDominante: EstiloAprendizagem) => Promise<void>
+  onFinaliza: () => void
 }
 
 export function ResultadosTela({
   resultados,
   estiloDominante,
   estiloInfo,
-  getStyleLevel,
-  onFinish,
+  getNivelEstilo,
+  onSalvaResultados,
+  onFinaliza,
 }: ResultadosTelaProps) {
-  const router = useRouter()
+  const router = useRouter();
+  const [isSalvando, setIsSalvando] = useState(false)
   
   // Verificação de segurança
   const estiloDominanteInfo = estiloDominante ? estiloInfo[estiloDominante] : null
 
-  const handleFinish = () => {
-    onFinish()
-    router.push("/home")
+  // Função para finalizar LSQ
+  const handleFinalizar = async () => {
+    try {
+      setIsSalvando(true)
+      await onSalvaResultados(resultados, estiloDominante);
+      onFinaliza()
+      router.push("/home")
+    } catch (error) {
+      console.error("Erro ao salvar resultados:", error)
+      // Mesmo com erro, redireciona para home
+      router.push("/home")
+    } finally {
+      setIsSalvando(false);
+    }
   }
 
   // Se não houver estilo dominante, mostrar estado de erro
@@ -89,7 +104,7 @@ export function ResultadosTela({
             <div className="grid gap-4">
               {(Object.entries(resultados) as [EstiloAprendizagem, number][]).map(([style, score]) => {
                 const info = estiloInfo[style]
-                const level = getStyleLevel(score, style)
+                const level = getNivelEstilo(score, style)
 
                 return (
                   <ScoreBar
@@ -110,7 +125,7 @@ export function ResultadosTela({
           {/* Botões de Acão */}
           <div className="text-center">
             <Button
-              onClick={handleFinish}
+              onClick={handleFinalizar}
               size="lg"
               className={`bg-gradient-to-r ${estiloDominanteInfo.color} hover:opacity-90 text-white px-8`}
             >

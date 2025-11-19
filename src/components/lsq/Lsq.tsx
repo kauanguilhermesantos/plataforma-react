@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { useLSQ } from "./hooks/useLSQ"
+import { useLSQ } from "../../hooks/useLSQ"
 import { LSQHeader } from "./LSQHeader"
 import { ProgressSection } from "./ProgressSection"
 import { InstrucoesBanner } from "./InstrucoesBanner"
@@ -17,28 +17,30 @@ export function LSQ({ onComplete, onCancel }: LSQProps) {
     totalPages,
     progress,
     currentQuestions,
-    answers,
-    showResults,
-    results,
-    allCurrentQuestionsAnswered,
-    handleAnswer,
+    respostas,
+    mostrarResultados,
+    resultados,
+    todasQuestoesRespondidas,
+    handleResposta,
     handleNext,
     handlePrevious,
-    getDominantStyle,
-    getStyleLevel,
-  } = useLSQ()
+    getEstiloDominante,
+    getNivelEstilo,
+    salvarResultados
+  } = useLSQ({ onComplete })
 
-  if (showResults && results) {
-    const dominantStyle = getDominantStyle(results)
+  if (mostrarResultados && resultados) {
+    const estiloDominante = getEstiloDominante(resultados)
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-50 dark:from-gray-900 dark:via-blue-950 dark:to-gray-800 p-4">
         <ResultadosTela
-          resultados={results}
-          estiloDominante={dominantStyle}
+          resultados={resultados}
+          estiloDominante={estiloDominante!}
           estiloInfo={estiloInfo}
-          getStyleLevel={getStyleLevel}
-          onFinish={() => onComplete?.(results)}
+          getNivelEstilo={getNivelEstilo}
+          onSalvaResultados={salvarResultados}
+          onFinaliza={() => onComplete?.(resultados)}
         />
       </div>
     )
@@ -69,8 +71,8 @@ export function LSQ({ onComplete, onCancel }: LSQProps) {
                 <PerguntaCard
                   key={pergunta.id}
                   pergunta={pergunta}
-                  resposta={answers[pergunta.id]}
-                  onAnswer={handleAnswer}
+                  resposta={respostas[pergunta.id]}
+                  onAnswer={handleResposta}
                 />
               ))}
             </div>
@@ -80,7 +82,7 @@ export function LSQ({ onComplete, onCancel }: LSQProps) {
         <NavigationButtons
           currentPage={currentPage}
           totalPages={totalPages}
-          allQuestionsAnswered={allCurrentQuestionsAnswered}
+          allQuestionsAnswered={todasQuestoesRespondidas}
           onPrevious={handlePrevious}
           onNext={handleNext}
         />
