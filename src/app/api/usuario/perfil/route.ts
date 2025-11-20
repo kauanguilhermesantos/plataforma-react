@@ -55,7 +55,11 @@ export async function GET(request: NextRequest) {
             select: {
                 bio: true,
                 data_entrada: true,
-                estilo_aprendizagem: true
+                estilo_aprendizagem: true,
+                ativista_score: true,
+                reflexivo_score: true,
+                teorico_score: true,
+                pragmatico_score: true
             }
         })
 
@@ -80,8 +84,13 @@ export async function GET(request: NextRequest) {
             dataNascimento: usuario.data_nascimento ? usuario.data_nascimento.toISOString().split('T')[0] : '',
             avatar: usuario.foto,
             joinDate: aluno?.data_entrada ? aluno.data_entrada.toISOString().split('T')[0] : '',
-            estiloApredizagem: aluno?.estilo_aprendizagem,
-            // estiloApredizagemScores: usuario.estilo_apredizagem_scores ? JSON.parse(usuario.estilo_apredizagem_scores) : undefined,
+            estiloAprendizagem: aluno?.estilo_aprendizagem,
+            estiloAprendizagemScores: {
+                ativista: aluno?.ativista_score || 0,
+                reflexivo: aluno?.reflexivo_score || 0,
+                teorico: aluno?.teorico_score || 0,
+                pragmatico: aluno?.pragmatico_score || 0
+            }
         };
 
         console.log("Dados do usuário formatados:", usuarioData);

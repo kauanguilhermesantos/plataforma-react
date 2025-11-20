@@ -9,25 +9,14 @@ import { LsqTabProps } from "@/types/perfil";
 
 {/* Card de Estilo de Aprendizagem */}
 export function LsqTab({ usuario }: LsqTabProps) {
-    // Simulando dados do usuário
-  const userStats = {
-    coursesCompleted: 12,
-    coursesInProgress: 3,
-    totalHours: 156,
-    streak: 7,
-    achievements: 24,
-    rank: "Intermediário",
-    estiloAprendizagem: "pragmatico",
-    estiloAprendizagemScores: {
-        ativista: 15,
-        reflexivo: 12,
-        teorico: 14,
-        pragmatico: 18
-    }
-  }
-
   // Função para obter a classificação do nível
   const getLevelClassification = (score: number, style: string) => {
+    
+    // Se o score for undefined, retorna ?
+    if (score === undefined || score === null) {
+      return "?";
+    }
+
     const ranges: { [key: string]: number[][] } = {
       Ativista: [
         [0, 7],
@@ -70,11 +59,11 @@ export function LsqTab({ usuario }: LsqTabProps) {
     return "Moderada"
   }
 
-//   if (!usuario.estiloApredizagem) {
-//     return null; // Não renderiza nada se o estilo de aprendizagem não estiver definido
-//   }
+  // if (!usuario.estiloAprendizagem) {
+  //   return null; // Não renderiza nada se o estilo de aprendizagem não estiver definido
+  // }
 
-  const estiloAprendizagemInfo = estiloInfo[userStats.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() as keyof typeof estiloInfo];
+  const estiloAprendizagemInfo = usuario.estiloAprendizagem ? estiloInfo[usuario.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() as keyof typeof estiloInfo] : null;
   const EstiloIcon = estiloAprendizagemInfo ? estiloAprendizagemInfo.icon : CircleQuestionMark;
 
   return (
@@ -90,18 +79,28 @@ export function LsqTab({ usuario }: LsqTabProps) {
                 <CardDescription>Baseado no questionário de Peter Honey e Alan Mumford</CardDescription>
                 </div>
             </div>
-            <Link href="/lsq">
-                <Button variant="outline" size="sm">
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Refazer
-                </Button>
-            </Link>
+            {!usuario.estiloAprendizagem &&
+              <Link href="/lsq">
+                  <Button variant="outline" size="sm">
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Responder Questionário
+                  </Button>
+              </Link>
+            }
+            {usuario.estiloAprendizagem &&
+              <Link href="/lsq">
+                  <Button variant="outline" size="sm">
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Refazer
+                  </Button>
+              </Link>
+            }
             </div>
         </CardHeader>
         <CardContent className="space-y-6">
-            <p className="text-sm text-gray-600 dark:text-gray-400">{estiloAprendizagemInfo?.descricao || "Descrição não disponível"}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{estiloAprendizagemInfo?.descricao || "Estilo de aprendizagem não definido. Responda o questionário para descobrir o seu estilo de aprendizagem."}</p>
 
-            {userStats.estiloAprendizagemScores && (
+            {usuario.estiloAprendizagemScores && (
             <>
                 <Separator />
                 <div className="space-y-4">
@@ -114,16 +113,16 @@ export function LsqTab({ usuario }: LsqTabProps) {
                         <span>Ativista</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                        <span className="font-bold">{userStats.estiloAprendizagemScores.ativista}/20</span>
+                        <span className="font-bold">{usuario.estiloAprendizagemScores.ativista || 0}/20</span>
                         <Badge variant="outline" className="text-xs">
-                            {getLevelClassification(userStats.estiloAprendizagemScores.ativista, "Ativista")}
+                            {getLevelClassification(usuario.estiloAprendizagemScores?.ativista, "Ativista")}
                         </Badge>
                         </div>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
                         className="bg-orange-600 h-2 rounded-full transition-all"
-                        style={{ width: `${(userStats.estiloAprendizagemScores.ativista / 20) * 100}%` }}
+                        style={{ width: `${((usuario.estiloAprendizagemScores?.ativista || 0) / 20) * 100}%` }}
                         />
                     </div>
                     </div>
@@ -135,16 +134,16 @@ export function LsqTab({ usuario }: LsqTabProps) {
                         <span>Reflexivo</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                        <span className="font-bold">{userStats.estiloAprendizagemScores.reflexivo}/20</span>
+                        <span className="font-bold">{usuario.estiloAprendizagemScores.reflexivo || 0}/20</span>
                         <Badge variant="outline" className="text-xs">
-                            {getLevelClassification(userStats.estiloAprendizagemScores.reflexivo, "Reflexivo")}
+                            {getLevelClassification(usuario.estiloAprendizagemScores.reflexivo, "Reflexivo")}
                         </Badge>
                         </div>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
                         className="bg-emerald-600 h-2 rounded-full transition-all"
-                        style={{ width: `${(userStats.estiloAprendizagemScores.reflexivo / 20) * 100}%` }}
+                        style={{ width: `${((usuario.estiloAprendizagemScores.reflexivo || 0) / 20) * 100}%` }}
                         />
                     </div>
                     </div>
@@ -156,16 +155,16 @@ export function LsqTab({ usuario }: LsqTabProps) {
                         <span>Teórico</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                        <span className="font-bold">{userStats.estiloAprendizagemScores.teorico}/20</span>
+                        <span className="font-bold">{usuario.estiloAprendizagemScores.teorico || 0}/20</span>
                         <Badge variant="outline" className="text-xs">
-                            {getLevelClassification(userStats.estiloAprendizagemScores.teorico, "Teórico")}
+                            {getLevelClassification(usuario.estiloAprendizagemScores.teorico, "Teórico")}
                         </Badge>
                         </div>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
                         className="bg-violet-600 h-2 rounded-full transition-all"
-                        style={{ width: `${(userStats.estiloAprendizagemScores.teorico / 20) * 100}%` }}
+                        style={{ width: `${((usuario.estiloAprendizagemScores.teorico || 0) / 20) * 100}%` }}
                         />
                     </div>
                     </div>
@@ -177,16 +176,16 @@ export function LsqTab({ usuario }: LsqTabProps) {
                         <span>Pragmático</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                        <span className="font-bold">{userStats.estiloAprendizagemScores.pragmatico}/20</span>
+                        <span className="font-bold">{usuario.estiloAprendizagemScores.pragmatico || 0}/20</span>
                         <Badge variant="outline" className="text-xs">
-                            {getLevelClassification(userStats.estiloAprendizagemScores.pragmatico, "Pragmático")}
+                            {getLevelClassification(usuario.estiloAprendizagemScores.pragmatico, "Pragmático")}
                         </Badge>
                         </div>
                     </div>
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                         <div
                         className="bg-cyan-600 h-2 rounded-full transition-all"
-                        style={{ width: `${(userStats.estiloAprendizagemScores.pragmatico / 20) * 100}%` }}
+                        style={{ width: `${((usuario.estiloAprendizagemScores.pragmatico || 0) / 20) * 100}%` }}
                         />
                     </div>
                     </div>

@@ -10,8 +10,8 @@ export interface Usuario {
 //   role: string
   avatar: string
   joinDate: string
-  estiloApredizagem: string
-  estiloApredizagemScores?: {
+  estiloAprendizagem: string
+  estiloAprendizagemScores?: {
     ativista: number
     reflexivo: number
     teorico: number

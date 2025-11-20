@@ -1,7 +1,5 @@
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { Usuario, Senha } from "@/types/perfil"
-import { mockUsuario } from "@/data/mockUsuario"
-import { get } from "http"
 
 export function usePerfil() {
   const [isLoading, setIsLoading] = useState(false) // Estado de carregamento geral
@@ -23,8 +21,14 @@ export function usePerfil() {
     dataNascimento: "",
     avatar: "",
     joinDate: "",
-    estiloApredizagem: "",
     bio: "",
+    estiloAprendizagem: "",
+    estiloAprendizagemScores: {
+      ativista: 0,
+      reflexivo: 0,
+      teorico: 0,
+      pragmatico: 0
+    }
   })
 
   const [passwordData, setPasswordData] = useState<Senha>({
@@ -72,7 +76,7 @@ export function usePerfil() {
       console.log('📡 Status da resposta:', response.status)
       console.log('📡 Response ok:', response.ok)
 
-      if (!response.ok) {
+      if (response.ok) {
         const data = await response.json();
 
         console.log('✅ Resposta da API:', data)
@@ -99,7 +103,7 @@ export function usePerfil() {
       }
     } catch (error) {
       console.error("Erro ao fazer upload do avatar:", error)
-      alert("Erro ao fazer upload do avatar.")
+      // alert("Erro ao fazer upload do avatar.")
     } finally {
       setIsUploadingAvatar(false);
     }

@@ -1,7 +1,7 @@
 "use client"
 
 import { PerfilConteudoProps } from "@/types/perfil"
-import { usePerfil } from "@/components/perfil/hooks/usePerfil"
+import { usePerfil } from "@/hooks/usePerfil"
 import { PerfilHeader } from "./PerfilHeader"
 import { PerfilTab } from "./PerfilTab"
 import { SecurityTab } from "./SecurityTab"
@@ -67,6 +67,10 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
             onAvatarUpload={handleAvatarUpload}
           />
         </TabsContent>
+        
+        <TabsContent value="estiloAprendizagem">
+          <LsqTab usuario={userData} />
+        </TabsContent>
 
         <TabsContent value="security">
           <SecurityTab
@@ -78,9 +82,6 @@ export function PerfilConteudo({ usuarioId }: PerfilConteudoProps) {
           />
         </TabsContent>
 
-        <TabsContent value="estiloAprendizagem">
-          <LsqTab usuario={userData} />
-        </TabsContent>
       </Tabs>
     </div>
   )
