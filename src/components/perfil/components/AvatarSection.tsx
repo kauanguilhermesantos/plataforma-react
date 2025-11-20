@@ -53,7 +53,7 @@ export function AvatarSection({ avatar, primeiroNome, ultimoNome, onAvatarChange
   return (
     <div className="flex items-center space-x-4">
       <Avatar className="h-20 w-20">
-        <AvatarImage src={avatar} alt={primeiroNome} />
+        <AvatarImage src={avatar} alt={primeiroNome} key={avatar} />
         <AvatarFallback className="text-lg">
           {primeiroNome?.[0] || ""}
           {ultimoNome?.[0] || ""}

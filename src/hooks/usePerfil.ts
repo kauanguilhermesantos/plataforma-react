@@ -81,16 +81,11 @@ export function usePerfil() {
 
         console.log('✅ Resposta da API:', data)
 
-        await fetchUserData()
-
-        // Atualizar os dados do usuário com o novo avatar
-        setUserData((prevData) => ({
-          ...prevData,
-          avatar: data.avatar,
-        }));
+        // Buscar dados atualizados do usuário
+        await fetchUserData(); // Atualiza todos os dados incluindo o avatar
 
         setSuccessMessage("Avatar atualizado com sucesso!")
-        setTimeout(() => setSuccessMessage(""), 3000)
+        setTimeout(() => setSuccessMessage(""), 5000)
       } else {
 
         console.log('❌ Erro na resposta da API')
