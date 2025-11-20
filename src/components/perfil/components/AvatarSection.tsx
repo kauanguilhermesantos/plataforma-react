@@ -53,11 +53,10 @@ export function AvatarSection({ avatar, primeiroNome, ultimoNome, onAvatarChange
   return (
     <div className="flex items-center space-x-4">
       <Avatar className="h-20 w-20">
-        {/* <AvatarImage src={"public/avatars"} alt={primeiroNome}/> */}
         <AvatarImage src={avatar} alt={primeiroNome} />
         <AvatarFallback className="text-lg">
-          {primeiroNome[0]}
-          {ultimoNome[0]}
+          {primeiroNome?.[0] || ""}
+          {ultimoNome?.[0] || ""}
         </AvatarFallback>
       </Avatar>
       <div className="space-y-2">

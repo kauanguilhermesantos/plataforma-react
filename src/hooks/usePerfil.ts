@@ -208,9 +208,9 @@ export function usePerfil() {
 
       if (response.ok) {
         const updatedUser = await response.json();
-        setUserData(updatedUser)
+        // setUserData(updatedUser)
         setSuccessMessage("Perfil atualizado com sucesso!")
-        setTimeout(() => setSuccessMessage(""), 3000)
+        setTimeout(() => setSuccessMessage(""), 5000)
       } else {
         const errorData = await response.json();
         console.error("Erro ao salvar perfil:", response.statusText)
