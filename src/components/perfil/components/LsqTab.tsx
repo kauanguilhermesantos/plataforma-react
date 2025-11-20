@@ -69,33 +69,34 @@ export function LsqTab({ usuario }: LsqTabProps) {
   return (
     <Card className={`${estiloAprendizagemInfo?.borderColor || 'border-gray-200'} border-2`}>
         <CardHeader>
-            <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
             <div className="flex items-center space-x-3">
-                <div className={`p-3 rounded-lg ${estiloAprendizagemInfo?.bgColor || 'bg-gray-100'}`}>
-                <EstiloIcon className={`h-6 w-6 ${estiloAprendizagemInfo?.textColor || 'text-gray-600'}`} />
+                <div className={`p-3 rounded-lg ${estiloAprendizagemInfo?.bgColor || 'bg-gray-300 dark:bg-gray-100'}`}>
+                <EstiloIcon className={`h-6 w-6 ${estiloAprendizagemInfo?.textColor || 'text-gray-500 dark:text-gray-600'}`} />
                 </div>
                 <div>
-                <CardTitle className={estiloAprendizagemInfo?.textColor || 'text-gray-100'}>Estilo de Aprendizagem: {estiloAprendizagemInfo?.nome || "Desconhecido"}</CardTitle>
+                <CardTitle className={estiloAprendizagemInfo?.textColor || 'text-gray-500 dark:text-gray-100'}>Estilo de Aprendizagem: {estiloAprendizagemInfo?.nome || "Desconhecido"}</CardTitle>
                 <CardDescription>Baseado no questionário de Peter Honey e Alan Mumford</CardDescription>
                 </div>
             </div>
-            {!usuario.estiloAprendizagem &&
-              <Link href="/lsq">
-                  <Button variant="outline" size="sm">
+            
+            {!usuario.estiloAprendizagem ? (
+              <Link href="/lsq" className="w-full sm:w-auto">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Responder Questionário
-                  </Button>
+                </Button>
               </Link>
-            }
-            {usuario.estiloAprendizagem &&
-              <Link href="/lsq">
-                  <Button variant="outline" size="sm">
+            ) : (
+              <Link href="/lsq" className="w-full sm:w-auto">
+                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Refazer
-                  </Button>
+                </Button>
               </Link>
-            }
-            </div>
+            )}
+            
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
             <p className="text-sm text-gray-600 dark:text-gray-400">{estiloAprendizagemInfo?.descricao || "Estilo de aprendizagem não definido. Responda o questionário para descobrir o seu estilo de aprendizagem."}</p>
