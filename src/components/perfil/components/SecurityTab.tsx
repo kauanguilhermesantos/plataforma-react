@@ -15,7 +15,7 @@ export function SecurityTab({
       <Card>
         <CardHeader>
           <CardTitle>Alterar Senha</CardTitle>
-          <CardDescription>Mantenha sua conta segura com uma senha forte</CardDescription>
+          <CardDescription>Mantenha sua conta segura com uma senha forte.</CardDescription>
         </CardHeader>
         <CardContent>
           <SenhaForm

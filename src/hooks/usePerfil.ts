@@ -110,33 +110,33 @@ export function usePerfil() {
   }
 
   const fetchUserData = async () => {
-  try {
-    const token = getToken()
-    
-    if (!token) {
-      console.error("Token não encontrado")
-      return
-    }
+    try {
+      const token = getToken()
+      
+      if (!token) {
+        console.error("Token não encontrado")
+        return
+      }
 
-    const response = await fetch("/api/usuario/perfil", {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    })
+      const response = await fetch("/api/usuario/perfil", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
 
-    if (response.ok) {
-      const userDataFromApi = await response.json()
-      console.log('🔄 Dados atualizados do usuário:', userDataFromApi)
-      setUserData(userDataFromApi)
-    } else {
-      console.error("Erro ao carregar dados do usuário")
+      if (response.ok) {
+        const userDataFromApi = await response.json()
+        console.log('🔄 Dados atualizados do usuário:', userDataFromApi)
+        setUserData(userDataFromApi)
+      } else {
+        console.error("Erro ao carregar dados do usuário")
+      }
+    } catch (error) {
+      console.error("Erro na requisição:", error)
     }
-  } catch (error) {
-    console.error("Erro na requisição:", error)
   }
-}
 
   // Buscar dados do usuário logado
   useEffect(() => {
@@ -192,10 +192,6 @@ export function usePerfil() {
     fetchUserData();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Dados do usuário carregados:", userData)
-  // }, [userData])
-
   const handleSaveProfile = async () => {
     setIsLoading(true)
     try {
@@ -232,12 +228,70 @@ export function usePerfil() {
       return
     }
 
+    // Validar requisitos da senha
+    const requisitosSenha = [
+      (pwd: string) => pwd.length >= 8,
+      (pwd: string) => /[a-z]/.test(pwd),
+      (pwd: string) => /[A-Z]/.test(pwd),
+      (pwd: string) => /\d/.test(pwd),
+      (pwd: string) => /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
+    ]
+
+    const requisitosFalhos = requisitosSenha.filter(req => !req(passwordData.newPassword))
+
+    // Validar requisitos da senha
+    if (requisitosFalhos.length > 0) {
+    alert("A senha não atende todos os requisitos de segurança!")
+    return
+  }
+
     setIsLoading(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+
+      const token = getToken()
+
+      if (!token) {
+        console.error("❌ Token não encontrado no storage")
+        console.log("Token não encontrado")
+        return
+      }
+
+      console.log('🔐 Token recebido:', token)
+
+      console.log('🔄 Enviando requisição para alterar senha...')
+
+      const response = await fetch("/api/usuario/seguranca", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        }),
+      })
+
+      console.log('📡 Status da resposta:', response.status)
+
+      if (!response.ok) {
+      const errorData = await response.json()
+      console.error('❌ Erro na resposta:', errorData)
+      throw new Error(errorData.error || 'Erro ao alterar senha')
+    }
+
+      const data = await response.json()
+      console.log('✅ Senha alterada com sucesso:', data)
+
       setSuccessMessage("Senha alterada com sucesso!")
-      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" })
-      setTimeout(() => setSuccessMessage(""), 3000)
+      setPasswordData({ 
+        currentPassword: "", 
+        newPassword: "", 
+        confirmPassword: "" 
+      })
+
+      // Limpar campos de senha
+      setTimeout(() => setSuccessMessage(""), 5000)
     } catch (error) {
       console.error("Erro ao alterar senha:", error)
     } finally {
