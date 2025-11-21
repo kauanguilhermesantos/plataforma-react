@@ -21,6 +21,7 @@ import { Badge } from "../ui/badge"
 import { estiloInfo } from "@/data/mockLSQ"
 import { useAuth } from "@/hooks/useAuth"
 import { mockUsuario } from "@/data/mockUsuario"
+import { Separator } from "../ui/separator"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -225,7 +226,7 @@ function MobileNavigation({
             className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
               pathname === item.href
                 ? "bg-blue-100 text-blue-900"
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
             }`}
           >
             <item.icon className="mr-3 h-5 w-5" />
@@ -233,7 +234,29 @@ function MobileNavigation({
           </Link>
         ))}
 
-        {/* Logout Button Mobile */}
+       
+      </nav>
+
+      <div className="p-4 border-t flex flex-col gap-2">
+        <Link href={"/meuPerfil"}>
+          <div className="flex items-center gap-3">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarFallback>
+                {user.name
+                  .split(" ")
+                  .map((n: string) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-300 truncate">{user.name}</p>
+              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+            </div>
+          </div>
+        </Link>
+
+         {/* Logout Button Mobile */}
         <button
           onClick={onLogout}
           className="group flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
@@ -241,24 +264,6 @@ function MobileNavigation({
           <LogOut className="mr-3 h-5 w-5" />
           Sair
         </button>
-      </nav>
-
-      <div className="p-4 border-t">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
-            <AvatarFallback>
-              {user.name
-                .split(" ")
-                .map((n: string) => n[0])
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{user.name}</p>
-            <p className="text-xs text-gray-500 truncate">{user.email}</p>
-          </div>
-        </div>
       </div>
     </div>
   )
