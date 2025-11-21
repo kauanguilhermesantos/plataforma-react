@@ -236,7 +236,7 @@ function MobileNavigation({
       <div className="p-4 border-t">
         <Link href={"/meuPerfil"}>
           <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-10 w-10">
               <AvatarImage src={usuario.avatar} alt={usuario?.primeiroNome} />
               <AvatarFallback>
                 {usuario?.primeiroNome?.[0] || ""}
@@ -246,10 +246,15 @@ function MobileNavigation({
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-800 dark:text-gray-300 truncate">{usuario?.primeiroNome} {usuario?.ultimoNome}</p>
               <p className="text-xs text-gray-500 truncate">{usuario?.email}</p>
+              {estiloAprendizagemInfo && (
+                <Badge className={`mt-1 w-fit text-xs ${estiloAprendizagemInfo.bgColor} ${estiloAprendizagemInfo.textColor} ${estiloAprendizagemInfo.borderColor} flex items-center gap-1.5`}>
+                  <EstiloIcon className="h-3 w-3" />
+                  {estiloAprendizagemInfo.nome}
+                </Badge>
+              )}
             </div>
           </div>
         </Link>
-
 
       </div>
         <Separator/>
