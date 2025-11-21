@@ -19,6 +19,8 @@ import Link from "next/link"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { usePathname } from "next/navigation"
 import { Separator } from "../ui/separator"
+import { usePerfil } from "@/hooks/usePerfil"
+import { useAuth } from "@/hooks/useAuth"
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -29,22 +31,20 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const pathname = usePathname()
 
-  // Simulando dados do admin
-  const admin = {
-    name: "Kauan Santos",
-    email: "admin@koda.com",
-    role: "Admin",
-    avatar: "/placeholder.svg?height=32&width=32",
-  }
+  const { logout } = useAuth();
+
+  const { userData } = usePerfil();
+  const admin = userData;
 
   const navigationItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/admin" },
     { icon: BookOpen, label: "Cursos", href: "/admin/cursos" },
   ]
 
-  const handleLogout = () => {
-    console.log("Admin fazendo logout...")
-    window.location.href = "/login"
+  const handleLogout = async () => {
+    console.log("Admin fazendo logout...");
+    await logout()
+    // window.location.href = "/login"
   }
 
   return (
@@ -71,7 +71,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64">
-                <MobileNavigation items={navigationItems} admin={admin} pathname={pathname} onLogout={handleLogout} />
+                <MobileNavigation items={navigationItems} admin={admin} pathname={pathname || ""} onLogout={handleLogout} />
               </SheetContent>
             </Sheet>
 
@@ -94,12 +94,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={admin.avatar || "/placeholder.svg"} alt={admin.name} />
+                    <AvatarImage src={admin.avatar} alt={admin.primeiroNome} />
                     <AvatarFallback>
-                      {admin.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {admin?.primeiroNome?.[0] || ""}
+                      {admin?.ultimoNome?.[0] || ""}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -107,10 +105,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{admin.name}</p>
+                    <p className="text-sm font-medium leading-none">{admin?.primeiroNome} {admin?.ultimoNome}</p>
                     <p className="text-xs leading-none text-muted-foreground">{admin.email}</p>
                     <Badge variant="destructive" className="w-fit text-xs">
-                      {admin.role}
+                      Admin
                     </Badge>
                   </div>
                 </DropdownMenuLabel>
@@ -212,39 +210,36 @@ function MobileNavigation({
             </Link>
           ))}
         </div>
+      </nav>
 
+      <div className="p-4 border-t">
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={admin.avatar} alt={admin.name} />
+            <AvatarFallback>
+              {admin?.primeiroNome?.[0] || ""}
+              {admin?.ultimoNome?.[0] || ""}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 dark:text-gray-300 truncate">{admin?.primeiroNome} {admin?.ultimoNome}</p>
+            <p className="text-xs text-gray-500 truncate">{admin.email}</p>
+            <Badge variant="destructive" className="text-xs mt-1">
+              Admin
+            </Badge>
+          </div>
+        </div>
+      </div>
         <Separator/>
 
         {/* Logout Button Mobile */}
         <button
           onClick={onLogout}
-          className="group flex  items-center w-full px-2 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+          className="group flex  items-center w-full p-4 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
         >
           <LogOut className="mr-3 h-5 w-5" />
           Sair
         </button>
-      </nav>
-
-      <div className="p-4 border-t">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={admin.avatar || "/placeholder.svg"} alt={admin.name} />
-            <AvatarFallback>
-              {admin.name
-                .split(" ")
-                .map((n: string) => n[0])
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-300 truncate">{admin.name}</p>
-            <p className="text-xs text-gray-500 truncate">{admin.email}</p>
-            <Badge variant="destructive" className="text-xs mt-1">
-              {admin.role}
-            </Badge>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
