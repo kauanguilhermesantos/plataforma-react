@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Clock, Play, CheckCircle, CircleQuestionMark } from "lucide-react"
+import { Clock, Play, CheckCircle, CircleQuestionMark, TrendingUp, BookOpen } from "lucide-react"
 import Link from "next/link"
 import { estiloInfo } from "@/data/mockLSQ"
 import { usePerfil } from "@/hooks/usePerfil"
@@ -90,18 +90,38 @@ export function DashboardContent() {
           </CardContent>
         </Card>
 
-        {estiloAprendizagemInfo && (
-          <Card className={`${estiloAprendizagemInfo.borderColor} border-2`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Estilo de Aprendizagem</CardTitle>
-              <EstiloIcon className={`h-4 w-4 ${estiloAprendizagemInfo.textColor}`} />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${estiloAprendizagemInfo.textColor}`}>{estiloAprendizagemInfo.nome}</div>
-              <p className="text-xs text-muted-foreground">Personalizado para você</p>
-            </CardContent>
-          </Card>
-        )}
+        {estiloAprendizagemInfo ? (
+            <Card className={`${estiloAprendizagemInfo.borderColor} border-2`}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Estilo de Aprendizagem</CardTitle>
+                <EstiloIcon className={`h-4 w-4 ${estiloAprendizagemInfo.textColor}`} />
+              </CardHeader>
+              <CardContent>
+                <div className={`text-2xl font-bold ${estiloAprendizagemInfo.textColor}`}>{estiloAprendizagemInfo.nome}</div>
+                <p className="text-xs text-muted-foreground">Personalizado para você</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className={"dark:border-gray-200"}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium dark:text-gray-300">Estilo de Aprendizagem</CardTitle>
+                <EstiloIcon className={"h-4 w-4 text-gray-700 dark:text-gray-300"} />
+              </CardHeader>
+              <CardContent>
+                <div className={"text-xl font-bold text-gray-600 dark:text-gray-300"}>Desconhecido</div>
+                <p className="text-xs text-muted-foreground">Faça o teste e descubra</p>
+                <div className="mt-2 flex items-center justify-center">
+                  <Link href={"/lsq"}>
+                    <Button size="sm" className="dark:text-white" variant="default">
+                      <Play className="h-4 w-4 mr-1" />
+                      Faça o Teste
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        }
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 dark:text-white">
