@@ -13,14 +13,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { GraduationCap, Menu, Home, BookOpen, Settings, LogOut, Bell, Search, User, CircleQuestionMark } from "lucide-react"
+import { GraduationCap, Menu, Home, BookOpen, LogOut, Search, User, CircleQuestionMark } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import { usePathname } from "next/navigation"
 import { Badge } from "../ui/badge"
 import { estiloInfo } from "@/data/mockLSQ"
 import { useAuth } from "@/hooks/useAuth"
-import { mockUsuario } from "@/data/mockUsuario"
 import { Separator } from "../ui/separator"
 import { usePerfil } from "@/hooks/usePerfil"
 
@@ -35,6 +34,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const { logout } = useAuth();
 
+  // Carregando dados do usuário
   const { userData } = usePerfil();
   const usuario = userData
 
