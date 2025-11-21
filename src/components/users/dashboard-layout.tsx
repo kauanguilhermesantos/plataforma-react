@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { use, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -22,6 +22,7 @@ import { estiloInfo } from "@/data/mockLSQ"
 import { useAuth } from "@/hooks/useAuth"
 import { mockUsuario } from "@/data/mockUsuario"
 import { Separator } from "../ui/separator"
+import { usePerfil } from "@/hooks/usePerfil"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -32,17 +33,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const pathname = usePathname()
 
-  const { usuario, logout } = useAuth();
+  const { logout } = useAuth();
 
-  // Simulando dados do usuário
-  const user = {
-    name: "João Silva",
-    email: "joao@email.com",
-    role: "student",
-    avatar: "/placeholder.svg?height=32&width=32",
-    estiloAprendizagem: "pragmatico",
-  }
-  const estiloAprendizagemInfo = estiloInfo[user.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() as keyof typeof estiloInfo];
+  const { userData } = usePerfil();
+  const usuario = userData
+
+  // Obter o estilo de aprendizagem
+  const estiloAprendizagemInfo = usuario?.estiloAprendizagem ? estiloInfo[usuario.estiloAprendizagem.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase() as keyof typeof estiloInfo] : null;
   const EstiloIcon = estiloAprendizagemInfo ? estiloAprendizagemInfo.icon : CircleQuestionMark;
   
   const navigationItems = [
@@ -86,7 +83,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-64">
-                <MobileNavigation items={navigationItems} user={user} pathname={pathname || ""} onLogout={handleLogout} />
+                <MobileNavigation 
+                  items={navigationItems} 
+                  usuario={usuario} 
+                  pathname={pathname || ""} 
+                  onLogout={handleLogout} 
+                  estiloAprendizagemInfo={estiloAprendizagemInfo}
+                  EstiloIcon={EstiloIcon}  
+                />
               </SheetContent>
             </Sheet>
 
@@ -103,25 +107,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Botão do Tema */}
             <ThemeToggle />
 
-            {/* Notifiações */}
-            {/* <Button variant="ghost" size="sm" className="relative">
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                3
-              </span>
-            </Button> */}
-
             {/* Menu do Usuário */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
+                    <AvatarImage src={usuario?.avatar} alt={usuario?.primeiroNome} />
                     <AvatarFallback>
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {usuario?.primeiroNome?.[0] || ""}
+                      {usuario?.ultimoNome?.[0] || ""}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -129,12 +123,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.name}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                    <Badge className={`w-fit text-xs ${estiloAprendizagemInfo.bgColor} ${estiloAprendizagemInfo.textColor} ${estiloAprendizagemInfo.borderColor} flex items-center gap-1.5`}>
-                      <EstiloIcon className="h-3 w-3" />
-                      {estiloAprendizagemInfo.nome}
-                    </Badge>
+                    <p className="text-sm font-medium leading-none">{usuario?.primeiroNome} {usuario?.ultimoNome}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{usuario?.email}</p>
+                    {estiloAprendizagemInfo && (
+                      <Badge className={`w-fit text-xs ${estiloAprendizagemInfo.bgColor} ${estiloAprendizagemInfo.textColor} ${estiloAprendizagemInfo.borderColor} flex items-center gap-1.5`}>
+                        <EstiloIcon className="h-3 w-3" />
+                        {estiloAprendizagemInfo.nome}
+                      </Badge>
+                    )}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -205,10 +201,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
 function MobileNavigation({
   items,
-  user,
+  usuario,
   pathname,
   onLogout,
-}: { items: any[]; user: any; pathname: string; onLogout: () => void }) {
+  estiloAprendizagemInfo,
+  EstiloIcon
+}: { items: any[]; usuario: any; pathname: string; onLogout: () => void, estiloAprendizagemInfo, EstiloIcon }) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center gap-2 p-4 border-b">
@@ -233,38 +231,37 @@ function MobileNavigation({
             {item.label}
           </Link>
         ))}
-
-       
       </nav>
 
-      <div className="p-4 border-t flex flex-col gap-2">
+      <div className="p-4 border-t">
         <Link href={"/meuPerfil"}>
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={usuario.avatar} alt={usuario?.primeiroNome} />
               <AvatarFallback>
-                {user.name
-                  .split(" ")
-                  .map((n: string) => n[0])
-                  .join("")}
+                {usuario?.primeiroNome?.[0] || ""}
+                {usuario?.ultimoNome?.[0] || ""}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-300 truncate">{user.name}</p>
-              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-300 truncate">{usuario?.primeiroNome} {usuario?.ultimoNome}</p>
+              <p className="text-xs text-gray-500 truncate">{usuario?.email}</p>
             </div>
           </div>
         </Link>
 
-         {/* Logout Button Mobile */}
+
+      </div>
+        <Separator/>
+        
+        {/* Logout Button Mobile */}
         <button
           onClick={onLogout}
-          className="group flex items-center w-full px-2 py-2 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+          className="group flex items-center w-full p-4 text-sm font-medium rounded-md text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
         >
           <LogOut className="mr-3 h-5 w-5" />
           Sair
         </button>
-      </div>
     </div>
   )
 }
