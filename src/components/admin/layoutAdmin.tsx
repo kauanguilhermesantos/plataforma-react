@@ -191,7 +191,7 @@ function MobileNavigation({
         </div>
         <div className="flex flex-col">
           <span className="font-bold text-xl text-gray-900 dark:text-white">Koda Admin</span>
-          <span className="text-xs text-gray-500">Painel Administrativo</span>
+          <span className="text-xs text-gray-400">Painel Administrativo</span>
         </div>
       </div>
 
@@ -202,7 +202,9 @@ function MobileNavigation({
               key={item.href}
               href={item.href}
               className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                pathname === item.href ? "bg-red-100 text-red-900" : "dark:text-gray-300 hover:bg-gray-50 hover:text-gray-900"
+                pathname === item.href 
+                ? "bg-red-100 text-red-900" 
+                : "text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
               }`}
             >
               <item.icon className="mr-3 h-5 w-5" />
@@ -222,7 +224,7 @@ function MobileNavigation({
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-300 truncate">{admin?.primeiroNome} {admin?.ultimoNome}</p>
+            <p className="text-sm font-medium text-gray-800 dark:text-gray-300 truncate">{admin?.primeiroNome} {admin?.ultimoNome}</p>
             <p className="text-xs text-gray-500 truncate">{admin.email}</p>
             <Badge variant="destructive" className="text-xs mt-1">
               Admin
