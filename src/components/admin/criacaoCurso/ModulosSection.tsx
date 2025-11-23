@@ -8,7 +8,7 @@ import { ModuloItem } from "./components/ModuloItem";
 interface ModulosSectionProps {
   modulos: Modulo[];
   onModuleAdd: () => void;
-  onModuleUpdate: (moduloId: number, titulo: string) => void;
+  onModuleUpdate: (moduloId: number, field: keyof Modulo, titulo: string) => void;
   onModuleRemove: (moduloId: number) => void;
   onLessonAdd: (moduloId: number) => void;
   onLessonUpdate: (moduloId: number, aulaId: number, field: keyof Aula, value: string) => void;
@@ -44,20 +44,29 @@ export const ModulosSection = ({
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
-        {modulos.map((modulo, moduloIndex) => (
-          <ModuloItem
-            key={modulo.id}
-            modulo={modulo}
-            moduloIndex={moduloIndex}
-            onModuleUpdate={onModuleUpdate}
-            onModuleRemove={onModuleRemove}
-            onLessonAdd={onLessonAdd}
-            onLessonUpdate={onLessonUpdate}
-            onLessonRemove={onLessonRemove}
-            onVideoUpload={onVideoUpload}
-            onVideoRemove={onVideoRemove}
-          />
-        ))}
+        {modulos.length === 0 ? (
+          <div className="text-center py-8 text-slate-500 dark:text-slate-400 border border-dashed border-slate-300 dark:border-slate-700 rounded-lg">
+            <p>Nenhum módulo adicionado ainda</p>
+            <p className="text-sm mt-1">Clique em "Adicionar Módulo" para começar</p>
+          </div>
+        ) : (
+          <>
+            {modulos.map((modulo, moduloIndex) => (
+              <ModuloItem
+                key={modulo.id}
+                modulo={modulo}
+                moduloIndex={moduloIndex}
+                onModuleUpdate={onModuleUpdate}
+                onModuleRemove={onModuleRemove}
+                onLessonAdd={onLessonAdd}
+                onLessonUpdate={onLessonUpdate}
+                onLessonRemove={onLessonRemove}
+                onVideoUpload={onVideoUpload}
+                onVideoRemove={onVideoRemove}
+              />
+            ))}
+          </>
+        )}
       </CardContent>
     </Card>
   );

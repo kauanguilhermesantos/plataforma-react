@@ -17,6 +17,8 @@ export function AdminCursosConteudo() {
     setSelectedCategory,
     selectedStatus,
     setSelectedStatus,
+    selectedEstilo,
+    setSelectedEstilo,
     selectedCourse,
     isDeleteDialogOpen,
     setIsDeleteDialogOpen,
@@ -27,7 +29,8 @@ export function AdminCursosConteudo() {
     handlePublishCurso,
     handleArchiveCurso,
     getStatusBadge,
-    getNivelBadge
+    getNivelBadge,
+    getEstiloBadge
   } = useCursos()
 
   const handleNovoCurso = () => {
@@ -59,6 +62,8 @@ export function AdminCursosConteudo() {
         onCategoryChange={setSelectedCategory}
         selectedStatus={selectedStatus}
         onStatusChange={setSelectedStatus}
+        selectedEstilo={selectedEstilo}
+        onEstiloChange={setSelectedEstilo}
       />
 
       {/* Tabela de Cursos */}
@@ -70,6 +75,7 @@ export function AdminCursosConteudo() {
         isLoading={isLoading}
         getStatusBadge={getStatusBadge}
         getNivelBadge={getNivelBadge}
+        getEstiloBadge={getEstiloBadge}
       />
 
       {/* Dialog de Exclusão */}

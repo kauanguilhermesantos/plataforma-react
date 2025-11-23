@@ -68,7 +68,7 @@ export const InstrutorFotoUpload = ({
                 alt="Preview do avatar do instrutor"
                 className="w-16 h-16 rounded-full object-cover dark:bg-slate-700 border-2 dark:border-slate-600"
               />
-              <span className="text-xs text-slate-700 dark:text-slate-400">{instrutor.foto}</span>
+              <span className="text-xs text-slate-700 dark:text-slate-400 truncate">{instrutor.foto}</span>
             </div>
           </div>
         )}

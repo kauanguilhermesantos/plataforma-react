@@ -27,3 +27,47 @@ export function getTokenFromHeader(authHeader: string | null): string | null {
   }
   return authHeader.substring(7) // Remove "Bearer "
 }
+
+// lib/jwt.ts
+export class JWTService {
+  static async verifyToken(token: string): Promise<any> {
+    try {
+      // Aqui você implementaria a verificação real do JWT
+      // Por enquanto, vamos simular uma verificação básica
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Token inválido');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw new Error('Token inválido');
+    }
+  }
+
+  static getToken(): string | null {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('token');
+    }
+    return null;
+  }
+
+  static setToken(token: string): void {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', token);
+    }
+  }
+
+  static removeToken(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+    }
+  }
+}

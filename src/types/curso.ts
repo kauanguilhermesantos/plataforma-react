@@ -8,10 +8,12 @@ export type CursoStatus = "Rascunho" | "Publicado" | "Arquivado";
 export interface Aula {
   id: number;
   titulo: string;
-  duracao: string;
-  tipo: TipoAula;
-  videoUrl?: string;
+  duracao: number;
   descricao?: string;
+  status?: string;
+  tipo?: TipoAula;
+  ordem?: number;
+  videoUrl?: string | null;
   videoArquivo?: string;
   videoPreview?: string;
   isUploading?: boolean;
@@ -27,10 +29,11 @@ export interface Modulo {
   id: number;
   titulo: string;
   descricao?: string;
-  aulas: Aula[];
   ordem?: number;
+  aulas: Aula[];
   concluida?: number;
-  total?:number
+  total?:number;
+  status?: string
 }
 
 export interface Recurso {
@@ -43,10 +46,11 @@ export interface Recurso {
 }
 
 export interface Instrutor {
+  id: number
   nome: string;
   bio: string;
   avatar?: string;
-  foto?: string;
+  foto?: string | null;
   fotoPreview?: string;
 }
 
@@ -58,14 +62,14 @@ export interface Curso {
   thumbnail: string;
   categoria: CursoCategoria;
   nivel: NivelCurso;
-  status?: CursoStatus;
-  estiloAprendizagem?: EstiloAprendizagem;
+  status: CursoStatus;
+  estiloAprendizagem: EstiloAprendizagem;
   tags?: string[];
   instrutor: Instrutor;
   modulos?: Modulo[];
   recursos?: Recurso[];
   // isPublished: boolean;
-  alunos?: number;
+  alunos: number;
   avaliacao: number;
   reviews?: number;
   dataCriacao?: string;
@@ -87,8 +91,9 @@ export interface CursoFormData {
   categoria: CursoCategoria | "";
   nivel: NivelCurso | "";
   estiloAprendizagem: EstiloAprendizagem | "";
-  thumbnail: string;
-  thumbnailPreview?: string;
+  status?: CursoStatus | "";
+  thumbnail?: string | null;
+  thumbnailPreview?: string | null;
   tags: string[];
   instrutor: Instrutor;
   modulos: Modulo[];
@@ -98,6 +103,7 @@ export interface CursoStats {
   totalCursos: number
   cursosPublicados: number
   cursosRascunho: number
+  cursosArquivados: number
   totalEstudantes: number
   mediaAvaliacao: number
 }

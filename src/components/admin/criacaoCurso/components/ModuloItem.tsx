@@ -8,7 +8,7 @@ import { AulaItem } from "./AulaItem";
 interface ModuloItemProps {
   modulo: Modulo;
   moduloIndex: number;
-  onModuleUpdate: (moduloId: number, titulo: string) => void;
+  onModuleUpdate: (moduloId: number, field: keyof Modulo, titulo: string) => void;
   onModuleRemove: (moduloId: number) => void;
   onLessonAdd: (moduloId: number) => void;
   onLessonUpdate: (moduloId: number, aulaId: number, field: keyof Aula, value: string) => void;
@@ -34,7 +34,7 @@ export const ModuloItem = ({
         <div className="flex-1">
           <Input
             value={modulo.titulo}
-            onChange={(e) => onModuleUpdate(modulo.id, e.target.value)}
+            onChange={(e) => onModuleUpdate(modulo.id, "titulo", e.target.value)}
             placeholder={`Módulo ${moduloIndex + 1}: Título do módulo`}
             className="dark:bg-slate-700 border-slate-300 dark:border-slate-700 dark:text-white"
           />
@@ -65,18 +65,28 @@ export const ModuloItem = ({
           </Button>
         </div>
 
-        {modulo.aulas.map((aula, aulaIndex) => (
-          <AulaItem
-            key={aula.id}
-            moduloId={modulo.id}
-            aula={aula}
-            aulaIndex={aulaIndex}
-            onLessonUpdate={onLessonUpdate}
-            onLessonRemove={onLessonRemove}
-            onVideoUpload={onVideoUpload}
-            onVideoRemove={onVideoRemove}
-          />
-        ))}
+        {modulo.aulas.length === 0 ? (
+          <div className="text-center py-6 text-slate-500 dark:text-slate-400 border border-dashed border-slate-300 dark:border-slate-600 rounded-lg">
+            <p>Nenhuma aula adicionada ainda</p>
+            <p className="text-sm mt-1">Clique em "Adicionar Aula" para começar</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {modulo.aulas.map((aula, aulaIndex) => (
+              <AulaItem
+                key={aula.id}
+                moduloId={modulo.id}
+                aula={aula}
+                aulaIndex={aulaIndex}
+                onLessonUpdate={onLessonUpdate}
+                onLessonRemove={onLessonRemove}
+                onVideoUpload={onVideoUpload}
+                onVideoRemove={onVideoRemove}
+              />
+            ))}
+          </div>
+        )}
+
       </div>
     </div>
   );

@@ -105,7 +105,17 @@ export const CursoInfoSection = ({
                   value="web"
                   className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
                 >
-                  Web Development</SelectItem>
+                  Desenvolvimento Web</SelectItem>
+                  <SelectItem 
+                  value="banco-de-dados"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Banco de Dados</SelectItem>
+                  <SelectItem 
+                  value="devops"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  DevOps</SelectItem>
               </SelectContent>
             </Select>
           </div>

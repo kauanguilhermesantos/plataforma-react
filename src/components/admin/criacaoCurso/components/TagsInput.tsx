@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, X } from "lucide-react";
 
 interface TagsInputProps {
-  tags: string[];
+  tags?: string[];
   currentTag: string;
   onTagChange: (value: string) => void;
   onTagAdd: () => void;
@@ -45,7 +45,7 @@ export const TagsInput = ({
         </Button>
       </div>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
+        {tags?.map((tag) => (
           <Badge key={tag} variant="secondary" className="bg-slate-200 dark:bg-slate-800 dark:text-slate-300">
             {tag}
             <button

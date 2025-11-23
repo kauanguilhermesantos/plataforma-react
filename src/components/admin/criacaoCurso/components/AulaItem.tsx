@@ -10,7 +10,7 @@ interface AulaItemProps {
   moduloId: number;
   aula: Aula;
   aulaIndex: number;
-  onLessonUpdate: (moduloId: number, aulaId: number, field: keyof Aula, value: string) => void;
+  onLessonUpdate: (moduloId: number, aulaId: number, field: keyof Aula, value: string | number) => void;
   onLessonRemove: (moduloId: number, aulaId: number) => void;
   onVideoUpload: (moduloId: number, aulaId: number, file: File) => void;
   onVideoRemove: (moduloId: number, aulaId: number) => void;
@@ -44,8 +44,9 @@ export const AulaItem = ({
             className="dark:bg-slate-700 border-slate-300 dark:border-slate-600 dark:text-white"
           />
           <Input
+            type="number"
             value={aula.duracao}
-            onChange={(e) => onLessonUpdate(moduloId, aula.id, "duracao", e.target.value)}
+            onChange={(e) => onLessonUpdate(moduloId, aula.id, "duracao", parseInt(e.target.value) || 0)}
             placeholder="Duração (ex: 15:30)"
             className="dark:bg-slate-700 border-slate-300 dark:border-slate-600 dark:text-white"
           />

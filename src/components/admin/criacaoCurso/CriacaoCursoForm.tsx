@@ -2,7 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useCriacaoCurso } from "./hooks/useCriacaoCurso";
+import { useCriacaoCurso } from "../../../hooks/useCriacaoCurso";
 import { CursoInfoSection } from "./CursoInfoSection";
 import { InstrutorSection } from "./InstrutorSection";
 import { ModulosSection } from "./ModulosSection";

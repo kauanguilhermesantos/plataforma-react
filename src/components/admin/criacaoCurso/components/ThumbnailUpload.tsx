@@ -3,11 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Loader2 } from "lucide-react";
+import React from "react";
 
 interface ThumbnailUploadProps {
   uploading: boolean;
-  thumbnail: string;
-  thumbnailPreview?: string;
+  thumbnail: string | null | undefined;
+  thumbnailPreview?: string | null;
   onUpload: (file: File) => void;
   onRemove: () => void;
 }
@@ -19,10 +20,29 @@ export const ThumbnailUpload = ({
   onUpload,
   onRemove,
 }: ThumbnailUploadProps) => {
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validar tipo de arquivo
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor, selecione apenas arquivos de imagem (JPEG, PNG, WebP)');
+        return;
+      }
+
+      // Validar tamanho do arquivo (máximo 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('A imagem deve ter no máximo 5MB');
+        return;
+      }
+
       onUpload(file);
+
+      // Limpar o input para permitir selecionar o mesmo arquivo novamente
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 

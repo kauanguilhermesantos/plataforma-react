@@ -10,6 +10,8 @@ interface CursoFiltersProps {
   onCategoryChange: (value: string) => void
   selectedStatus: string
   onStatusChange: (value: string) => void
+  selectedEstilo: string
+  onEstiloChange: (value: string) => void
 }
 
 export function CursoFilters({
@@ -18,7 +20,9 @@ export function CursoFilters({
   selectedCategory,
   onCategoryChange,
   selectedStatus,
-  onStatusChange
+  onStatusChange,
+  selectedEstilo,
+  onEstiloChange
 }: CursoFiltersProps) {
   return (
     <Card>
@@ -44,12 +48,13 @@ export function CursoFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as Categorias</SelectItem>
-            <SelectItem value="Programação">Programação</SelectItem>
-            <SelectItem value="Design">Design</SelectItem>
-            <SelectItem value="Data Science">Data Science</SelectItem>
-            <SelectItem value="Mobile">Mobile</SelectItem>
-            <SelectItem value="Banco de Dados">Banco de Dados</SelectItem>
-            <SelectItem value="DevOps">DevOps</SelectItem>
+            <SelectItem value="programacao">Programação</SelectItem>
+            <SelectItem value="design">Design</SelectItem>
+            <SelectItem value="data-science">Data Science</SelectItem>
+            <SelectItem value="mobile">Mobile</SelectItem>
+            <SelectItem value="web">Desenvolvimento Web</SelectItem>
+            <SelectItem value="banco-de-dados">Banco de Dados</SelectItem>
+            <SelectItem value="devops">DevOps</SelectItem>
           </SelectContent>
         </Select>
 
@@ -60,9 +65,23 @@ export function CursoFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os Status</SelectItem>
-            <SelectItem value="published">Publicados</SelectItem>
-            <SelectItem value="draft">Rascunhos</SelectItem>
-            <SelectItem value="archived">Arquivados</SelectItem>
+            <SelectItem value="Publicado">Publicados</SelectItem>
+            <SelectItem value="Rascunho">Rascunhos</SelectItem>
+            <SelectItem value="Arquivado">Arquivados</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Filtro por Estilo */}
+        <Select value={selectedEstilo} onValueChange={onEstiloChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Filtrar por estilo" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os Estilos</SelectItem>
+            <SelectItem value="pragmatico">Pragmático</SelectItem>
+            <SelectItem value="teorico">Teórico</SelectItem>
+            <SelectItem value="ativista">Ativista</SelectItem>
+            <SelectItem value="reflexivo">Reflexivo</SelectItem>
           </SelectContent>
         </Select>
       </div>

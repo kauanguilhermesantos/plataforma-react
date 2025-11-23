@@ -9,7 +9,8 @@ datasource db {
 }
 
 model admin {
-  id_usuario Int @id
+  id_usuario Int     @id
+  curso      curso[]
 
   @@schema("koda_schema")
 }
@@ -34,6 +35,7 @@ model instrutor {
   nome         String  @db.VarChar(100)
   bio          String?
   foto         String? @db.VarChar(255)
+  curso        curso[]
 
   @@schema("koda_schema")
 }
@@ -63,5 +65,71 @@ model estilo_aprendizagem {
   aluno_aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem aluno[] @relation("aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem")
 
   @@id([estilo_aprendizagem_dominante, ativista_score, reflexivo_score, teorico_score, pragmatico_score])
+  @@schema("koda_schema")
+}
+
+model aula {
+  id_aula   Int     @id @default(autoincrement())
+  titulo    String  @db.VarChar(255)
+  duracao   Int?
+  descricao String?
+  ordem     Int
+  arquivo   String? @db.VarChar(500)
+  status    String  @default("Rascunho") @db.VarChar(50)
+  id_modulo Int
+  modulo    modulo  @relation(fields: [id_modulo], references: [id_modulo], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("koda_schema")
+}
+
+model curso {
+  id_curso            Int       @id @default(autoincrement())
+  titulo              String    @db.VarChar(200)
+  descricao           String?
+  thumbnail           String?   @db.VarChar(500)
+  categoria           String?   @db.VarChar(100)
+  nivel               String?   @db.VarChar(50)
+  status              String?   @default("Rascunho") @db.VarChar(20)
+  estilo_aprendizagem String?   @db.VarChar(100)
+  id_instrutor        Int
+  id_usuario          Int
+  instrutor           instrutor @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: NoAction, onUpdate: NoAction)
+  admin               admin     @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction)
+  modulo              modulo[]
+  recurso             recurso[]
+  tags                tags[]
+
+  @@schema("koda_schema")
+}
+
+model modulo {
+  id_modulo Int     @id @default(autoincrement())
+  titulo    String  @db.VarChar(255)
+  descricao String?
+  ordem     Int
+  status    String  @default("Rascunho") @db.VarChar(50)
+  id_curso  Int
+  aula      aula[]
+  curso     curso   @relation(fields: [id_curso], references: [id_curso], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("koda_schema")
+}
+
+model recurso {
+  id_recurso Int     @id @default(autoincrement())
+  titulo     String  @db.VarChar(255)
+  arquivo    String? @db.VarChar(500)
+  id_curso   Int
+  curso      curso   @relation(fields: [id_curso], references: [id_curso], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("koda_schema")
+}
+
+model tags {
+  id_curso Int
+  nome_tag String @db.VarChar(100)
+  curso    curso  @relation(fields: [id_curso], references: [id_curso], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_curso, nome_tag])
   @@schema("koda_schema")
 }
