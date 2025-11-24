@@ -1,7 +1,7 @@
-// src/components/admin/course-editor/Components/ThumbnailUpload.tsx
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Loader2 } from "lucide-react";
+import { useState } from "react";
 
 interface ThumbnailUploadProps {
   thumbnail: string;
@@ -18,9 +18,24 @@ export const ThumbnailUpload = ({
   onUpload,
   onRemove,
 }: ThumbnailUploadProps) => {
+
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    setUploadError(null);
+    
     if (file) {
+      // Validações adicionais no frontend
+      if (!file.type.startsWith('image/')) {
+        setUploadError('Por favor, selecione um arquivo de imagem');
+        return;
+      }
+      
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError('Arquivo muito grande. Tamanho máximo: 5MB');
+        return;
+      }
+      
       onUpload(file);
     }
   };

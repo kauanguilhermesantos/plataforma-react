@@ -52,7 +52,7 @@ export const InstrutorInfo = ({
               ) : (
                 <Avatar className="h-16 w-16">
                   <AvatarImage
-                    src={fotoPreview || instrutor.avatar || "/placeholder.svg"}
+                    src={fotoPreview || instrutor.avatar}
                   />
                   <AvatarFallback>{instrutor.nome[0]}</AvatarFallback>
                 </Avatar>

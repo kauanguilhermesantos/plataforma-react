@@ -356,28 +356,68 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
     }
   };
 
-  // Funções para uploads
+  // Função para upload de thumbnail
+  const uploadThumbnailToServer = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('thumbnail', file);
+  
+  try {
+    const response = await fetch(`/api/admin/curso/${cursoId}/uploadThumbnail`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro no upload da thumbnail');
+    }
+
+    const data = await response.json();
+    return data.url; // URL da thumbnail no servidor
+  } catch (error) {
+    console.error('Erro ao fazer upload da thumbnail:', error);
+    throw error;
+  }
+};
+
+  // Funções para uploads da thumbnail
   const handleThumbnailUpload = async (file: File) => {
     if (!curso) return;
-    
+  
     setThumbnailUploading(true);
     try {
-      // Simular upload - implementar upload real aqui
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const previewUrl = URL.createObjectURL(file);
-      setThumbnailPreview(previewUrl);
-      setCurso({ ...curso, thumbnail: previewUrl });
+      // Fazer upload real para o servidor
+      const thumbnailUrl = await uploadThumbnailToServer(file);
+      
+      // Atualizar preview e curso
+      setThumbnailPreview(thumbnailUrl);
+      setCurso({ ...curso, thumbnail: thumbnailUrl });
+      
+      // Salvar automaticamente após upload
+      await salvarCurso({ ...curso, thumbnail: thumbnailUrl });
+      
     } catch (error) {
       console.error('Erro ao fazer upload da thumbnail:', error);
+      // Fallback para preview local em caso de erro
+      const previewUrl = URL.createObjectURL(file);
+      setThumbnailPreview(previewUrl);
     } finally {
       setThumbnailUploading(false);
     }
   };
 
-  const removeThumbnail = () => {
+  // Função para remover thumbnail
+  const removeThumbnail = async () => {
     if (!curso) return;
+    
     setThumbnailPreview("");
-    setCurso({ ...curso, thumbnail: "" });
+    const cursoAtualizado = { ...curso, thumbnail: "" };
+    setCurso(cursoAtualizado);
+    
+    // Salvar automaticamente após remoção
+    await salvarCurso(cursoAtualizado);
   };
 
   const handleFotoInstrutorUpload = async (file: File) => {

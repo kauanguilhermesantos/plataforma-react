@@ -3,3 +3,7 @@ node_modules
 /src/generated/prisma
 .env
 .env.local
+
+public/avatars/*
+public/uploads/thumbnail/*
+public/uploads/thumbnails/*
