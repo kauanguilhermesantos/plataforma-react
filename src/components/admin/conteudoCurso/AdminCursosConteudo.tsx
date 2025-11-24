@@ -2,12 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { useCursos } from "@/components/admin/conteudoCurso/hooks/useCursos"
+import { useCursos } from "@/hooks/useCursos"
 import { CursoStats } from "./CursoStats"
 import { CursoFilters } from "./CursoFilters"
 import { CursoTable } from "./CursoTable"
 import { DeleteCourseDialog } from "./modals/DeleteCursoDialog"
-// import { CourseStats, CourseFilters, CourseTable, DeleteCourseDialog } from "@/components/admin/conteudoCurso/CursoTable"
 
 export function AdminCursosConteudo() {
   const {

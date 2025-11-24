@@ -1,18 +1,19 @@
-// src/components/admin/course-editor/Components/CourseHeader.tsx
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { ArrowLeft, Eye, Save } from "lucide-react";
+import { ArrowLeft, Eye, Loader2, Save } from "lucide-react";
 import { Curso } from "@/types/curso";
 
 interface CursoHeaderProps {
   curso: Curso;
   onPublishToggle: () => void;
+  onSave: () => void;
+  saving?: boolean;
 }
 
-export const CursoHeader = ({ curso, onPublishToggle }: CursoHeaderProps) => {
+export const CursoHeader = ({ curso, onPublishToggle, onSave, saving = false }: CursoHeaderProps) => {
   return (
     <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 items-center justify-between">
       <div className="flex items-center space-x-4 w-full sm:w-auto">
@@ -27,16 +28,16 @@ export const CursoHeader = ({ curso, onPublishToggle }: CursoHeaderProps) => {
         </div>
       </div>
       <div className="flex items-center space-x-2 w-full sm:w-auto justify-between">
-        <Badge variant={curso.isPublished ? "default" : "secondary"}>
-          {curso.isPublished ? "Publicado" : "Rascunho"}
+        <Badge variant={curso.status === "Publicado" ? "default" : curso.status === "Rascunho" ? "secondary" : "destructive"}>
+          {curso.status}
         </Badge>
         <div className="flex items-center space-x-2">
           <Label htmlFor="publish-toggle" className="text-sm">
-            {curso.isPublished ? "Publicado" : "Rascunho"}
+            {curso.status === "Publicado" ? "Publicado" : "Rascunho"}
           </Label>
           <Switch 
             id="publish-toggle" 
-            checked={curso.isPublished} 
+            checked={curso.status === "Publicado"} 
             onCheckedChange={onPublishToggle} 
           />
         </div>
@@ -46,9 +47,13 @@ export const CursoHeader = ({ curso, onPublishToggle }: CursoHeaderProps) => {
             Visualizar
           </Button>
         </Link>
-        <Button>
-          <Save className="h-4 w-4 mr-2" />
-          Salvar
+        <Button onClick={onSave} disabled={saving}>
+          {saving ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="h-4 w-4 mr-2" />
+          )}
+          {saving ? 'Salvando...' : 'Salvar'}
         </Button>
       </div>
     </div>

@@ -54,7 +54,7 @@ export const ThumbnailUpload = ({
         ) : (
           <div className="space-y-2">
             <img
-              src={thumbnail || "/placeholder.svg"}
+              src={thumbnail}
               alt="Thumbnail"
               className="max-w-full h-48 object-cover rounded-lg mx-auto"
             />

@@ -1,4 +1,4 @@
-// src/components/admin/course-editor/CourseEditor.tsx
+// components/admin/editorCurso/EditorCurso.tsx
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,20 +14,18 @@ import { PublishModal } from "./modals/PublishModal";
 import { DeleteCursoModal } from "./modals/DeleteCursoModal";
 import { EstiloAprendizagemModal } from "./modals/EstiloAprendizagemModal";
 import { useEditorCurso } from "./hooks/useEditorCurso";
-import { defaultCourse } from "@/utils/defaultCourse";
 import { EditorCursoProps } from "@/types/curso";
 
 export function EditorCurso({ cursoId }: EditorCursoProps) {
   const {
     curso,
+    loading,
+    saving,
     aulasExpandida,
-    setAulasExpandida,
     novaTag,
     setNovaTag,
-    arquivoThumbnail,
     thumbnailPreview,
     thumbnailUploading,
-    arquivoFotoInstrutor,
     fotoInstrutorPreview,
     fotoInstrutorUploading,
     mostrarDeleteModuloModal,
@@ -40,8 +38,7 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
     setMostrarDeleteCursoModal,
     mostrarEstiloAprendizagemModal,
     setMostrarEstiloAprendizagemModal,
-    moduloToDelete,
-    aulaToDelete,
+    salvarCurso,
     updateCurso,
     updateModulo,
     updateAula,
@@ -59,21 +56,33 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
     removeThumbnail,
     handleFotoInstrutorUpload,
     removeFotoInstrutor,
-    handleVideoUpload,
-    removeVideo,
     addTag,
     removeTag,
     handleTagKeyPress,
     handlePublishToggle,
     confirmPublishToggle,
     confirmDeleteCurso,
-  } = useEditorCurso(defaultCourse);
+  } = useEditorCurso(cursoId);
+
+  // Se não há curso, mostrar erro
+  if (!curso) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900">Curso não encontrado</h2>
+          <p className="text-gray-600 mt-2">O curso que você está tentando editar não existe.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <CursoHeader 
         curso={curso} 
         onPublishToggle={handlePublishToggle}
+        onSave={() => salvarCurso()}
+        saving={saving}
       />
       
       <StatsCards curso={curso} />
@@ -94,7 +103,7 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
             thumbnailUploading={thumbnailUploading}
             fotoInstrutorPreview={fotoInstrutorPreview}
             fotoInstrutorUploading={fotoInstrutorUploading}
-            onCourseUpdate={updateCurso}
+            onCourseUpdate={(field, value) => updateCurso({ [field]: value } as Partial<any>)}
             onTagChange={setNovaTag}
             onTagAdd={addTag}
             onTagRemove={removeTag}
@@ -107,30 +116,32 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
           />
         </TabsContent>
 
-        <TabsContent value="content" className="space-y-4">
+        {/* <TabsContent value="content" className="space-y-4">
           <ConteudoTab
             curso={curso}
-            aulasExpandida={aulasExpandida}
-            onModuleUpdate={updateModulo}
-            onLessonUpdate={updateAula}
+            aulasExpandida={new Set(Array.from(aulasExpandida).map(s => Number(s)))}
+            onModuleUpdate={(moduloId, field, value) => updateModulo(String(moduloId), { [field]: value } as any)}
+            onLessonUpdate={(moduloId, aulaId, field, value) => updateAula(String(moduloId), String(aulaId), { [field]: value } as any)}
             onModuleAdd={addModulo}
-            onLessonAdd={addAula}
-            onModuleDelete={deleteModulo}
-            onLessonDelete={deleteAula}
-            onLessonToggle={toggleExpansaoAula}
-            onVideoUpload={handleVideoUpload}
-            onVideoRemove={removeVideo}
-          />
-        </TabsContent>
+            onLessonAdd={(moduloId) => addAula(String(moduloId))}
+            onModuleDelete={(moduloId) => deleteModulo(String(moduloId))}
+            onLessonDelete={(moduloId, aulaId) => deleteAula(String(moduloId), String(aulaId))}
+            onLessonToggle={(aulaId) => toggleExpansaoAula(String(aulaId))}
+            onSave={salvarCurso} onVideoUpload={function (moduloId: number, aulaId: number, file: File): void {
+              throw new Error("Function not implemented.");
+            } } onVideoRemove={function (moduloId: number, aulaId: number): void {
+              throw new Error("Function not implemented.");
+            } }          />
+        </TabsContent> */}
 
-        <TabsContent value="resources" className="space-y-4">
+        {/* <TabsContent value="resources" className="space-y-4">
           <RecursosTab
             recursos={curso.recursos}
             onResourceUpdate={updateRecurso}
             onResourceAdd={addRecurso}
             onResourceRemove={removeRecurso}
           />
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="settings" className="space-y-4">
           <ConfigTab
@@ -157,7 +168,7 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
       <PublishModal
         open={mostrarPublicarModal}
         onOpenChange={setMostrarPublicarModal}
-        isPublished={curso.isPublished}
+        isPublished={curso.status === 'Publicado'}
         onConfirm={confirmPublishToggle}
       />
 

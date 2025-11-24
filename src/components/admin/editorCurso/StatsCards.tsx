@@ -1,4 +1,3 @@
-// src/components/admin/course-editor/Components/StatsCards.tsx
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, BookOpen, Play, Clock, Star } from "lucide-react";
 import { Curso } from "@/types/curso";
@@ -20,7 +19,7 @@ export const StatsCards = ({ curso }: StatsCardsProps) => {
             <Users className="h-4 w-4 text-blue-500" />
             <div>
               <p className="text-sm font-medium">Estudantes</p>
-              <p className="text-2xl font-bold">{curso.alunos.toLocaleString()}</p>
+              {/* <p className="text-2xl font-bold">{curso.alunos.toLocaleString()}</p> */}
             </div>
           </div>
         </CardContent>

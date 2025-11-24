@@ -1,11 +1,10 @@
-// src/components/admin/course-editor/utils/course-helpers.ts
 import { Modulo } from '@/types/curso';
 
 export const calcularTotalHoras = (modulos: Modulo[]): number => {
   const totalMinutos = modulos.reduce((acc, modulo) => {
     return acc + modulo.aulas.reduce((aulaAcc, aula) => {
       if (aula.duracao) {
-        const [minutos, segundos] = aula.duracao.split(":").map(Number);
+        const [minutos, segundos] = String(aula.duracao).split(":").map(Number);
         return aulaAcc + minutos + segundos / 60;
       }
       return aulaAcc;

@@ -18,6 +18,7 @@ interface ConteudoTabProps {
   onLessonToggle: (aulaId: number) => void;
   onVideoUpload: (moduloId: number, aulaId: number, file: File) => void;
   onVideoRemove: (moduloId: number, aulaId: number) => void;
+  onSave: () => void;
 }
 
 export const ConteudoTab = ({

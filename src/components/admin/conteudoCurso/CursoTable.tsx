@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Eye, Edit, Trash2, Play, Pause, MoreHorizontal, Star } from "lucide-react"
 import { Curso } from "@/types/curso"
-import { useCursos } from "./hooks/useCursos"
+import { useCursos } from "../../../hooks/useCursos"
 
 interface CursoTableProps {
   cursos: Curso[]

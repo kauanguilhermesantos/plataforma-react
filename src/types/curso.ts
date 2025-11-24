@@ -55,7 +55,6 @@ export interface Instrutor {
 }
 
 export interface Curso {
-  isPublished?: boolean;
   id: number;
   titulo: string;
   descricao?: string;
@@ -64,11 +63,11 @@ export interface Curso {
   nivel: NivelCurso;
   status: CursoStatus;
   estiloAprendizagem: EstiloAprendizagem;
-  tags?: string[];
+  tags: string[];
   instrutor: Instrutor;
-  modulos?: Modulo[];
-  recursos?: Recurso[];
-  // isPublished: boolean;
+  modulos: Modulo[];
+  recursos: Recurso[];
+  isPublished: boolean;
   alunos: number;
   avaliacao: number;
   reviews?: number;

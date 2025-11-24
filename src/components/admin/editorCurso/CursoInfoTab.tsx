@@ -85,10 +85,41 @@ export const CursoInfoTab = ({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Programação">Programação</SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Marketing">Marketing</SelectItem>
-                    <SelectItem value="Data Science">Data Science</SelectItem>
+                    <SelectItem 
+                  value="programacao"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Programação</SelectItem>
+                <SelectItem 
+                  value="data-science"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Data Science</SelectItem>
+                <SelectItem 
+                  value="design"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Design</SelectItem>
+                <SelectItem 
+                  value="mobile"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Mobile</SelectItem>
+                <SelectItem 
+                  value="web"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Desenvolvimento Web</SelectItem>
+                  <SelectItem 
+                  value="banco-de-dados"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Banco de Dados</SelectItem>
+                  <SelectItem 
+                  value="devops"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  DevOps</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -102,9 +133,21 @@ export const CursoInfoTab = ({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Iniciante">Iniciante</SelectItem>
-                    <SelectItem value="Intermediário">Intermediário</SelectItem>
-                    <SelectItem value="Avançado">Avançado</SelectItem>
+                    <SelectItem 
+                  value="iniciante"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Iniciante</SelectItem>
+                <SelectItem 
+                  value="intermediario"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Intermediário</SelectItem>
+                <SelectItem 
+                  value="avancado"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Avançado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -132,29 +175,25 @@ export const CursoInfoTab = ({
                   </SelectTrigger>
                   <SelectContent className="text-slate-700 dark:bg-slate-800 dark:border-slate-700">
                     <SelectItem 
-                      value="Pragmático"
-                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
-                    >
-                      Pragmático
-                    </SelectItem>
-                    <SelectItem 
-                      value="Teórico"
-                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
-                    >
-                      Teórico
-                    </SelectItem>
-                    <SelectItem 
-                      value="Ativista"
-                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
-                    >
-                      Ativista
-                    </SelectItem>
-                    <SelectItem 
-                      value="Reflexivo"
-                      className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
-                    >
-                      Reflexivo
-                    </SelectItem>
+                  value="pragmatico"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Pragmático</SelectItem>
+                <SelectItem 
+                  value="teorico"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Teórico</SelectItem>
+                <SelectItem 
+                  value="ativista"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Ativista</SelectItem>
+                <SelectItem 
+                  value="reflexivo"
+                  className="dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 hover:cursor-pointer"
+                >
+                  Reflexivo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
