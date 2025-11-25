@@ -116,7 +116,7 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
           />
         </TabsContent>
 
-        {/* <TabsContent value="content" className="space-y-4">
+        <TabsContent value="content" className="space-y-4">
           <ConteudoTab
             curso={curso}
             aulasExpandida={new Set(Array.from(aulasExpandida).map(s => Number(s)))}
@@ -127,12 +127,16 @@ export function EditorCurso({ cursoId }: EditorCursoProps) {
             onModuleDelete={(moduloId) => deleteModulo(String(moduloId))}
             onLessonDelete={(moduloId, aulaId) => deleteAula(String(moduloId), String(aulaId))}
             onLessonToggle={(aulaId) => toggleExpansaoAula(String(aulaId))}
-            onSave={salvarCurso} onVideoUpload={function (moduloId: number, aulaId: number, file: File): void {
+            onVideoUpload={function (moduloId: number, aulaId: number, file: File): void {
               throw new Error("Function not implemented.");
-            } } onVideoRemove={function (moduloId: number, aulaId: number): void {
+            } } 
+            onVideoRemove={function (moduloId: number, aulaId: number): void {
               throw new Error("Function not implemented.");
-            } }          />
-        </TabsContent> */}
+            } }        
+            onSave={salvarCurso}
+            saving={saving}
+          />
+        </TabsContent>
 
         {/* <TabsContent value="resources" className="space-y-4">
           <RecursosTab

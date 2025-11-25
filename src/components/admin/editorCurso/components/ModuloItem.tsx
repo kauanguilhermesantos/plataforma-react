@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Trash2, Plus } from "lucide-react";
 import { Modulo, Aula } from "@/types/curso";
 import { AulaItem } from "./AulaItem";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ModuloItemProps {
   modulo: Modulo;
@@ -75,11 +76,17 @@ export const ModuloItem = ({
             </div>
             <div className="space-y-2">
               <Label>Descrição do Módulo</Label>
-              <Input
+              <Textarea
                 value={modulo.descricao}
                 onChange={(e) => onModuleUpdate(modulo.id, "descricao", e.target.value)}
                 className="bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                rows={3}
               />
+              {/* // <Input
+              //   value={modulo.descricao}
+              //   onChange={(e) => onModuleUpdate(modulo.id, "descricao", e.target.value)}
+              //   className="bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+              // /> */}
             </div>
           </div>
 

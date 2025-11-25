@@ -34,6 +34,19 @@ export const AulaItem = ({
     }
   };
 
+  // Função para formatar a duração no formato MM:SS
+  const formatarDuracao = (valor: string): string => {
+    // Remover caracteres não numéricos exceto ':'
+    const apenasNumeros = valor.replace(/[^\d:]/g, '');
+    
+    // Limitar a formatação MM:SS
+    if (apenasNumeros.length > 5) {
+      return apenasNumeros.slice(0, 5);
+    }
+    
+    return apenasNumeros;
+  };
+
   return (
     <div className="p-4 bg-muted rounded-lg space-y-3">
       <div className="flex items-center justify-between">
@@ -87,8 +100,11 @@ export const AulaItem = ({
             <div>
               <Label className="text-sm font-medium dark:text-slate-300 mb-2">Duração</Label>
               <Input
-                value={aula.duracao}
-                onChange={(e) => onUpdate("duracao", e.target.value)}
+                value={aula.duracao || ""}
+                onChange={(e) => {
+                  const duracaoFormatada = formatarDuracao(e.target.value);
+                  onUpdate("duracao", duracaoFormatada);
+                }}
                 placeholder="Duração (ex: 15:30)"
                 className="bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"
               />

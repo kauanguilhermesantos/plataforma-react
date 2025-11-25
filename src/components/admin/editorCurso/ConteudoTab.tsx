@@ -1,7 +1,6 @@
-// src/components/admin/course-editor/ContentTab.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Accordion } from "@/components/ui/accordion";
 import { Plus } from "lucide-react";
 import { Curso, Modulo, Aula } from "@/types/curso";
 import { ModuloItem } from "./components/ModuloItem";
@@ -19,6 +18,7 @@ interface ConteudoTabProps {
   onVideoUpload: (moduloId: number, aulaId: number, file: File) => void;
   onVideoRemove: (moduloId: number, aulaId: number) => void;
   onSave: () => void;
+  saving?: boolean;
 }
 
 export const ConteudoTab = ({

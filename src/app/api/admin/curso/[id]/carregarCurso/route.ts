@@ -131,7 +131,12 @@ export async function PUT(
       where: { id_curso: parseInt(cursoId) },
       include: { 
         tags: true,
-        instrutor: true
+        instrutor: true,
+        modulo: {
+          include: {
+            aula: true
+          }
+        }
       }
     });
 
@@ -172,6 +177,50 @@ export async function PUT(
         });
       }
 
+      // Gerenciar módulos e aulas
+      if (dados.modulos && Array.isArray(dados.modulos)) {
+        // Deletar aulas e módulos existentes
+        await tx.aula.deleteMany({
+          where: {
+            modulo: {
+              id_curso: parseInt(cursoId)
+            }
+          }
+        });
+
+        // Deletar módulos existentes
+        await tx.modulo.deleteMany({
+          where: {
+            id_curso: parseInt(cursoId)
+          }
+        });
+
+        // Criar novos módulos e aulas
+        for (const moduloData of dados.modulos) {
+          const modulo = await tx.modulo.create({
+            data: {
+              id_curso: parseInt(cursoId),
+              titulo: moduloData.titulo,
+              descricao: moduloData.descricao,
+              ordem: moduloData.ordem
+            }
+          });
+
+          // Criar aulas do módulo
+          for (const aulaData of moduloData.aulas) {
+            await tx.aula.create({
+              data: {
+                id_modulo: modulo.id_modulo,
+                titulo: aulaData.titulo,
+                descricao: aulaData.descricao,
+                arquivo: aulaData.videoUrl,
+                duracao: parseInt(aulaData.duracao) || 0,
+                ordem: aulaData.ordem
+              }
+            });
+          }
+        }
+      }
 
       // 3. Atualizar o curso
       const cursoAtualizado = await tx.curso.update({
@@ -252,6 +301,187 @@ export async function PUT(
     return NextResponse.json(respostaFormatada);
   } catch (error) {
     console.error('Erro ao atualizar curso:', error);
+    return NextResponse.json(
+      { error: 'Erro interno do servidor' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST - Criar novo curso
+export async function POST(request: NextRequest) {
+  try {
+    const token = request.headers.get('authorization')?.replace('Bearer ', '');
+    if (!token) {
+      return NextResponse.json({ error: 'Token não fornecido' }, { status: 401 });
+    }
+
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return NextResponse.json({ error: 'Token inválido' }, { status: 401 });
+    }
+
+    const dados = await request.json();
+    console.log('Criando novo curso:', dados);
+
+    // Iniciar uma transação
+    const resultado = await prisma.$transaction(async (tx) => {
+      // 1. Criar instrutor se necessário
+      let instrutorId = dados.instrutor?.id;
+      if (dados.instrutor && !dados.instrutor.id) {
+        const novoInstrutor = await tx.instrutor.create({
+          data: {
+            id_instrutor: 0,
+            nome: dados.instrutor.nome || '',
+            foto: dados.instrutor.avatar || '',
+            bio: dados.instrutor.bio || ''
+          }
+        });
+        instrutorId = novoInstrutor.id_instrutor;
+      }
+
+      // 2. Criar curso
+      const novoCurso = await tx.curso.create({
+        data: {
+          titulo: dados.titulo || 'Novo Curso',
+          descricao: dados.descricao || '',
+          thumbnail: dados.thumbnail || '',
+          nivel: dados.nivel || 'Iniciante',
+          status: dados.status || 'Rascunho',
+          estilo_aprendizagem: dados.estiloAprendizagem || 'Pragmático',
+          categoria: dados.categoria || 'Programação',
+          id_instrutor: instrutorId,
+          instrutor: { connect: { id_instrutor: instrutorId } },
+          tags: { create: [] }, // Tags serão adicionadas depois
+          modulo: { create: [] }, // Módulos serão adicionados depois
+          recurso: { create: [] }, // Recursos serão adicionados depois
+          admin: { connect: { id_usuario: parseInt(decoded.usuarioId) } }
+        }
+      });
+
+      // 3. Adicionar tags
+      if (dados.tags && Array.isArray(dados.tags)) {
+        for (const tagNome of dados.tags) {
+          if (tagNome.trim()) {
+            await tx.tags.create({
+              data: {
+                id_curso: novoCurso.id_curso,
+                nome_tag: tagNome.trim()
+              }
+            });
+          }
+        }
+      }
+
+      // 4. Criar módulos e aulas se fornecidos
+      if (dados.modulos && Array.isArray(dados.modulos)) {
+        for (const moduloData of dados.modulos) {
+          const modulo = await tx.modulo.create({
+            data: {
+              id_curso: novoCurso.id_curso,
+              titulo: moduloData.titulo || 'Novo Módulo',
+              descricao: moduloData.descricao || '',
+              ordem: moduloData.ordem || 1
+            }
+          });
+
+          // Criar aulas do módulo
+          if (moduloData.aulas && Array.isArray(moduloData.aulas)) {
+            for (const aulaData of moduloData.aulas) {
+              await tx.aula.create({
+                data: {
+                  id_modulo: modulo.id_modulo,
+                  titulo: aulaData.titulo || 'Nova Aula',
+                  descricao: aulaData.descricao || '',
+                  arquivo: aulaData.videoUrl || '',
+                  duracao: parseInt(aulaData.duracao) || 0,
+                  ordem: aulaData.ordem || 1
+                }
+              });
+            }
+          }
+        }
+      }
+
+      // 5. Buscar curso completo criado
+      const cursoCompleto = await tx.curso.findUnique({
+        where: { id_curso: novoCurso.id_curso },
+        include: {
+          instrutor: {
+            select: {
+              id_instrutor: true,
+              nome: true,
+              foto: true,
+              bio: true
+            }
+          },
+          tags: true,
+          modulo: {
+            include: {
+              aula: {
+                orderBy: { ordem: 'asc' }
+              }
+            },
+            orderBy: { ordem: 'asc' }
+          },
+          recurso: true
+        }
+      });
+
+      return cursoCompleto;
+    });
+
+    // Formatar resposta
+        if (!resultado) {
+          console.error('Erro: curso não retornado após criação');
+          return NextResponse.json(
+            { error: 'Erro interno do servidor' },
+            { status: 500 }
+          );
+        }
+    
+        const respostaFormatada = {
+          id: resultado.id_curso,
+          titulo: resultado.titulo,
+          descricao: resultado.descricao,
+          thumbnail: resultado.thumbnail,
+          categoria: resultado.categoria,
+          nivel: resultado.nivel,
+          status: resultado.status,
+          estiloAprendizagem: resultado.estilo_aprendizagem,
+          tags: resultado.tags.map(tag => tag.nome_tag),
+          instrutor: {
+            id: resultado.instrutor.id_instrutor,
+            nome: resultado.instrutor.nome,
+            avatar: resultado.instrutor.foto,
+            bio: resultado.instrutor.bio
+          },
+          modulos: resultado.modulo.map(modulo => ({
+            id: modulo.id_modulo,
+            titulo: modulo.titulo,
+            descricao: modulo.descricao,
+            ordem: modulo.ordem,
+            aulas: modulo.aula.map(aula => ({
+              id: aula.id_aula,
+              titulo: aula.titulo,
+              descricao: aula.descricao,
+              videoUrl: aula.arquivo,
+              duracao: aula.duracao,
+              ordem: aula.ordem,
+              isCompleted: false
+            }))
+          })),
+          recursos: resultado.recurso.map(recurso => ({
+            id: recurso.id_recurso,
+            titulo: recurso.titulo,
+            url: recurso.arquivo
+          })),
+        };
+    
+        console.log('Novo curso criado com sucesso:', respostaFormatada.id);
+        return NextResponse.json(respostaFormatada);
+  } catch (error) {
+    console.error('Erro ao criar curso:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
       { status: 500 }

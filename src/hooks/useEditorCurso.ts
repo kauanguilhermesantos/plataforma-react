@@ -156,11 +156,30 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
     setSaving(true);
     try {
       const cursoParaSalvar = dadosCurso || curso;
+
+      // Preparar os dados completos do curso incluindo módulos e aulas
+      const dadosCompletos = {
+        ...cursoParaSalvar,
+        // Garantir que os módulos e aulas tenham dados consistentes
+        modulos: cursoParaSalvar.modulos.map((modulo, index) => ({
+          ...modulo,
+          ordem: index + 1,
+          aulas: modulo.aulas.map((aula, aulaIndex) => ({
+            ...aula,
+            ordem: aulaIndex + 1,
+            // Garantir tipos numéricos
+            duracao: typeof aula.duracao === 'string' ? parseInt(aula.duracao) || 0 : aula.duracao || 0
+          }))
+        }))
+      };
+
       const url = cursoId 
         ? `/api/admin/curso/${cursoId}/carregarCurso`
         : '/api/admin/curso';
       
       const method = cursoId ? 'PUT' : 'POST';
+      
+      console.log('Salvando curso completo:', { url, method, dadosCompletos });
 
       const response = await fetch(url, {
         method,
@@ -191,22 +210,27 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
     }
   };
 
-  // Funções de atualização
+  // Funções de atualização do curso
   const updateCurso = (updates: Partial<Curso>) => {
     if (!curso) return;
     setCurso({ ...curso, ...updates });
   };
 
+  // Funções de atualização de Módulos
   const updateModulo = (moduloId: string, updates: Partial<Modulo>) => {
     if (!curso) return;
+    
     const modulosAtualizados = curso.modulos.map(modulo =>
       modulo.id === parseInt(moduloId) ? { ...modulo, ...updates } : modulo
     );
+    
     setCurso({ ...curso, modulos: modulosAtualizados });
   };
 
+  // Funções de atualização de Aulas
   const updateAula = (moduloId: string, aulaId: string, updates: Partial<Aula>) => {
     if (!curso) return;
+    
     const modulosAtualizados = curso.modulos.map(modulo => {
       if (modulo.id === parseInt(moduloId)) {
         const aulasAtualizadas = modulo.aulas.map(aula =>
@@ -216,6 +240,7 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
       }
       return modulo;
     });
+    
     setCurso({ ...curso, modulos: modulosAtualizados });
   };
 
@@ -227,16 +252,21 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
     setCurso({ ...curso, recursos: recursosAtualizados });
   };
 
-  // Funções de adição
+  // Funções de adição de Módulos
   const addModulo = () => {
     if (!curso) return;
+    
+    // Gerar ID temporário único (negativo para diferenciar dos IDs do banco)
+    const tempId = -Date.now();
+    
     const novoModulo: Modulo = {
-      id: 0,
+      id: tempId,
       titulo: 'Novo Módulo',
       descricao: '',
       ordem: curso.modulos.length + 1,
       aulas: []
     };
+    
     setCurso({
       ...curso,
       modulos: [...curso.modulos, novoModulo]
@@ -245,10 +275,14 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
 
   const addAula = (moduloId: string) => {
     if (!curso) return;
+    
+    // Gerar ID temporário único
+    const tempId = -Date.now();
+    
     const modulosAtualizados = curso.modulos.map(modulo => {
       if (modulo.id === parseInt(moduloId)) {
         const novaAula: Aula = {
-          id: 0,
+          id: tempId,
           titulo: 'Nova Aula',
           descricao: '',
           videoUrl: '',
@@ -263,6 +297,7 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
       }
       return modulo;
     });
+    
     setCurso({ ...curso, modulos: modulosAtualizados });
   };
 
