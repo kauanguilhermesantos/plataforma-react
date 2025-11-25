@@ -1,4 +1,3 @@
-// hooks/useEditorCurso.ts
 import { useState, useEffect } from 'react';
 import { Curso, Modulo, Aula, Recurso, CursoStatus } from '@/types/curso';
 
@@ -420,33 +419,86 @@ export const useEditorCurso = (cursoId?: string): UseEditorCursoReturn => {
     await salvarCurso(cursoAtualizado);
   };
 
+  // Funções para upload da foto do instrutor
+  const uploadFotoInstrutorToServer = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append('fotoInstrutor', file);
+  
+  try {
+    const response = await fetch(`/api/admin/curso/${cursoId}/uploadInstrutor`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro no upload da foto do instrutor');
+    }
+
+    const data = await response.json();
+    return data.url; // URL da foto no servidor
+  } catch (error) {
+    console.error('Erro ao fazer upload da foto do instrutor:', error);
+    throw error;
+  }
+};
+
+  // Função para fazer upload da foto do instrutor
   const handleFotoInstrutorUpload = async (file: File) => {
     if (!curso) return;
     
     setFotoInstrutorUploading(true);
     try {
-      // Simular upload - implementar upload real aqui
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const previewUrl = URL.createObjectURL(file);
-      setFotoInstrutorPreview(previewUrl);
-      setCurso({
-        ...curso,
-        instrutor: { ...curso.instrutor, avatar: previewUrl }
+      // Fazer upload real para o servidor
+      const fotoUrl = await uploadFotoInstrutorToServer(file);
+      
+      // Atualizar preview e curso
+      setFotoInstrutorPreview(fotoUrl);
+      const instrutorAtualizado = {
+        ...curso.instrutor,
+        avatar: fotoUrl
+      };
+      setCurso({ 
+        ...curso, 
+        instrutor: instrutorAtualizado 
       });
+      
+      // Salvar automaticamente após upload
+      await salvarCurso({ 
+        ...curso, 
+        instrutor: instrutorAtualizado 
+      });
+      
     } catch (error) {
       console.error('Erro ao fazer upload da foto do instrutor:', error);
+      // Fallback para preview local em caso de erro
+      const previewUrl = URL.createObjectURL(file);
+      setFotoInstrutorPreview(previewUrl);
     } finally {
       setFotoInstrutorUploading(false);
     }
   };
 
-  const removeFotoInstrutor = () => {
+  // Função para remover foto do instrutor
+  const removeFotoInstrutor = async () => {
     if (!curso) return;
+    
     setFotoInstrutorPreview("");
-    setCurso({
-      ...curso,
-      instrutor: { ...curso.instrutor, avatar: "" }
-    });
+    const instrutorAtualizado = {
+      ...curso.instrutor,
+      avatar: ""
+    };
+    const cursoAtualizado = { 
+      ...curso, 
+      instrutor: instrutorAtualizado 
+    };
+    
+    setCurso(cursoAtualizado);
+    
+    // Salvar automaticamente após remoção
+    await salvarCurso(cursoAtualizado);
   };
 
   const handleVideoUpload = async (moduloId: string, aulaId: string, file: File) => {

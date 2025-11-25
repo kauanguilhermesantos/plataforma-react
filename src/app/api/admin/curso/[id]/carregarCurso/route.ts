@@ -62,7 +62,13 @@ export async function GET(
       status: curso.status,
       estiloAprendizagem: curso.estilo_aprendizagem,
       tags: curso.tags.map(tag => tag.nome_tag),
-      instrutor: curso.instrutor,
+      // instrutor: curso.instrutor,
+      instrutor: {
+        id: curso.instrutor.id_instrutor,
+        nome: curso.instrutor.nome,
+        avatar: curso.instrutor.foto,
+        bio: curso.instrutor.bio
+      },
       modulos: curso.modulo.map(modulo => ({
         id: modulo.id_modulo,
         titulo: modulo.titulo,
@@ -123,7 +129,10 @@ export async function PUT(
     // Verificar se o curso existe
     const cursoExistente = await prisma.curso.findUnique({
       where: { id_curso: parseInt(cursoId) },
-      include: { tags: true }
+      include: { 
+        tags: true,
+        instrutor: true
+      }
     });
 
     if (!cursoExistente) {
@@ -150,6 +159,19 @@ export async function PUT(
           }
         }
       }
+
+      // Atualizar informações do instrutor se fornecidas
+      if (dados.instrutor && cursoExistente.instrutor) {
+        await tx.instrutor.update({
+          where: { id_instrutor: cursoExistente.instrutor.id_instrutor },
+          data: {
+            nome: dados.instrutor.nome,
+            foto: dados.instrutor.avatar, // Mapeando 'avatar' para 'foto'
+            bio: dados.instrutor.bio
+          }
+        });
+      }
+
 
       // 3. Atualizar o curso
       const cursoAtualizado = await tx.curso.update({

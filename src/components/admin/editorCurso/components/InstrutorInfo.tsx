@@ -1,4 +1,3 @@
-// src/components/admin/course-editor/Components/InstructorInfo.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X, Loader2 } from "lucide-react";
 import { Instrutor } from "@/types/curso";
+import { useState } from "react";
 
 interface InstrutorInfoProps {
   instrutor: Instrutor;
@@ -27,9 +27,24 @@ export const InstrutorInfo = ({
   onNameChange,
   onBioChange,
 }: InstrutorInfoProps) => {
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    setUploadError(null);
+    
     if (file) {
+      // Validações adicionais no frontend
+      if (!file.type.startsWith('image/')) {
+        setUploadError('Por favor, selecione um arquivo de imagem');
+        return;
+      }
+      
+      if (file.size > 2 * 1024 * 1024) {
+        setUploadError('Arquivo muito grande. Tamanho máximo: 2MB');
+        return;
+      }
+      
       onPhotoUpload(file);
     }
   };

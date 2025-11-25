@@ -13,7 +13,7 @@ import { DeleteAulaModal } from "./modals/DeleteAulaModal";
 import { PublishModal } from "./modals/PublishModal";
 import { DeleteCursoModal } from "./modals/DeleteCursoModal";
 import { EstiloAprendizagemModal } from "./modals/EstiloAprendizagemModal";
-import { useEditorCurso } from "./hooks/useEditorCurso";
+import { useEditorCurso } from "../../../hooks/useEditorCurso";
 import { EditorCursoProps } from "@/types/curso";
 
 export function EditorCurso({ cursoId }: EditorCursoProps) {

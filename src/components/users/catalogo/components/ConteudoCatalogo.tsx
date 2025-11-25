@@ -15,12 +15,15 @@ export function ConteudoCatalogo() {
       <CatalogoHeader
         titulo="Catálogo de Cursos"
         descricao="Descubra novos conhecimentos e desenvolva suas habilidades"
+        // Implementar a detecção do estilo de aprendizagem do usuário
+        // Ex.: "Seu estilo de aprendizagem: Pragmático"
       />
 
       {/* Filtros e Pesquisa */}
       <FiltrosCatalogo
         filters={filters}
         onFiltersChange={updateFilters}
+        // O filtro do estilo de aprendizagem deve está habilitado de acordo com o estilo do usuário
       />
 
       {/* Resultados */}

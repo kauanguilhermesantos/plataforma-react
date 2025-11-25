@@ -1,4 +1,3 @@
-// src/components/admin/course-editor/CourseInfoTab.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -256,8 +255,8 @@ export const CursoInfoTab = ({
           uploading={fotoInstrutorUploading}
           onPhotoUpload={onInstructorPhotoUpload}
           onPhotoRemove={onInstructorPhotoRemove}
-          onNameChange={(name) => onCourseUpdate("instrutor", { ...curso.instrutor, name })}
-          onBioChange={(bio) => onCourseUpdate("instrutor", { ...curso.instrutor, bio })}
+          onNameChange={(name) => onCourseUpdate("instrutor", { ...curso.instrutor, name: name })}
+          onBioChange={(bio) => onCourseUpdate("instrutor", { ...curso.instrutor, bio: bio })}
         />
       </div>
     </div>
