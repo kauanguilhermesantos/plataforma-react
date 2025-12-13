@@ -1,5 +1,6 @@
 import { CadastroForm } from "@/components/auth/CadastroForm"
 import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function RegisterPage() {
   return (
@@ -7,7 +8,13 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Logo e Título */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold dark:text-blue-500">Koda</h1>
+          <h1 className="text-3xl font-bold dark:text-blue-500">
+            <Link href={"/"}>
+              <span className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
+                Koda
+              </span>
+            </Link>
+          </h1>
           <p className="text-gray-600 dark:text-gray-400">Plataforma Educacional de Programação</p>
         </div>
 
