@@ -76,12 +76,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             </Sheet>
 
             <Link href="/admin" className="flex items-center gap-2">
-              <div className="bg-red-600 p-2 rounded-lg">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
               <div className="flex flex-col">
-                <span className="font-bold text-xl text-gray-900 dark:text-white">Koda Admin</span>
-                <span className="text-xs text-gray-500">Painel Administrativo</span>
+                <div className="flex items-end gap-1">
+                  <span className=" text-3xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">Koda</span>
+                  <span className=" text-x font-bold">Admin</span>
+                </div>
+                <span className="text-xs text-gray-500 dark:text-gray-300 ">Painel Administrativo</span>
               </div>
             </Link>
           </div>
