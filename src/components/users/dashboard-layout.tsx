@@ -95,10 +95,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </Sheet>
 
             <Link href="/home" className="flex items-center gap-2">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <GraduationCap className="h-6 w-6 text-white" />
-              </div>
-              <span className="font-bold text-xl text-gray-900 dark:text-white">Koda</span>
+              <span className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
+                Koda
+              </span>
             </Link>
           </div>
 
