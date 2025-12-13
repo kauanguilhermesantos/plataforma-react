@@ -7,6 +7,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useTheme } from "next-themes"
 import { ThemeToggle } from "@/components/shared/theme-toggle"
 import {
   ArrowRight,
@@ -25,6 +26,7 @@ import {
 
 export function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { theme } = useTheme();
 
   const estilosAprendizagem = [
     {
@@ -105,12 +107,11 @@ export function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
-                <Code className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
-                Koda
-              </span>
+              <Link href={"/"}>
+                <span className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
+                  Koda
+                </span>
+              </Link>
             </div>
 
             {/* Desktop Navigation */}
@@ -204,9 +205,9 @@ export function LandingPage() {
       <section className="py-20 lg:py-32">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge variant="secondary" className="mb-4">
-              🚀 Nova Era do Ensino de Programação
-            </Badge>
+            {/* <Badge variant="secondary" className="mb-4">
+              Nova Era do Ensino de Programação
+            </Badge> */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Aprenda Programação do{" "}
               <span className="bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
@@ -415,12 +416,22 @@ export function LandingPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg flex items-center justify-center">
-                  <Code className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent">
-                  Koda
+              <div className="flex items-center space-x-2 mb-4 flex-col-2">
+                <span>
+                  {theme === "light" ? (
+                    <img src="logo/logo_koda_branco.png" alt="Logo Koda preto" className="w-64 h-20 object-cover mix-blend-multiply" />
+                  ) : (
+                    <img src="logo/logo_koda_preto.png" alt="Logo Koda branco" className="w-64 h-20 object-cover dark:mix-blend-screen" />
+                  )
+                  }
+                </span>
+                <span>
+                  {theme === "light" ? (
+                    <img src="logo/logo_react_escura.png" alt="Logo React" className="w-60 h-16"/>
+                  ) : (
+                    <img src="logo/logo_react.png" alt="Logo React" className="w-60 h-16"/>
+                  )
+                  }
                 </span>
               </div>
               <p className="text-muted-foreground">
