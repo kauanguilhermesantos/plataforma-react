@@ -1,13 +1,24 @@
+// ConteudoCatalogo.tsx
 "use client"
 
-import { useCatalogo } from "@/components/users/catalogo/hooks/useCatalogo"
+import { useCatalogo } from "@/hooks/useCatalogo"
 import { CatalogoHeader } from "./CatalogoHeader"
 import { FiltrosCatalogo } from "./FiltrosCatalogo"
 import { CursoCard } from "./CursoCard"
 import { EmptyState } from "./EmptyState"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle } from "lucide-react"
 
 export function ConteudoCatalogo() {
-  const { filters, cursos, updateFilters } = useCatalogo()
+  const { filters, cursos, updateFilters, isLoading, error } = useCatalogo()
+
+  console.log("ConteudoCatalogo - Estado:", {
+    isLoading,
+    error,
+    totalCursos: cursos.length,
+    filters
+  })
 
   return (
     <div className="space-y-6">
@@ -15,34 +26,64 @@ export function ConteudoCatalogo() {
       <CatalogoHeader
         titulo="Catálogo de Cursos"
         descricao="Descubra novos conhecimentos e desenvolva suas habilidades"
-        // Implementar a detecção do estilo de aprendizagem do usuário
-        // Ex.: "Seu estilo de aprendizagem: Pragmático"
       />
 
       {/* Filtros e Pesquisa */}
       <FiltrosCatalogo
         filters={filters}
         onFiltersChange={updateFilters}
-        // O filtro do estilo de aprendizagem deve está habilitado de acordo com o estilo do usuário
       />
+
+      {/* Mostrar erro se houver */}
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Erro ao carregar cursos: {error}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Resultados */}
       <div className="flex items-center justify-between">
-        <p className="text-gray-600 dark:text-gray-400">
-          {cursos.length} curso{cursos.length !== 1 ? "s" : ""} encontrado
-          {cursos.length !== 1 ? "s" : ""}
-        </p>
+        {isLoading ? (
+          <Skeleton className="h-4 w-32" />
+        ) : error ? (
+          <p className="text-red-500">Erro ao carregar cursos</p>
+        ) : (
+          <p className="text-gray-600 dark:text-gray-400">
+            {cursos.length} curso{cursos.length !== 1 ? "s" : ""} encontrado
+            {cursos.length !== 1 ? "s" : ""}
+          </p>
+        )}
       </div>
 
-      {/* Grid de Cursos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {cursos.map((curso) => (
-          <CursoCard key={curso.id} curso={curso} />
-        ))}
-      </div>
-
-      {/* Mensagem quando não há resultados */}
-      {cursos.length === 0 && <EmptyState />}
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="space-y-3">
+              <Skeleton className="h-48 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <>
+          {/* Grid de Cursos */}
+          {cursos.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {cursos.map((curso) => (
+                <CursoCard key={curso.id} curso={curso} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState />
+          )}
+        </>
+      )}
     </div>
   )
 }
