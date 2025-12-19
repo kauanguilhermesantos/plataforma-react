@@ -1,4 +1,3 @@
-// ConteudoCatalogo.tsx
 "use client"
 
 import { useCatalogo } from "@/hooks/useCatalogo"
@@ -8,10 +7,11 @@ import { CursoCard } from "./CursoCard"
 import { EmptyState } from "./EmptyState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Filter } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function ConteudoCatalogo() {
-  const { filters, cursos, updateFilters, isLoading, error } = useCatalogo()
+  const { filters, cursos, updateFilters, resetFilters, isLoading, error } = useCatalogo()
 
   console.log("ConteudoCatalogo - Estado:", {
     isLoading,
@@ -20,13 +20,34 @@ export function ConteudoCatalogo() {
     filters
   })
 
+  // Verificar se há filtros ativos
+  const hasActiveFilters = 
+    filters.searchTerm.trim() !== "" ||
+    filters.selectedCategory !== "all" ||
+    filters.selectedLevel !== "all" ||
+    filters.selectedEstiloAprendizagem !== "all"
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <CatalogoHeader
-        titulo="Catálogo de Cursos"
-        descricao="Descubra novos conhecimentos e desenvolva suas habilidades"
-      />
+      <div className="flex justify-between items-start">
+        <CatalogoHeader
+          titulo="Catálogo de Cursos"
+          descricao="Descubra novos conhecimentos e desenvolva suas habilidades"
+        />
+        
+        {hasActiveFilters && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={resetFilters}
+            className="flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Limpar Filtros
+          </Button>
+        )}
+      </div>
 
       {/* Filtros e Pesquisa */}
       <FiltrosCatalogo
@@ -54,6 +75,7 @@ export function ConteudoCatalogo() {
           <p className="text-gray-600 dark:text-gray-400">
             {cursos.length} curso{cursos.length !== 1 ? "s" : ""} encontrado
             {cursos.length !== 1 ? "s" : ""}
+            {hasActiveFilters && " com os filtros aplicados"}
           </p>
         )}
       </div>
@@ -80,7 +102,10 @@ export function ConteudoCatalogo() {
               ))}
             </div>
           ) : (
-            <EmptyState />
+            <EmptyState 
+              titulo={hasActiveFilters ? "Nenhum curso encontrado com os filtros aplicados" : "Nenhum curso encontrado"}
+              menssagem={hasActiveFilters ? "Tente ajustar os filtros ou limpar todos para ver os cursos disponíveis." : "Nenhum curso disponível no momento."}
+            />
           )}
         </>
       )}

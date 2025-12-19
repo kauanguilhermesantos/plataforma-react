@@ -2,9 +2,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search } from "lucide-react"
+import { Search, X } from "lucide-react"
 import { FiltrosCatalogo as FiltersType } from "@/types/catalogo"
 import { categoriasCatalogo } from "@/data/mockCatalogo"
+import { Button } from "@/components/ui/button"
 
 interface FiltrosCatalogoProps {
   filters: FiltersType
@@ -12,6 +13,15 @@ interface FiltrosCatalogoProps {
 }
 
 export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoProps) {
+  
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onFiltersChange({ searchTerm: e.target.value })
+  }
+
+  const clearSearch = () => {
+    onFiltersChange({ searchTerm: "" })
+  }
+
   return (
     <Card>
       <CardContent className="p-6">
@@ -22,24 +32,35 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
             <Input
               placeholder="Pesquisar cursos, tecnologias, instrutores..."
               value={filters.searchTerm}
-              onChange={(e) => onFiltersChange({ searchTerm: e.target.value })}
-              className="pl-10"
+              onChange={handleSearchChange}
+              className="pl-10 pr-10"
             />
+            {filters.searchTerm && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                onClick={clearSearch}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
 
           {/* Filtros */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Por Catogoria */}
+            {/* Categoria */}
             <div className="space-y-2">
-              <Label>Categoria</Label>
+              <Label htmlFor="categoria">Categoria</Label>
               <Select
                 value={filters.selectedCategory}
                 onValueChange={(value) => onFiltersChange({ selectedCategory: value })}
               >
-                <SelectTrigger>
-                  <SelectValue />
+                <SelectTrigger id="categoria">
+                  <SelectValue placeholder="Todas as categorias" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="all">Todas as Categorias</SelectItem>
                   {categoriasCatalogo.map((category) => (
                     <SelectItem key={category.value} value={category.value}>
                       <div className="flex items-center">
@@ -52,15 +73,15 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
               </Select>
             </div>
 
-            {/* Por Nível */}
+            {/* Nível */}
             <div className="space-y-2">
-              <Label>Nível</Label>
+              <Label htmlFor="nivel">Nível</Label>
               <Select
                 value={filters.selectedLevel}
                 onValueChange={(value) => onFiltersChange({ selectedLevel: value })}
               >
-                <SelectTrigger>
-                  <SelectValue />
+                <SelectTrigger id="nivel">
+                  <SelectValue placeholder="Todos os níveis" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Níveis</SelectItem>
@@ -71,33 +92,33 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
               </Select>
             </div>
             
-            {/* Por Popular */}
+            {/* Ordenar por */}
             <div className="space-y-2">
-              <Label>Ordenar por</Label>
+              <Label htmlFor="ordenar">Ordenar por</Label>
               <Select
                 value={filters.sortBy}
                 onValueChange={(value) => onFiltersChange({ sortBy: value })}
               >
-                <SelectTrigger>
-                  <SelectValue />
+                <SelectTrigger id="ordenar">
+                  <SelectValue placeholder="Ordenar por" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="newest">Mais Recente</SelectItem>
                   <SelectItem value="popular">Mais Popular</SelectItem>
                   <SelectItem value="rating">Melhor Avaliado</SelectItem>
-                  <SelectItem value="newest">Mais Recente</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Por Estilo de Aprendizagem */}
+            {/* Estilo de Aprendizagem */}
             <div className="space-y-2">
-              <Label>Estilo de Aprendizagem</Label>
+              <Label htmlFor="estilo">Estilo de Aprendizagem</Label>
               <Select
                 value={filters.selectedEstiloAprendizagem}
                 onValueChange={(value) => onFiltersChange({ selectedEstiloAprendizagem: value })}
               >
-                <SelectTrigger>
-                  <SelectValue />
+                <SelectTrigger id="estilo">
+                  <SelectValue placeholder="Todos os estilos" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Estilos</SelectItem>
@@ -107,7 +128,6 @@ export function FiltrosCatalogo({ filters, onFiltersChange }: FiltrosCatalogoPro
                   <SelectItem value="Reflexivo">Reflexivo</SelectItem>
                 </SelectContent>
               </Select>
-
             </div>
           </div>
         </div>

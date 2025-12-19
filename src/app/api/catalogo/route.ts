@@ -21,17 +21,50 @@ export async function GET(request: Request) {
 
     // Filtro por categoria
     if (categoria && categoria !== 'all') {
-      where.categoria = categoria
+      // Normalizar: remover acentos e converter para minúsculas
+      const categoriaNormalizado = categoria
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+      
+      console.log('Estilo normalizado para busca:', categoriaNormalizado)
+      
+      where.nivel = {
+        contains: categoriaNormalizado,
+        mode: 'insensitive'
+      }
     }
 
     // Filtro por nível
     if (nivel && nivel !== 'all') {
-      where.nivel = nivel
+      // Normalizar: remover acentos e converter para minúsculas
+      const nivelNormalizado = nivel
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+      
+      console.log('Estilo normalizado para busca:', nivelNormalizado)
+      
+      where.nivel = {
+        contains: nivelNormalizado,
+        mode: 'insensitive'
+      }
     }
 
-    // Filtro por estilo de aprendizagem
+    // Filtro por estilo de aprendizagem (normalizar para minúsculas)
     if (estilo && estilo !== 'all') {
-      where.estilo_aprendizagem = estilo
+      // Normalizar: remover acentos e converter para minúsculas
+      const estiloNormalizado = estilo
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+      
+      console.log('Estilo normalizado para busca:', estiloNormalizado)
+      
+      where.estilo_aprendizagem = {
+        contains: estiloNormalizado,
+        mode: 'insensitive'
+      }
     }
 
     // Filtro por termo de pesquisa (busca em título, descrição e tags)
