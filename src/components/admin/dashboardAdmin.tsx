@@ -4,18 +4,93 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Users, BookOpen, Star } from "lucide-react"
 import { Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
-import { estiloInfo } from "@/data/mockLSQ"
+import { useEffect, useState } from "react"
+
+// Tipos para os dados
+interface DashboardStats {
+  totalAlunos: number
+  totalAdmins: number
+  totalUsuarios: number
+  activeUsers: number
+  totalCursos: number
+  cursosAtivos: number
+  supportTickets?: number
+  pendingReviews?: number
+}
+
+interface ApiResponse {
+  success: boolean
+  data: DashboardStats
+  error?: string
+}
 
 export function AdminDashboard() {
-  // Dados simulados para o dashboard
-  const stats = {
-    totalUsers: 15420,
-    activeUsers: 12350,
-    totalCourses: 156,
-    activeCourses: 142,
+  const [stats, setStats] = useState<DashboardStats>({
+    totalAlunos: 0,
+    totalAdmins: 0,
+    totalUsuarios: 0,
+    activeUsers: 0,
+    totalCursos: 0,
+    cursosAtivos: 0,
     supportTickets: 23,
     pendingReviews: 8,
-  }
+  })
+
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const response = await fetch('/api/admin/dashboard', {
+          // Adicione cache se necessário
+          next: { revalidate: 60 } // Revalida a cada 60 segundos
+        })
+        
+        if (!response.ok) {
+          throw new Error(`Erro na API: ${response.status}`)
+        }
+        
+        const result: ApiResponse = await response.json()
+        
+        if (!result.success) {
+          throw new Error(result.error || "Erro desconhecido")
+        }
+        
+        setStats({
+          ...result.data,
+          supportTickets: 23, // Mantendo dados mock por enquanto
+          pendingReviews: 8,
+        })
+      } catch (error) {
+        console.error("Erro ao buscar dados do dashboard:", error)
+        setError(error instanceof Error ? error.message : "Erro ao carregar dados")
+        
+        // Fallback para dados mock em caso de erro
+        // setStats({
+        //   totalAlunos: 15420,
+        //   totalUsuarios: 15420,
+        //   activeUsers: 12350,
+        //   totalCursos: 156,
+        //   cursosAtivos: 142,
+        //   supportTickets: 23,
+        //   pendingReviews: 8,
+        // })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+    
+    // // Opcional: Atualizar dados periodicamente
+    // const interval = setInterval(fetchDashboardData, 300000) // 5 minutos
+    
+    // return () => clearInterval(interval)
+  }, [])
 
   const recentCourses = [
     {
@@ -70,16 +145,45 @@ export function AdminDashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {/* Total de Usuários */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{stats.totalUsuarios.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              <span className="text-green-600">+12%</span> vs mês anterior
+              {/* <span className="text-green-600">+12%</span> vs mês anterior */}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Total de Alunos */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Alunos</CardTitle>
+            <Users className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalAlunos.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">
+              {/* <span className="text-green-600">+12%</span> vs mês anterior */}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Total de Admin */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total de Admins</CardTitle>
+            <Users className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalAdmins.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">
+              {/* <span className="text-green-600">+12%</span> vs mês anterior */}
             </p>
           </CardContent>
         </Card>
@@ -90,8 +194,8 @@ export function AdminDashboard() {
             <BookOpen className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.activeCourses}</div>
-            <p className="text-xs text-muted-foreground">de {stats.totalCourses} cursos totais</p>
+            <div className="text-2xl font-bold">{stats.cursosAtivos}</div>
+            <p className="text-xs text-muted-foreground">de {stats.totalCursos} cursos totais</p>
           </CardContent>
         </Card>
       </div>

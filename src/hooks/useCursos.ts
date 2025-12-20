@@ -15,9 +15,10 @@ function mapApiDataToCurso(data: any): Curso {
     tags: data.tags,
     instrutor: data.instrutor,
     modulos: data.modulos,
-    // recursos: data.recursos,
+    recursos: data.recursos,
     alunos: data.alunos,
-    avaliacao: data.avaliacao
+    avaliacao: data.avaliacao,
+    isPublished: data.status
   }
 }
 
