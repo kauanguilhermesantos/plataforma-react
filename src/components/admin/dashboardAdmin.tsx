@@ -2,11 +2,18 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, BookOpen, Star } from "lucide-react"
+import { Users, BookOpen, Star, AlertCircle } from "lucide-react"
 import { Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
 import { useEffect, useState } from "react"
 
 // Tipos para os dados
+interface CategoriaData {
+  nome: string
+  value: number
+  quantidade: number
+  cor: string
+}
+
 interface DashboardStats {
   totalAlunos: number
   totalAdmins: number
@@ -14,8 +21,8 @@ interface DashboardStats {
   activeUsers: number
   totalCursos: number
   cursosAtivos: number
-  supportTickets?: number
-  pendingReviews?: number
+  categorias: CategoriaData[]
+  estilosAprendizagem: CategoriaData[]
 }
 
 interface ApiResponse {
@@ -32,8 +39,8 @@ export function AdminDashboard() {
     activeUsers: 0,
     totalCursos: 0,
     cursosAtivos: 0,
-    supportTickets: 23,
-    pendingReviews: 8,
+    categorias: [],
+    estilosAprendizagem: [],
   })
 
   const [loading, setLoading] = useState(true)
@@ -45,10 +52,7 @@ export function AdminDashboard() {
         setLoading(true)
         setError(null)
         
-        const response = await fetch('/api/admin/dashboard', {
-          // Adicione cache se necessário
-          next: { revalidate: 60 } // Revalida a cada 60 segundos
-        })
+        const response = await fetch('/api/admin/dashboard')
         
         if (!response.ok) {
           throw new Error(`Erro na API: ${response.status}`)
@@ -62,34 +66,21 @@ export function AdminDashboard() {
         
         setStats({
           ...result.data,
-          supportTickets: 23, // Mantendo dados mock por enquanto
-          pendingReviews: 8,
         })
       } catch (error) {
         console.error("Erro ao buscar dados do dashboard:", error)
         setError(error instanceof Error ? error.message : "Erro ao carregar dados")
         
         // Fallback para dados mock em caso de erro
-        // setStats({
-        //   totalAlunos: 15420,
-        //   totalUsuarios: 15420,
-        //   activeUsers: 12350,
-        //   totalCursos: 156,
-        //   cursosAtivos: 142,
-        //   supportTickets: 23,
-        //   pendingReviews: 8,
-        // })
+        setStats(prev => ({
+          ...prev,
+        }))
       } finally {
         setLoading(false)
       }
     }
 
     fetchDashboardData()
-    
-    // // Opcional: Atualizar dados periodicamente
-    // const interval = setInterval(fetchDashboardData, 300000) // 5 minutos
-    
-    // return () => clearInterval(interval)
   }, [])
 
   const recentCourses = [
@@ -119,19 +110,108 @@ export function AdminDashboard() {
     },
   ]
 
-  const categoryData = [
-    { name: "Programação", value: 45, color: "#3B82F6" },
-    { name: "Design", value: 25, color: "#10B981" },
-    { name: "Data Science", value: 20, color: "#F59E0B" },
-    { name: "Mobile", value: 10, color: "#EF4444" },
-  ]
+  // Custom tooltip para os gráficos
+  const CustomTooltip = ({ active, payload, labelKey = "nome" }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload
+      return (
+        <div className="bg-white dark:bg-gray-800 p-3 border rounded-lg shadow-lg">
+          <p className="font-bold">{data[labelKey]}</p>
+          <p className="text-sm">
+            {data.quantidade} curso{data.quantidade !== 1 ? 's' : ''}
+          </p>
+          <p className="text-sm">{data.value}% do total</p>
+        </div>
+      )
+    }
+    return null
+  }
 
-  const estiloAprendizagemData = [
-    { name: "Ativista", value: 40, color: "#f87171" },
-    { name: "Reflexivo", value: 30, color: "#4ade80" },
-    { name: "Teórico", value: 20, color: "#c084fc" },
-    { name: "Pragmático", value: 10, color: "#60a5fa" },
-  ]
+  // Função para renderizar gráfico de dados
+  const renderChart = (data: CategoriaData[], title: string, description: string) => {
+    const datas = data.map(item => ({
+      ...item,
+      nome: item.nome
+    }))
+
+  // Função auxiliar para capitalizar
+  function capitalizeFirstLetter(text: string): string {
+    return text
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+    
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      )
+    }
+
+    if (error) {
+      return (
+        <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+          <AlertCircle className="h-12 w-12 text-red-500 mb-2" />
+          <p className="text-red-500">Erro ao carregar dados</p>
+          <p className="text-sm text-gray-500 mt-1">Usando dados de exemplo</p>
+        </div>
+      )
+    }
+
+    if (data.length === 0) {
+      return (
+        <div className="text-center text-gray-500 p-4 h-64 flex items-center justify-center">
+          Nenhum dado disponível
+        </div>
+      )
+    }
+
+    return (
+      <>
+        <ResponsiveContainer width="100%" height={250}>
+          <PieChart>
+            <Pie
+              data={datas}
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={100}
+              paddingAngle={5}
+              dataKey="value"
+              nameKey="nome"
+            >
+              {datas.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.cor} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="space-y-2 mt-4">
+          {datas.map((item) => (
+            <div key={item.nome} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: item.cor }} 
+                />
+                <span className="text-sm truncate">{item.nome}</span>
+              </div>
+              <div className="text-right">
+                <span className="text-sm font-medium">{item.value}%</span>
+                <span className="text-xs text-gray-500 ml-2">
+                  ({item.quantidade})
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -141,25 +221,10 @@ export function AdminDashboard() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Administrativo</h1>
           <p className="text-gray-600 dark:text-gray-400">Visão geral da plataforma Koda</p>
         </div>
-
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {/* Total de Usuários */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Usuários</CardTitle>
-            <Users className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalUsuarios.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              {/* <span className="text-green-600">+12%</span> vs mês anterior */}
-            </p>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
         {/* Total de Alunos */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -167,9 +232,11 @@ export function AdminDashboard() {
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalAlunos.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {loading ? "..." : stats.totalAlunos.toLocaleString()}
+            </div>
             <p className="text-xs text-muted-foreground">
-              {/* <span className="text-green-600">+12%</span> vs mês anterior */}
+              {loading ? "Carregando..." : `de ${stats.totalUsuarios} usuários totais`}
             </p>
           </CardContent>
         </Card>
@@ -181,9 +248,11 @@ export function AdminDashboard() {
             <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalAdmins.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {loading ? "..." : stats.totalAdmins.toLocaleString()}
+            </div>
             <p className="text-xs text-muted-foreground">
-              {/* <span className="text-green-600">+12%</span> vs mês anterior */}
+              {loading ? "Carregando..." : `de ${stats.totalUsuarios} usuários totais`}
             </p>
           </CardContent>
         </Card>
@@ -194,89 +263,41 @@ export function AdminDashboard() {
             <BookOpen className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.cursosAtivos}</div>
-            <p className="text-xs text-muted-foreground">de {stats.totalCursos} cursos totais</p>
+            <div className="text-2xl font-bold">
+              {loading ? "..." : stats.cursosAtivos}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {loading ? "Carregando..." : `de ${stats.totalCursos} cursos totais`}
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Charts */}
-      {/* Distribuição por Categoria e Atividade Recente */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Distribuição por Categoria */}
         <Card>
           <CardHeader>
             <CardTitle>Cursos por Categoria</CardTitle>
-            <CardDescription>Distribuição dos cursos</CardDescription>
+            <CardDescription>
+              Distribuição dos cursos publicados
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="space-y-2 mt-4">
-              {categoryData.map((category) => (
-                <div key={category.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }} />
-                    <span className="text-sm">{category.name}</span>
-                  </div>
-                  <span className="text-sm font-medium">{category.value}%</span>
-                </div>
-              ))}
-            </div>
+            {renderChart(stats.categorias, "Categorias", "Distribuição por categoria")}
           </CardContent>
         </Card>
 
+        {/* Distribuição por Estilo de Aprendizagem */}
         <Card>
           <CardHeader>
-            <CardTitle>Cursos por Estilos de Aprendizagem</CardTitle>
-            <CardDescription>Distribuição dos cursos</CardDescription>
+            <CardTitle>Cursos por Estilo de Aprendizagem</CardTitle>
+            <CardDescription>
+              Distribuição dos cursos publicados
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={estiloAprendizagemData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {estiloAprendizagemData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="space-y-2 mt-4">
-              {estiloAprendizagemData.map((category) => (
-                <div key={category.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }} />
-                    <span className="text-sm">{category.name}</span>
-                  </div>
-                  <span className="text-sm font-medium">{category.value}%</span>
-                </div>
-              ))}
-            </div>
+            {renderChart(stats.estilosAprendizagem, "Estilos", "Distribuição por estilo")}
           </CardContent>
         </Card>
 
