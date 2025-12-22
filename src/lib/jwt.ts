@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { NextRequest } from 'next/server'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'seu-segredo-super-secreto'
 
@@ -26,6 +27,36 @@ export function getTokenFromHeader(authHeader: string | null): string | null {
     return null
   }
   return authHeader.substring(7) // Remove "Bearer "
+}
+
+export async function getToken(request: NextRequest | Request): Promise<DecodedToken | null> {
+  try {
+    const authHeader = request.headers.get('authorization')
+    const token = getTokenFromHeader(authHeader)
+    
+    if (!token) {
+      return null
+    }
+    
+    return verifyToken(token)
+  } catch (error) {
+    console.error('Erro ao obter token:', error)
+    return null
+  }
+}
+
+export function decodeToken(token: string): { userId: string } | null {
+  try {
+    // Decodificar token JWT (base64)
+    const payload = token.split('.')[1]
+    const decodedPayload = JSON.parse(atob(payload))
+    return {
+      userId: decodedPayload.userId
+    }
+  } catch (error) {
+    console.error('Erro ao decodificar token:', error)
+    return null
+  }
 }
 
 // lib/jwt.ts

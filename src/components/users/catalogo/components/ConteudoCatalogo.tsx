@@ -77,7 +77,7 @@ export function ConteudoCatalogo() {
           
           {/* Botão para fazer teste de estilo se não tiver estilo definido */}
           {isUserAuthenticated && !userEstilo && (
-            <Link href="/teste-estilo">
+            <Link href="/lsq">
               <Button
                 variant="outline"
                 size="sm"

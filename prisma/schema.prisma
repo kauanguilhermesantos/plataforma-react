@@ -9,8 +9,9 @@ datasource db {
 }
 
 model admin {
-  id_usuario Int     @id
+  id_usuario Int        @id
   curso      curso[]
+  gerencia   gerencia[]
 
   @@schema("koda_schema")
 }
@@ -26,6 +27,7 @@ model aluno {
   teorico_score                                                                                                                    Int?
   pragmatico_score                                                                                                                 Int?
   estilo_aprendizagem_aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem estilo_aprendizagem? @relation("aluno_estilo_aprendizagem_ativista_score_reflexivo_score_teorico_score_pragmatico_scoreToestilo_aprendizagem", fields: [estilo_aprendizagem, ativista_score, reflexivo_score, teorico_score, pragmatico_score], references: [estilo_aprendizagem_dominante, ativista_score, reflexivo_score, teorico_score, pragmatico_score], onDelete: NoAction, onUpdate: NoAction, map: "estilo_aprendizagem_dominante")
+  matricula                                                                                                                        matricula[]
 
   @@schema("koda_schema")
 }
@@ -83,18 +85,20 @@ model aula {
 }
 
 model curso {
-  id_curso            Int       @id @default(autoincrement())
-  titulo              String    @db.VarChar(200)
+  id_curso            Int         @id @default(autoincrement())
+  titulo              String      @db.VarChar(200)
   descricao           String?
-  thumbnail           String?   @db.VarChar(500)
-  categoria           String?   @db.VarChar(100)
-  nivel               String?   @db.VarChar(50)
-  status              String?   @default("Rascunho") @db.VarChar(20)
-  estilo_aprendizagem String?   @db.VarChar(100)
+  thumbnail           String?     @db.VarChar(500)
+  categoria           String?     @db.VarChar(100)
+  nivel               String?     @db.VarChar(50)
+  status              String?     @default("Rascunho") @db.VarChar(20)
+  estilo_aprendizagem String?     @db.VarChar(100)
   id_instrutor        Int
   id_usuario          Int
-  instrutor           instrutor @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: NoAction, onUpdate: NoAction)
-  admin               admin     @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction)
+  instrutor           instrutor   @relation(fields: [id_instrutor], references: [id_instrutor], onDelete: NoAction, onUpdate: NoAction)
+  admin               admin       @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction)
+  gerencia            gerencia[]
+  matricula           matricula[]
   modulo              modulo[]
   recurso             recurso[]
   tags                tags[]
@@ -131,5 +135,25 @@ model tags {
   curso    curso  @relation(fields: [id_curso], references: [id_curso], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([id_curso, nome_tag])
+  @@schema("koda_schema")
+}
+
+model gerencia {
+  id_curso   Int
+  id_usuario Int
+  curso      curso @relation(fields: [id_curso], references: [id_curso], onDelete: NoAction, onUpdate: NoAction)
+  admin      admin @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_curso, id_usuario])
+  @@schema("koda_schema")
+}
+
+model matricula {
+  id_usuario Int
+  id_curso   Int
+  curso      curso @relation(fields: [id_curso], references: [id_curso], onDelete: NoAction, onUpdate: NoAction)
+  aluno      aluno @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_usuario, id_curso])
   @@schema("koda_schema")
 }

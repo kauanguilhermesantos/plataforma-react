@@ -172,5 +172,4 @@ function getEstiloColor(estiloNome: string): { estilo: string, cor: string } {
     estilo: nomeFormatado,
     cor: colorsMap[estiloNome]
   }
-    colorsMap[estiloLower]
 }

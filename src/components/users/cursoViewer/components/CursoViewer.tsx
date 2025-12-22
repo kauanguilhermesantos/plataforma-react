@@ -1,6 +1,6 @@
 "use client"
 
-import { useCursoViewer } from "@/components/users/cursoViewer/hooks/useCursoViewer"
+import { useCursoViewer } from "@/hooks/useCursoViewer"
 import { CursoHeader } from "./CursoHeader"
 import { CursoConteudo } from "./CursoConteudo"
 import { CursoPreview } from "./CursoPreview"
@@ -53,7 +53,7 @@ export function CursoViewer({ cursoId }: CursoViewerProps) {
       ) : (
         <CursoConteudo
           curso={curso}
-          currentLesson={currentLessonData}
+          currentLesson={currentLessonData ?? undefined}
           state={state}
           onPlayPause={handlePlayPause}
           onNextLesson={handleNextLesson}

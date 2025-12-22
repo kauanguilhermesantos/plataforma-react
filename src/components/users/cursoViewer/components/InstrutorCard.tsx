@@ -16,7 +16,7 @@ export function InstrutorCard({ instrutor }: InstrutorCardProps) {
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-3">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={instrutor.avatar || "/placeholder.svg"} />
+            <AvatarImage src={instrutor.avatar} />
             <AvatarFallback>{instrutor.nome[0]}</AvatarFallback>
           </Avatar>
           <div>
