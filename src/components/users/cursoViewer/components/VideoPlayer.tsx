@@ -18,7 +18,8 @@ export function VideoPlayer({ aula, isPlaying, onPlayPause, onNext, onPrevious }
         <div className="relative bg-black rounded-t-lg aspect-video">
           <img
             src="/placeholder.svg?height=400&width=600"
-            alt={aula.titulo}
+            // alt={aula.titulo}
+            alt="Placeholder de vídeo"
             className="w-full h-full object-cover rounded-t-lg"
           />
           <div className="absolute inset-0 flex items-center justify-center">
@@ -53,9 +54,11 @@ export function VideoPlayer({ aula, isPlaying, onPlayPause, onNext, onPrevious }
         </div>
 
         <div className="p-4">
-          <h2 className="text-xl font-semibold mb-2">{aula.titulo}</h2>
+          {/* <h2 className="text-xl font-semibold mb-2">{aula.titulo}</h2> */}
+          <h2 className="text-xl font-semibold mb-2">Aula 1</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            {aula.descricao || "Nesta aula você aprenderá conceitos fundamentais."}
+            {/* {aula.descricao || "Nesta aula você aprenderá conceitos fundamentais."} */}
+            {"Nesta aula você aprenderá conceitos fundamentais."}
           </p>
         </div>
       </CardContent>

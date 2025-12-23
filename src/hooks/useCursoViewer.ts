@@ -53,13 +53,32 @@ export function useCursoViewer(cursoId: string) {
 
   // Função para verificar se usuário está autenticado
   const isAuthenticated = useCallback((): boolean => {
-    const token = getToken()
-    const userId = getUserId()
-    return !!(token && userId) // Retorna true se ambos existirem
-  }, [])
+  const token = getToken()
+  console.log('Verificando autenticação:', { 
+    tokenExiste: !!token,
+    token: token ? `${token.substring(0, 20)}...` : 'null'
+  })
+  
+  // Verificação mais simples - apenas se existe token
+  if (!token) {
+    console.log('Token não encontrado no localStorage');
+    return false
+  }
+  
+  // Verificar se token não está vazio
+  if (token.trim() === '') {
+    console.log('Token está vazio');
+    return false
+  }
+  
+  console.log('Usuário considerado autenticado');
+  return true
+}, [])
 
   // Buscar curso e dados relacionados
   useEffect(() => {
+    console.log('=== INICIANDO BUSCA DO CURSO ===');
+    
     const fetchData = async () => {
       try {
         setIsLoading(true)
@@ -96,6 +115,7 @@ export function useCursoViewer(cursoId: string) {
         if (token && userId) {
           try {
             const matriculaResponse = await fetch(`/api/catalogo/${cursoId}/matricula`, {
+              method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`
               }
@@ -103,8 +123,19 @@ export function useCursoViewer(cursoId: string) {
             
             if (matriculaResponse.ok) {
               const { inscrito } = await matriculaResponse.json()
-              console.log('Usuário inscrito?', inscrito) // Para debug
-              setState(prev => ({ ...prev, isEnrolled: inscrito }))
+              console.log('=== STATUS DA MATRÍCULA ===', { 
+                inscrito,
+                userId,
+                cursoId 
+              });
+                    
+              // Forçar atualização clara
+              setState(prev => ({ 
+                ...prev, 
+                isEnrolled: inscrito 
+              }));
+
+              console.log('Estado atualizado para isEnrolled:', inscrito);
               
               // Se estiver matriculado, buscar progresso
               if (inscrito) {
@@ -121,6 +152,7 @@ export function useCursoViewer(cursoId: string) {
         setCurso(null)
       } finally {
         setIsLoading(false)
+        console.log('=== BUSCA FINALIZADA ===');
       }
     }
 
@@ -156,18 +188,27 @@ export function useCursoViewer(cursoId: string) {
 
   // Encontrar a aula atual
   const currentLessonData = useMemo(() => {
+    console.log('Calculando currentLessonData:', {
+      temCurso: !!curso,
+      temModulos: !!curso?.modulos,
+      quantidadeModulos: curso?.modulos?.length,
+      currentLessonId: state.currentLesson
+    });
+    
     if (!curso?.modulos || !state.currentLesson) {
-      // Se não tiver aula atual definida, retorna a primeira aula
-      return curso?.modulos?.[0]?.aulas?.[0] || null
+      console.log('Retornando primeira aula como fallback');
+      return curso?.modulos?.[0]?.aulas?.[0] || null;
     }
 
     // Encontrar a aula com o ID atual
     const aulaAtual = curso.modulos
       .flatMap((modulo) => modulo.aulas)
-      .find((aula) => aula.id === state.currentLesson)
+      .find((aula) => aula.id === state.currentLesson);
 
-    return aulaAtual || curso.modulos[0]?.aulas[0] || null
-  }, [curso?.modulos, state.currentLesson])
+    console.log('Aula encontrada:', aulaAtual);
+    
+    return aulaAtual || curso.modulos[0]?.aulas[0] || null;
+  }, [curso?.modulos, state.currentLesson]);
 
   // Atualizar estado
   const updateState = useCallback((newState: Partial<CursoViewerState>) => {
@@ -266,20 +307,22 @@ export function useCursoViewer(cursoId: string) {
 
   // Matrícula no curso
   const handleEnrollment = useCallback(async () => {
+    console.log('handleEnrollment chamado', { cursoId, token: getToken() });
+
     const token = getToken()
     
     // Verificar se usuário está autenticado
     if (!isAuthenticated()) {
-      // Redirecionar para login
+      console.log('Usuário não autenticado, redirecionando para login');
       window.location.href = `/login?redirect=/cursos/${cursoId}&message=Para se inscrever no curso, faça login primeiro`
       return
     }
 
     try {
+      console.log('Iniciando processo de matrícula');
       updateState({ isEnrolling: true })
       
-      const response = await fetch(`/api/cursos/${cursoId}/matricula`, {
-        // CORREÇÃO: Mudando a rota de /api/catalogo para /api/cursos
+      const response = await fetch(`/api/catalogo/${cursoId}/matricula`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -287,14 +330,26 @@ export function useCursoViewer(cursoId: string) {
         }
       })
 
+      console.log('Resposta da API:', { status: response.status, ok: response.ok });
+
       if (response.ok) {
         const result = await response.json()
+        console.log('Matrícula bem-sucedida:', result);
         
         // Atualizar estado
         updateState({ 
           isEnrolled: true, 
           isEnrolling: false 
-        })
+        });
+
+        // Forçar seleção da primeira aula
+        if (curso?.modulos?.[0]?.aulas?.[0]) {
+          const primeiraAulaId = curso.modulos[0].aulas[0].id;
+          updateState({ 
+            currentLesson: primeiraAulaId 
+          });
+          console.log('Primeira aula selecionada:', primeiraAulaId);
+        }
         
         // Atualizar contador de alunos localmente
         if (curso) {
@@ -326,6 +381,7 @@ export function useCursoViewer(cursoId: string) {
         updateState({ isEnrolled: true, isEnrolling: false })
         
       } else {
+        console.error('Erro na resposta:', await response.text());
         const errorData = await response.json()
         throw new Error(errorData.error || 'Erro na matrícula')
       }
