@@ -377,13 +377,13 @@ export function LandingPage() {
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Badge variant="secondary" className="text-sm">
-                  Teoria de Kolb
+                  Teoria de Kolb (1979)
                 </Badge>
                 <Badge variant="secondary" className="text-sm">
-                  Honey-Mumford
+                  Honey-Mumford (1997)
                 </Badge>
                 <Badge variant="secondary" className="text-sm">
-                  Neurociência
+                  Metodologia ativa
                 </Badge>
               </div>
             </div>

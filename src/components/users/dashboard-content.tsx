@@ -33,7 +33,7 @@ export function DashboardContent() {
       totalLessons: 20,
       completedLessons: 15,
       instructor: "Prof. Maria Silva",
-      thumbnail: "/placeholder.svg?height=100&width=150",
+      thumbnail: "testeImagem.png",
     },
     {
       id: 2,
@@ -42,7 +42,7 @@ export function DashboardContent() {
       totalLessons: 16,
       completedLessons: 7,
       instructor: "Prof. João Santos",
-      thumbnail: "/placeholder.svg?height=100&width=150",
+      thumbnail: "testeImagem.png",
     },
     {
       id: 3,
@@ -51,7 +51,7 @@ export function DashboardContent() {
       totalLessons: 12,
       completedLessons: 11,
       instructor: "Prof. Ana Costa",
-      thumbnail: "/placeholder.svg?height=100&width=150",
+      thumbnail: "testeImagem.png",
     },
   ]
 

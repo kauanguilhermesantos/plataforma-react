@@ -29,7 +29,7 @@ export function CursoCard({ curso, onToggleFavorite, onUnenroll }: CursoCardProp
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <div className="relative">
-        <img src={curso.thumbnail || "/placeholder.svg"} alt={curso.titulo} className="w-full h-48 object-cover" />
+        <img src={"/testeImagem.png"} alt={curso.titulo} className="w-full h-48 object-cover" />
         <div className="absolute top-2 left-2 flex gap-2">
           {curso.isCompleted && <Badge className="bg-green-500 hover:bg-green-600">Concluído</Badge>}
           <Badge variant="secondary">{curso.nivel}</Badge>
